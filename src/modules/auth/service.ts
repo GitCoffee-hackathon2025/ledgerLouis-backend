@@ -1,0 +1,1 @@
+// aplicação das regras de negocio/lógica, senha, jwt, dados
