@@ -14,6 +14,7 @@ export const EnvSchema = Type.Object({
     ],
     { default: "development" },
   ),
+  ALLOWED_ORIGINS: Type.String({ default: "" }) // formato: "http://localhost, https:vercel.app/slaoque"
 });
 
 export type Env = Static<typeof EnvSchema>;
