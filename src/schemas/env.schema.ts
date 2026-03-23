@@ -14,7 +14,14 @@ export const EnvSchema = Type.Object({
     ],
     { default: "development" },
   ),
-  ALLOWED_ORIGINS: Type.String({ default: "" }) // formato: "http://localhost, https:vercel.app/slaoque"
+  ALLOWED_ORIGINS: Type.String({ default: "" }), // formato: "http://localhost, https:vercel.app/slaoque"
+
+  // Banco de dados
+  DB_HOST: Type.String({ format: "hostname" }),
+  DB_PORT: Type.Number({ default: 3306 }),
+  DATABASE: Type.String({ default: "legder" }),
+  DB_USER: Type.String(),
+  DB_PASS: Type.String(),
 });
 
 export type Env = Static<typeof EnvSchema>;
