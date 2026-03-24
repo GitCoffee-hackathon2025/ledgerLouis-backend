@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import fastifyEnv from "@fastify/env";
 import type { FastifyInstance } from "fastify";
 
-import { EnvSchema } from "../../schemas/env.schema.js";
+import { EnvSchema } from "../../schemas/env.schema";
 
 // Função que integra as variáveis de ambiente no fastify
 

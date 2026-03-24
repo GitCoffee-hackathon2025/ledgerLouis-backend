@@ -1,10 +1,12 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
+import path from "path";
+
 // Core Plugins, só podem ser importados nesse arquivo e precisam ser carregados primeiro
 // Para maior organização importe-os na ordem correta de registro
-import env from "./plugins/core/env.js";
-import cors from "./plugins/core/cors.js";
+import env from "./plugins/core/env";
+import cors from "./plugins/core/cors";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -20,7 +22,7 @@ E para validação de headers das requisições: @fastify/helmet
 */
 
 // Cria o path global para utilização do Autoload
-const root = new URL(".", import.meta.url);
+const root = __dirname;
 
 async function buildApp() {
   const app = fastify({ logger: true });
@@ -31,7 +33,7 @@ async function buildApp() {
 
   // Plugins mais isolados
   await app.register(Autoload, {
-    dir: new URL("./plugins/infra", root).pathname,
+    dir: path.join(root, "plugins/infra"),
   });
 
   // Carregamento das rotas
