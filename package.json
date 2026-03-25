@@ -20,12 +20,16 @@
   },
   "license": "ISC",
   "author": "William Chormiak",
-  "type": "module",
+  "type": "commonjs",
   "main": "src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "preview": "node dist/server.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@fastify/autoload": "^6.3.1",
@@ -33,16 +37,19 @@
     "@fastify/env": "^5.0.3",
     "@fastify/jwt": "^10.0.0",
     "@fastify/multipart": "^9.4.0",
-    "@fastify/mysql": "^5.0.2",
     "@fastify/swagger": "^9.7.0",
     "@fastify/swagger-ui": "^5.2.5",
     "@sinclair/typebox": "^0.34.48",
+    "ajv-formats": "^3.0.1",
+    "dotenv": "^17.3.1",
+    "drizzle-orm": "^0.45.1",
     "fastify": "^5.8.2",
     "fastify-plugin": "^5.1.0",
     "mysql2": "^3.19.0"
   },
   "devDependencies": {
     "@types/node": "^25.3.5",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
