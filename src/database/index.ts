@@ -1,7 +1,7 @@
-import { createPool } from "mysql2/promise";
+import { createPool } from "mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
 
-import * as schema from "./schemas/index.js";
+import * as schema from "./schemas";
 
 export async function createDatabase(
   host: string,
@@ -27,12 +27,13 @@ export async function createDatabase(
     charset: "utf8mb4",
   });
 
-  await pool.query("SELECT 1");
+  await pool.promise().query("SELECT 1");
 
-  const db = drizzle(pool, {
-    schema: schema as any,
+  const db = drizzle<typeof schema>(pool, {
+    schema,
     casing: "snake_case",
+    mode: "default",
   });
 
-  return db;
+  return { db, pool };
 }
