@@ -1,47 +1,17 @@
 import { defineConfig } from "drizzle-kit";
+import dotenv from "dotenv";
+dotenv.config();
 
 export default defineConfig({
-  dialect: "mysql", // 'mysql' | 'sqlite' | 'turso'
-  out: "./drizzle", // arquivos de migration
-  schema: "./src/db/schemas",
-});
-
-
-/* 
-export default defineConfig({
+  dialect: "mysql",
+  schema: "./src/database/schemas",
   out: "./drizzle",
-  dialect: "postgresql",
-  schema: "./src/schema.ts",
 
-  driver: "pglite",
   dbCredentials: {
-    url: "./database/",
+    host: process.env.DB_HOST!,
+    port: Number(process.env.DB_PORT),
+    user: process.env.DB_USER!,
+    password: process.env.DB_PASS!,
+    database: process.env.DATABASE!,
   },
-
-  extensionsFilters: ["postgis"],
-  schemaFilter: "public",
-  tablesFilter: "*",
-
-  introspect: {
-    casing: "camel",
-  },
-
-  migrations: {
-    prefix: "timestamp",
-    table: "__drizzle_migrations__",
-    schema: "public",
-  },
-
-  entities: {
-    roles: {
-      provider: '',
-      exclude: [],
-      include: []
-    }
-  },
-
-  breakpoints: true,
-  strict: true,
-  verbose: true,
 });
-*/
