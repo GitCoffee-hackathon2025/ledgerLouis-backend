@@ -1,23 +1,19 @@
 import fp from "fastify-plugin";
 import fastifyEnv from "@fastify/env";
 import type { FastifyInstance } from "fastify";
+import type Ajv from "ajv";
 
 import { EnvSchema } from "../../schemas/env.schema";
 
 // Função que integra as variáveis de ambiente no fastify
 
 export default fp(
-  async function (app: FastifyInstance) {
+  async function (app: FastifyInstance, opts: { ajv: Ajv }) {
     await app.register(fastifyEnv, {
       schema: EnvSchema,
       dotenv: true,
       confKey: "config",
-      ajv: {
-        customOptions: (ajv) => {
-          ajv.opts.coerceTypes = true;
-          return ajv;
-        },
-      },
+      ajv: opts.ajv,
     });
   },
   {
