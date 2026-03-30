@@ -1,0 +1,15 @@
+import { ulid, isValid } from "ulid";
+type ULID = string & { readonly __brand: unique symbol };
+
+export const generateId = (): ULID => ulid() as ULID;
+
+export const isValidId = (v: string): boolean => isValid(v);
+
+export const toId = (v: string): ULID => {
+  const vu = v.toUpperCase();
+
+  if (!isValid(vu)) {
+    throw new Error("Invalid ULID");
+  }
+  return vu as ULID;
+};
