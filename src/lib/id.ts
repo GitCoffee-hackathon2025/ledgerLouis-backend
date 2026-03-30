@@ -1,5 +1,6 @@
 import { ulid, isValid } from "ulid";
-type ULID = string & { readonly __brand: unique symbol };
+
+export type ULID = string & { readonly __brand: unique symbol };
 
 export const generateId = (): ULID => ulid() as ULID;
 
