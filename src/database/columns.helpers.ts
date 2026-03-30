@@ -7,10 +7,8 @@ export const id = char("id", { length: 26 })
   .primaryKey()
   .$defaultFn(() => generateId());
 
-export const foreignId = (id: string) =>
-  char(id, { length: 26 })
-    .$type<ULID>()
-    .$defaultFn(() => generateId());
+export const foreignId = (name: string) =>
+  char(name, { length: 26 }).$type<ULID>().notNull();
 
 export const timestamps = {
   createdAt: timestamp().defaultNow().notNull(),
