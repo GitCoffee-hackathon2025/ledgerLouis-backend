@@ -1,4 +1,4 @@
-import { char, timestamp } from "drizzle-orm/mysql-core";
+import { AnyMySqlColumn, char, timestamp } from "drizzle-orm/mysql-core";
 
 import { type ULID, generateId } from "../lib/id";
 
@@ -7,8 +7,14 @@ export const id = char("id", { length: 26 })
   .primaryKey()
   .$defaultFn(() => generateId());
 
-export const foreignId = (name: string) =>
-  char(name, { length: 26 }).$type<ULID>().notNull();
+export const foreignId = (
+  name: string,
+  ref: () => AnyMySqlColumn
+) =>
+  char(name, { length: 26 })
+    .$type<ULID>()
+    .notNull()
+    .references(ref, { onDelete: "restrict" });
 
 export const timestamps = {
   createdAt: timestamp().defaultNow().notNull(),
