@@ -13,7 +13,6 @@ export const foreignId = (
 ) =>
   char(name, { length: 26 })
     .$type<ULID>()
-    .notNull()
     .references(ref, { onDelete: "restrict" });
 
 export const timestamps = {
