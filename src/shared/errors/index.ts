@@ -1,6 +1,6 @@
 import { errorMap, type ErrorCode } from "./errorCodes";
 
-type FieldError = { field: string; message: string };
+type FieldErrors = Record<string, string[]>;
 
 // Erro básico
 export class AppError extends Error {
@@ -15,12 +15,12 @@ export class AppError extends Error {
   }
 }
 
-// Erro para formulário
+// Erro para algum campo inválido
 export class ValidationError extends AppError {
-  fields: FieldError[];
+  fields: FieldErrors;
 
-  constructor(fields: FieldError[]) {
-    super("INVALID_CREDENTIALS");
+  constructor(fields: FieldErrors) {
+    super("VALIDATION_ERROR");
     this.fields = fields;
   }
 }

@@ -7,6 +7,10 @@ export const errorMap = {
     statusCode: 401,
     message: "Invalid credentials",
   },
+  VALIDATION_ERROR: {
+    statusCode: 400,
+    message: "Invalid input"
+  }
   // TOKEN_EXPIRED: {
   //   statusCode: 401,
   //   message: "Token expired",
