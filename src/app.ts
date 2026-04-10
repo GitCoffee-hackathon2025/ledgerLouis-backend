@@ -12,6 +12,11 @@ import env from "./plugins/core/env";
 import cors from "./plugins/core/cors";
 import db from "./plugins/core/db";
 
+// Classes de Erro
+import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
+import { isAjvError } from "./lib/validation/isAjvError";
+import { AppError, ValidationError } from "./shared/errors";
+
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
 Fluxo:
@@ -29,12 +34,46 @@ E para validação de headers das requisições: @fastify/helmet
 const root = __dirname;
 
 async function buildApp() {
+  // Criando ajv próprio
   const ajv = createValidator();
 
+  // Criando instância fastify
   const app = fastify({ logger: true });
 
+  // Declarando AJV e tratamento de erro
   app.setValidatorCompiler(({ schema }) => {
     return ajv.compile(schema);
+  });
+
+  app.setErrorHandler((error, request, reply) => {
+    // Erro declarado pela validação
+    if (isAjvError(error))
+      return reply.status(400).send({
+        error: "VALIDATION_ERROR",
+        message: "Invalid input",
+        fields: transformAjvErrors(error.validation),
+      });
+    
+    // Erros retornados manualmente
+    if (error instanceof ValidationError)
+      return reply.status(error.statusCode).send({
+        error: error.code,
+        message: error.message,
+        fields: error.fields,
+      });
+    if (error instanceof AppError)
+      return reply.status(error.statusCode).send({
+        error: error.code,
+        message: error.message,
+      });
+
+    // erro inesperado
+    request.log.error(error);
+    
+    return reply.status(500).send({
+      error: "INTERNAL_ERROR",
+      message: "Something went wrong",
+    });
   });
 
   // Plugins fundamentais para o carregamento
@@ -48,10 +87,10 @@ async function buildApp() {
   });
 
   // Carregamento das rotas
-  /* await app.register(Autoload, {
-    dir: // Rotas
-  });
-  */
+  // await app.register(Autoload, {
+  //   dir: // Rotas
+  // });
+ 
 
   return app;
 }
