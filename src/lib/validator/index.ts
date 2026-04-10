@@ -6,6 +6,9 @@ export function createValidator() {
     coerceTypes: true,
     removeAdditional: true,
     allErrors: true,
+    useDefaults: true,
+    strict: false,
+    allowUnionTypes: true
   });
 
   addFormats(ajv);
