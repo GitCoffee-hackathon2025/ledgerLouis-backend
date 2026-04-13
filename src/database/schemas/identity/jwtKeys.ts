@@ -1,17 +1,22 @@
 import {
+  char,
   datetime,
   mysqlTable,
   text,
   uniqueIndex,
-  varchar,
 } from "drizzle-orm/mysql-core";
 import { id, timestamps } from "../../columns.helpers";
+
+import { generateId, type ULID } from "../../../lib/id";
 
 export const jwtkeys = mysqlTable(
   "jwt_keys",
   {
     id,
-    kid: varchar("kid", { length: 50 }).notNull(),
+    kid: char("kid", { length: 26 })
+      .$type<ULID>()
+      .notNull()
+      .$defaultFn(() => generateId()),
     publicKey: text("public_key").notNull(),
     privateKey: text("private_key").notNull(),
     expiresAt: datetime("expires_at").notNull(),
