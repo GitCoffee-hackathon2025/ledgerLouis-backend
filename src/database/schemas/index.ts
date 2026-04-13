@@ -7,6 +7,7 @@ export * from "./finance/recurringTransactions";
 export * from "./finance/transactions";
 
 // identity
+export * from "./identity/jwtKeys";
 export * from "./identity/refreshTokens";
 export * from "./identity/sessions";
 export * from "./identity/users";

@@ -8,6 +8,13 @@
       "when": 1775492898380,
       "tag": "0000_premium_cargill",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1776089491298,
+      "tag": "0001_organic_magdalene",
+      "breakpoints": true
     }
   ]
 }
