@@ -17,6 +17,9 @@ import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
 import { isAjvError } from "./lib/validation/isAjvError";
 import { AppError, ValidationError } from "./shared/errors";
 
+// Adaptador pro Fastify com TypeBox
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
 Fluxo:
@@ -38,7 +41,7 @@ async function buildApp() {
   const ajv = createValidator();
 
   // Criando instância fastify
-  const app = fastify({ logger: true });
+  const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 
   // Declarando AJV e tratamento de erro
   app.setValidatorCompiler(({ schema }) => {
@@ -53,7 +56,7 @@ async function buildApp() {
         message: "Invalid input",
         fields: transformAjvErrors(error.validation),
       });
-    
+
     // Erros retornados manualmente
     if (error instanceof ValidationError)
       return reply.status(error.statusCode).send({
@@ -69,7 +72,7 @@ async function buildApp() {
 
     // erro inesperado
     request.log.error(error);
-    
+
     return reply.status(500).send({
       error: "INTERNAL_ERROR",
       message: "Something went wrong",
@@ -90,7 +93,6 @@ async function buildApp() {
   // await app.register(Autoload, {
   //   dir: // Rotas
   // });
- 
 
   return app;
 }
