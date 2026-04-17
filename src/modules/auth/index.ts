@@ -1,7 +1,54 @@
-// O arquivo index.ts é o que sempre será lido pelo Autoload então aqui onde ficará a função que registra as rotas do serviço, é importante ressaltar que plugins/ serão usados para configuração do ambiente, como jwt, env, multipart, mysql. 
+import { FastifyInstance } from "fastify";
+import { buildAuthRoutes } from "./routes";
+import { ErrorResponse, RefreshBody, RefreshResponse } from "./schema";
 
-// E devesse ser usado "export default" para a função que será lida pelo Autoload
+export default async function (app: FastifyInstance) {
+  const routes = buildAuthRoutes();
+  app.post(
+    "/refresh",
+    {
+      schema: {
+        tags: ["auth"],
+        summary: "Refresh token",
+        body: RefreshBody,
+        response: {
+          200: RefreshResponse,
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.refresh,
+  );
 
-// É um estilo parecido com a arquitetura do Django (automátizada) então QUALQUER DÚVIDA pergunte para William Chormiak
+  app.post(
+    "/logout",
+    {
+      preHandler: app.verifyAccessToken,
+      schema: {
+        tags: ["auth"],
+        summary: "Logout current session",
+        response: {
+          204: {},
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.logout,
+  );
 
-// Cada pasta (serviço) dentro de modules
+  app.post(
+    "/logout-all",
+    {
+      preHandler: app.verifyAccessToken,
+      schema: {
+        tags: ["auth"],
+        summary: "Logout all sessions",
+        response: {
+          204: {},
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.logoutAll,
+  );
+}

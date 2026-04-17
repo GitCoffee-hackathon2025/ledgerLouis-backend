@@ -16,7 +16,7 @@ export const foreignId = (
     .references(ref, { onDelete: "restrict" });
 
 export const timestamps = {
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp(),
-  deletedAt: timestamp(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at"),
+  deletedAt: timestamp("deleted_at"),
 };

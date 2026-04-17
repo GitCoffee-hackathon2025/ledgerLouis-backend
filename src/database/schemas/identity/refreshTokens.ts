@@ -1,32 +1,27 @@
 import {
-  char,
   datetime,
   mysqlTable,
   timestamp,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
-
 import { id, foreignId, timestamps } from "../../columns.helpers";
-
-// Outras tabelas
+import { users } from "./users";
 import { sessions } from "./sessions";
 
 export const refreshTokens = mysqlTable(
   "refresh_tokens",
   {
     id,
+    userId: foreignId("user_id", () => users.id).notNull(),
     sessionId: foreignId("session_id", () => sessions.id).notNull(),
     tokenHash: varchar("token_hash", { length: 255 }).notNull(),
     expiresAt: datetime("expires_at").notNull(),
     revokedAt: timestamp("revoked_at"),
-    replacedByTokenId: foreignId(
-      "replaced_by_token_id",
-      (): any => refreshTokens.id,
-    ),
+    replacedBy: foreignId("replaced_by", (): any => refreshTokens.id),
     ...timestamps,
   },
-  (table) => [uniqueIndex("uq_refresh_tokens_token_hash").on(table.tokenHash)],
+  (table) => [uniqueIndex("uq_refresh_token_hash").on(table.tokenHash)],
 );
 
 /* 

@@ -8,6 +8,34 @@
       "when": 1775492898380,
       "tag": "0000_premium_cargill",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1776089491298,
+      "tag": "0001_organic_magdalene",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1776455633655,
+      "tag": "0002_classy_tomas",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1776457539965,
+      "tag": "0003_fresh_mother_askani",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1776461008541,
+      "tag": "0004_legal_living_tribunal",
+      "breakpoints": true
     }
   ]
 }

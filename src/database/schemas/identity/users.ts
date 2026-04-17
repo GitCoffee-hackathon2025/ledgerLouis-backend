@@ -1,4 +1,4 @@
-import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
 import { id, timestamps } from "../../columns.helpers";
 
 export const users = mysqlTable("users", {
@@ -6,6 +6,7 @@ export const users = mysqlTable("users", {
   name: varchar("name", { length: 150 }).notNull(),
   email: varchar("email", { length: 150 }).notNull().unique(),
   password: varchar("passaword", { length: 255 }).notNull(),
+  isVerified: timestamp("is_verified"),
   ...timestamps,
 });
 

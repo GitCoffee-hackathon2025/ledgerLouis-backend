@@ -11,11 +11,15 @@ import { createValidator } from "./lib/validator";
 import env from "./plugins/core/env";
 import cors from "./plugins/core/cors";
 import db from "./plugins/core/db";
+import auth from "./plugins/core/auth";
 
 // Classes de Erro
 import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
 import { isAjvError } from "./lib/validation/isAjvError";
 import { AppError, ValidationError } from "./shared/errors";
+
+// Adaptador pro Fastify com TypeBox
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -38,7 +42,7 @@ async function buildApp() {
   const ajv = createValidator();
 
   // Criando instância fastify
-  const app = fastify({ logger: true });
+  const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 
   // Declarando AJV e tratamento de erro
   app.setValidatorCompiler(({ schema }) => {
@@ -46,6 +50,24 @@ async function buildApp() {
   });
 
   app.setErrorHandler((error, request, reply) => {
+    // JWT
+    if (
+      (error as { code: string }).code === "FST_JWT_AUTHORIZATION_TOKEN_EXPIRED"
+    )
+      return reply.status(401).send({
+        error: "TOKEN_EXPIRED",
+        message: "Token expired",
+      });
+
+    const code = (error as any)?.code;
+
+    if (typeof code === "string" && code.startsWith("FST_JWT_")) {
+      return reply.status(401).send({
+        error: "UNAUTHORIZED",
+        message: "Invalid token",
+      });
+    }
+
     // Erro declarado pela validação
     if (isAjvError(error))
       return reply.status(400).send({
@@ -53,7 +75,7 @@ async function buildApp() {
         message: "Invalid input",
         fields: transformAjvErrors(error.validation),
       });
-    
+
     // Erros retornados manualmente
     if (error instanceof ValidationError)
       return reply.status(error.statusCode).send({
@@ -65,11 +87,17 @@ async function buildApp() {
       return reply.status(error.statusCode).send({
         error: error.code,
         message: error.message,
+        fields: [],
       });
 
     // erro inesperado
-    request.log.error(error);
-    
+    request.log.error({
+      err: error,
+      url: request.url,
+      method: request.method,
+      // user: request.user?.sub,
+    });
+
     return reply.status(500).send({
       error: "INTERNAL_ERROR",
       message: "Something went wrong",
@@ -81,16 +109,19 @@ async function buildApp() {
   await app.register(cors);
   await app.register(db);
 
+  // Possivelmente o causador do erro do swagger
+  await app.register(auth);
+
   // Plugins mais isolados
-  await app.register(Autoload, {
-    dir: path.join(root, "plugins/infra"),
-  });
+  // await app.register(Autoload, {
+  //   dir: path.join(root, "plugins/infra"),
+  // });
 
   // Carregamento das rotas
-  // await app.register(Autoload, {
-  //   dir: // Rotas
-  // });
- 
+  await app.register(Autoload, {
+    dir: path.join(root, "modules"),
+    indexPattern: /^index\.(ts|js)$/,
+  });
 
   return app;
 }
