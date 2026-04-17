@@ -48,6 +48,7 @@
     "drizzle-orm": "^0.45.1",
     "fastify": "^5.8.2",
     "fastify-plugin": "^5.1.0",
+    "jose": "^6.2.2",
     "mysql2": "^3.19.0",
     "ulid": "^3.0.2"
   },

@@ -3,13 +3,14 @@ import {
   datetime,
   mysqlTable,
   text,
+  timestamp,
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
-import { id, timestamps } from "../../columns.helpers";
+import { id } from "../../columns.helpers";
 
 import { generateId, type ULID } from "../../../lib/id";
 
-export const jwtkeys = mysqlTable(
+export const jwtKeys = mysqlTable(
   "jwt_keys",
   {
     id,
@@ -20,7 +21,8 @@ export const jwtkeys = mysqlTable(
     publicKey: text("public_key").notNull(),
     privateKey: text("private_key").notNull(),
     expiresAt: datetime("expires_at").notNull(),
-    ...timestamps,
+    revokedAt: timestamp("revoke_at"),
+    createdAt: timestamp().defaultNow().notNull(),
   },
   (table) => [uniqueIndex("uq_jwt_keys_kid").on(table.kid)],
 );

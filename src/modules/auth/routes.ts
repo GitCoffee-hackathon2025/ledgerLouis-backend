@@ -1,3 +1,34 @@
-// Pasta responsável por definir as rotas, aqui não têm regras de negócio, apenas o método e o endpoint de cada rota
+import { FastifyRequest, FastifyReply } from "fastify";
+import { AppError } from "../../shared/errors";
 
-// Equivalente ao view/ de Django
+export const buildAuthRoutes = () => ({
+  async refresh(req: FastifyRequest, reply: FastifyReply) {
+    const { auth } = req.server;
+
+    const { refreshToken } = req.body as { refreshToken: string };
+
+    const tokens = await auth.authService.refresh(refreshToken);
+
+    return reply.send(tokens);
+  },
+
+  async logout(req: FastifyRequest, reply: FastifyReply) {
+    const { auth } = req.server;
+
+    if (!req.authUser) throw new AppError("UNAUTHORIZED");
+
+    await auth.authService.logout(req.authUser.sid);
+
+    return reply.status(204).send();
+  },
+
+  async logoutAll(req: FastifyRequest, reply: FastifyReply) {
+    const { auth } = req.server;
+
+    if (!req.authUser) throw new AppError("UNAUTHORIZED");
+
+    await auth.authService.logoutAll(req.authUser.sub);
+
+    return reply.status(204).send();
+  },
+});

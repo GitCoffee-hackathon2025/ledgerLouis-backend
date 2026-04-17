@@ -22,6 +22,9 @@ export const EnvSchema = Type.Object({
   DATABASE: Type.String({ default: "legder" }),
   DB_USER: Type.String(),
   DB_PASS: Type.String(),
+
+  // Autenticação
+  ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
 });
 
 export type Env = Static<typeof EnvSchema>;

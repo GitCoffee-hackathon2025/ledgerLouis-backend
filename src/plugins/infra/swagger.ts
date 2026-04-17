@@ -15,11 +15,15 @@ export default fp(
       },
     });
 
-    if (app.config.NODE_ENV !== "production") {
+    if (app.config.NODE_ENV !== "production")
       await app.register(swaggerUI, {
         routePrefix: "/docs",
+        staticCSP: false,
+        uiConfig: {
+          docExpansion: "list",
+          deepLinking: true,
+        },
       });
-    }
   },
   {
     name: "swagger",
