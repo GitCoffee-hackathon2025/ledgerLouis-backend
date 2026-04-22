@@ -1,10 +1,10 @@
-import { createUserRepository } from "./repository";
-import { AppError } from "../../shared/errors";
+import { createUserRepository } from "./repository.js";
+import { AppError } from "../../shared/errors/index.js";
 import {
   hashPassword,
   verifyPassword,
-} from "../../shared/security/hash/password";
-import { generateId } from "../../lib/id";
+} from "../../shared/security/hash/password.js";
+import { generateId } from "../../lib/id.js";
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -49,7 +49,7 @@ export const createUserService = (
     console.log("HEX:", Buffer.from(user.password).toString("hex"));
 
     // const valid = await verifyPassword(password, user.password);
-    const valid = await verifyPassword(user.password, password)
+    const valid = await verifyPassword(user.password, password);
 
     if (!valid) throw new AppError("INVALID_CREDENTIALS");
 

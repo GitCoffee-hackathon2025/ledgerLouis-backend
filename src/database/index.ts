@@ -1,7 +1,7 @@
 import { createPool } from "mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
 
-import * as schema from "./schemas";
+import * as schema from "./schemas/index.js";
 
 export async function createDatabase(
   host: string,

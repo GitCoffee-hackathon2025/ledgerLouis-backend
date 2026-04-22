@@ -1,9 +1,9 @@
-import { type createKeyRepository } from "../repositories/key.repository";
+import { type createKeyRepository } from "../repositories/key.repository.js";
 
-import { computeKeyExpiration } from "../auth.policy";
+import { computeKeyExpiration } from "../auth.policy.js";
 
-import { AppError } from "../../../shared/errors";
-import { type ULID } from "../../../lib/id";
+import { AppError } from "../../../shared/errors/index.js";
+import { type ULID } from "../../../lib/id.js";
 
 async function generateKeyPair() {
   const keys = await crypto.subtle.generateKey({ name: "Ed25519" }, true, [

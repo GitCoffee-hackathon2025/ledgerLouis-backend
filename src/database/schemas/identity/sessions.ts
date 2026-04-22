@@ -5,8 +5,8 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { id, foreignId, timestamps } from "../../columns.helpers";
-import { users } from "./users";
+import { id, foreignId, timestamps } from "../../columns.helpers.js";
+import { users } from "./users.js";
 
 export const sessions = mysqlTable("sessions", {
   id,

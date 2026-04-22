@@ -1,7 +1,7 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
-import { createUserRepository } from "./repository";
-import { createUserService } from "./service";
+import { createUserRepository } from "./repository.js";
+import { createUserService } from "./service.js";
 
 export function buildUserModule(app: FastifyInstance) {
   const repo = createUserRepository(app.db);

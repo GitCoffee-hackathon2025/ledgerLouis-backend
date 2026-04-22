@@ -6,9 +6,9 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
-import { id } from "../../columns.helpers";
+import { id } from "../../columns.helpers.js";
 
-import { generateId, type ULID } from "../../../lib/id";
+import { generateId, type ULID } from "../../../lib/id.js";
 
 export const jwtKeys = mysqlTable(
   "jwt_keys",

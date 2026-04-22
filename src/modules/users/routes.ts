@@ -1,8 +1,9 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import { buildUserModule } from "./module";
+import type { FastifyRequest, FastifyReply } from "fastify";
 
-export const buildUserRoutes = (user: ReturnType<typeof buildUserModule>) => ({
+export const buildUserRoutes = () => ({
   async register(req: FastifyRequest, reply: FastifyReply) {
+    const { user } = req.server;
+
     const { name, email, password } = req.body as {
       name: string;
       email: string;
@@ -19,7 +20,7 @@ export const buildUserRoutes = (user: ReturnType<typeof buildUserModule>) => ({
   },
 
   async login(req: FastifyRequest, reply: FastifyReply) {
-    const { auth } = req.server;
+    const { auth, user } = req.server;
 
     const { email, password } = req.body as {
       email: string;

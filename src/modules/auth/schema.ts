@@ -1,68 +1,31 @@
 import { Type } from "@sinclair/typebox";
+import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
+import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
-// =====================
-// BASE TYPES
-// =====================
-
-export const ULID = Type.String({
-  pattern: "^[0-9A-HJKMNP-TV-Z]{26}$",
-});
-
-export const JWT = Type.String({
-  pattern: "^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$",
-});
-
-// =====================
-// HEADERS
-// =====================
-
+// headers
 export const AuthHeader = Type.Object(
   {
     authorization: Type.String({
-      pattern: "^Bearer .+$",
+      pattern: `^Bearer ${JwtPattern}$`,
     }),
   },
   { additionalProperties: true },
 );
 
-// =====================
-// TOKENS
-// =====================
-
-export const AccessToken = JWT;
-export const RefreshToken = JWT;
-
-// =====================
-// BODIES
-// =====================
-
-export const LoginBody = Type.Object({});
-
+// bodies
 export const RefreshBody = Type.Object(
   {
-    refreshToken: RefreshToken,
+    refreshToken: JwtSchema,
   },
   { additionalProperties: false },
 );
 
-// =====================
-// RESPONSES
-// =====================
-
+// responses
 export const AuthResponse = Type.Object({
-  accessToken: AccessToken,
-  refreshToken: RefreshToken,
+  accessToken: JwtSchema,
+  refreshToken: JwtSchema,
 });
 
-export const RefreshResponse = AuthResponse;
+export const EmptyResponse = Type.Null();
 
-export const EmptyResponse = Type.Object({});
-
-// =====================
-// ERRORS
-// =====================
-
-export const ErrorResponse = Type.Object({
-  statusCode: Type.Number(),
-  message: Type.String(),
-});
+export { ErrorResponse };

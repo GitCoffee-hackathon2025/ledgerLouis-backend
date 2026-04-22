@@ -1,25 +1,23 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
-import path from "path";
-
 // Função que cria a instância que permite maior validação com o Ajv
-import { createValidator } from "./lib/validator";
+import { createValidator } from "./lib/validator/index.js";
 
 // Core Plugins, só podem ser importados nesse arquivo e precisam ser carregados primeiro
 // Para maior organização importe-os na ordem correta de registro
-import env from "./plugins/core/env";
-import cors from "./plugins/core/cors";
-import db from "./plugins/core/db";
-import auth from "./plugins/core/auth";
+import env from "./plugins/core/env.js";
+import cors from "./plugins/core/cors.js";
+import db from "./plugins/core/db.js";
+import auth from "./plugins/core/auth.js";
 
-// Classes de Erro
-import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
-import { isAjvError } from "./lib/validation/isAjvError";
-import { AppError, ValidationError } from "./shared/errors";
+// Erros
+import { transformAjvErrors } from "./lib/validation/transformAjvErrors.js";
+import { isAjvError } from "./lib/validation/isAjvError.js";
+import { AppError, ValidationError } from "./shared/errors/index.js";
 
 // Adaptador pro Fastify com TypeBox
-import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -30,13 +28,18 @@ Aproveitaremos a instalação do Redis para criar o "rate-limit" com o @fastify/
 Funcionamento dessa arquitetura:
 request → verifica IP limit → se autenticado → verifica user limit
 O limite por IP não é para limitar usuários, é para limitar origens de tráfego.
-
-E para validação de headers das requisições: @fastify/helmet
 */
 
 // Cria o path global para utilização do Autoload
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const root = __dirname;
 
+// Função
 async function buildApp() {
   // Criando ajv próprio
   const ajv = createValidator();
@@ -50,53 +53,34 @@ async function buildApp() {
   });
 
   app.setErrorHandler((error, request, reply) => {
-    // JWT
-    if (
-      (error as { code: string }).code === "FST_JWT_AUTHORIZATION_TOKEN_EXPIRED"
-    )
-      return reply.status(401).send({
-        error: "TOKEN_EXPIRED",
-        message: "Token expired",
-      });
-
-    const code = (error as any)?.code;
-
-    if (typeof code === "string" && code.startsWith("FST_JWT_")) {
-      return reply.status(401).send({
-        error: "UNAUTHORIZED",
-        message: "Invalid token",
-      });
-    }
-
-    // Erro declarado pela validação
-    if (isAjvError(error))
+    // AJV
+    if (isAjvError(error)) {
       return reply.status(400).send({
         error: "VALIDATION_ERROR",
         message: "Invalid input",
         fields: transformAjvErrors(error.validation),
       });
+    }
 
-    // Erros retornados manualmente
-    if (error instanceof ValidationError)
+    // ValidationError
+    if (error instanceof ValidationError) {
       return reply.status(error.statusCode).send({
         error: error.code,
         message: error.message,
         fields: error.fields,
       });
-    if (error instanceof AppError)
+    }
+
+    // AppError
+    if (error instanceof AppError) {
       return reply.status(error.statusCode).send({
         error: error.code,
         message: error.message,
-        fields: [],
       });
+    }
 
-    // erro inesperado
-    request.log.error({
-      err: error,
-      url: request.url,
-      method: request.method,
-      // user: request.user?.sub,
-    });
+    // fallback
+    request.log.error(error);
 
     return reply.status(500).send({
       error: "INTERNAL_ERROR",
@@ -108,18 +92,16 @@ async function buildApp() {
   await app.register(env, { ajv });
   await app.register(cors);
   await app.register(db);
-
-  // Possivelmente o causador do erro do swagger
   await app.register(auth);
 
   // Plugins mais isolados
-  // await app.register(Autoload, {
-  //   dir: path.join(root, "plugins/infra"),
-  // });
+  await app.register(Autoload, {
+    dir: join(root, "plugins/infra"),
+  });
 
   // Carregamento das rotas
   await app.register(Autoload, {
-    dir: path.join(root, "modules"),
+    dir: join(root, "modules"),
     indexPattern: /^index\.(ts|js)$/,
   });
 

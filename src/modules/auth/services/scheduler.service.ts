@@ -1,5 +1,5 @@
-import { authPolicy } from "../auth.policy";
-import { createKeyService } from "./key.service";
+import { authPolicy } from "../auth.policy.js";
+import { createKeyService } from "./key.service.js";
 
 /**
  * Inicia o rotacionamento de chaves usadas na autenticação

@@ -1,23 +1,17 @@
 import { Type } from "@sinclair/typebox";
+import { IdSchema } from "../../schemas/primitives/id.schema.js";
+import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
-export const ULID = Type.String({
-  pattern: "^[0-9A-HJKMNP-TV-Z]{26}$",
-});
-
-export const Email = Type.String({
-  format: "email",
-});
-
+// primitives locais
+export const Email = Type.String({ format: "email" });
 export const Password = Type.String({
   minLength: 8,
   maxLength: 72,
+  pattern: "^(?=.*[A-Za-z])(?=.*\\d).+$",
 });
+export const Name = Type.String({ minLength: 3, maxLength: 100 });
 
-export const Name = Type.String({
-  minLength: 3,
-  maxLength: 100,
-});
-
+// bodies
 export const RegisterBody = Type.Object(
   {
     name: Name,
@@ -35,18 +29,11 @@ export const LoginBody = Type.Object(
   { additionalProperties: false },
 );
 
+// responses
 export const UserResponse = Type.Object({
-  id: ULID,
+  id: IdSchema,
   name: Name,
   email: Email,
 });
 
-export const AuthResponse = Type.Object({
-  accessToken: Type.String(),
-  refreshToken: Type.String(),
-});
-
-export const ErrorResponse = Type.Object({
-  statusCode: Type.Number(),
-  message: Type.String(),
-});
+export { ErrorResponse };

@@ -1,9 +1,9 @@
 import fp from "fastify-plugin";
 import fastifyEnv from "@fastify/env";
 import type { FastifyInstance } from "fastify";
-import type Ajv from "ajv";
+import type { Ajv } from "ajv";
 
-import { EnvSchema } from "../../schemas/env.schema";
+import { EnvSchema } from "../../schemas/env.schema.js";
 
 // Função que integra as variáveis de ambiente no fastify
 

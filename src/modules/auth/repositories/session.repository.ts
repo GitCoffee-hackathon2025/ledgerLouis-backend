@@ -1,7 +1,7 @@
 import { eq, type InferInsertModel } from "drizzle-orm";
 
-import type { DB } from "../../../types/db";
-import { sessions } from "../../../database/schemas";
+import type { DB } from "../../../types/db.js";
+import { sessions } from "../../../database/schemas/index.js";
 
 type SessionInsert = InferInsertModel<typeof sessions>;
 
