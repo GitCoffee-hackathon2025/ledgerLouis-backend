@@ -1,48 +1,53 @@
+import fp from "fastify-plugin";
 import { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module";
 import { buildUserRoutes } from "./routes";
 
-import {
-  RegisterBody,
-  LoginBody,
-  UserResponse,
-  AuthResponse,
-  ErrorResponse,
-} from "./schema";
+import { RegisterBody, LoginBody, UserResponse, ErrorResponse } from "./schema";
 
-export default async function (app: FastifyInstance) {
-  const user = buildUserModule(app);
-  const routes = buildUserRoutes(user);
+import { AuthResponse } from "../auth/schema";
 
-  app.post(
-    "/register",
-    {
-      schema: {
-        tags: ["users"],
-        summary: "Register user",
-        body: RegisterBody,
-        response: {
-          201: UserResponse,
-          409: ErrorResponse,
+export default fp(
+  async function (app: FastifyInstance) {
+    app.decorate("user", buildUserModule(app));
+
+    const routes = buildUserRoutes();
+
+    app.post(
+      "/register",
+      {
+        schema: {
+          tags: ["users"],
+          summary: "Register user",
+          body: RegisterBody,
+          response: {
+            201: UserResponse,
+            400: ErrorResponse,
+            409: ErrorResponse,
+          },
         },
       },
-    },
-    routes.register,
-  );
+      routes.register,
+    );
 
-  app.post(
-    "/login",
-    {
-      schema: {
-        tags: ["users"],
-        summary: "Login user",
-        body: LoginBody,
-        response: {
-          200: AuthResponse,
-          401: ErrorResponse,
+    app.post(
+      "/login",
+      {
+        schema: {
+          tags: ["auth"],
+          summary: "Login user",
+          body: LoginBody,
+          response: {
+            200: AuthResponse,
+            401: ErrorResponse,
+          },
         },
       },
-    },
-    routes.login,
-  );
-}
+      routes.login,
+    );
+  },
+  {
+    name: "users-routes",
+    dependencies: ["db", "auth"],
+  },
+);
