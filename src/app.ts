@@ -13,7 +13,7 @@ import cors from "./plugins/core/cors";
 import db from "./plugins/core/db";
 import auth from "./plugins/core/auth";
 
-// Classes de Erro
+// Erros
 import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
 import { isAjvError } from "./lib/validation/isAjvError";
 import { AppError, ValidationError } from "./shared/errors";
@@ -30,8 +30,6 @@ Aproveitaremos a instalação do Redis para criar o "rate-limit" com o @fastify/
 Funcionamento dessa arquitetura:
 request → verifica IP limit → se autenticado → verifica user limit
 O limite por IP não é para limitar usuários, é para limitar origens de tráfego.
-
-E para validação de headers das requisições: @fastify/helmet
 */
 
 // Cria o path global para utilização do Autoload
@@ -57,6 +55,7 @@ async function buildApp() {
       return reply.status(401).send({
         error: "TOKEN_EXPIRED",
         message: "Token expired",
+        fields: [],
       });
 
     const code = (error as any)?.code;
@@ -65,6 +64,7 @@ async function buildApp() {
       return reply.status(401).send({
         error: "UNAUTHORIZED",
         message: "Invalid token",
+        fields: [],
       });
     }
 
@@ -95,7 +95,6 @@ async function buildApp() {
       err: error,
       url: request.url,
       method: request.method,
-      // user: request.user?.sub,
     });
 
     return reply.status(500).send({
@@ -108,14 +107,12 @@ async function buildApp() {
   await app.register(env, { ajv });
   await app.register(cors);
   await app.register(db);
-
-  // Possivelmente o causador do erro do swagger
   await app.register(auth);
 
   // Plugins mais isolados
-  // await app.register(Autoload, {
-  //   dir: path.join(root, "plugins/infra"),
-  // });
+  await app.register(Autoload, {
+    dir: path.join(root, "plugins/infra"),
+  });
 
   // Carregamento das rotas
   await app.register(Autoload, {
