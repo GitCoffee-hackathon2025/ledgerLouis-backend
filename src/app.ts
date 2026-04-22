@@ -48,54 +48,34 @@ async function buildApp() {
   });
 
   app.setErrorHandler((error, request, reply) => {
-    // JWT
-    if (
-      (error as { code: string }).code === "FST_JWT_AUTHORIZATION_TOKEN_EXPIRED"
-    )
-      return reply.status(401).send({
-        error: "TOKEN_EXPIRED",
-        message: "Token expired",
-        fields: [],
-      });
-
-    const code = (error as any)?.code;
-
-    if (typeof code === "string" && code.startsWith("FST_JWT_")) {
-      return reply.status(401).send({
-        error: "UNAUTHORIZED",
-        message: "Invalid token",
-        fields: [],
-      });
-    }
-
-    // Erro declarado pela validação
-    if (isAjvError(error))
+    // AJV
+    if (isAjvError(error)) {
       return reply.status(400).send({
         error: "VALIDATION_ERROR",
         message: "Invalid input",
         fields: transformAjvErrors(error.validation),
       });
+    }
 
-    // Erros retornados manualmente
-    if (error instanceof ValidationError)
+    // ValidationError
+    if (error instanceof ValidationError) {
       return reply.status(error.statusCode).send({
         error: error.code,
         message: error.message,
         fields: error.fields,
       });
-    if (error instanceof AppError)
+    }
+
+    // AppError
+    if (error instanceof AppError) {
       return reply.status(error.statusCode).send({
         error: error.code,
         message: error.message,
-        fields: [],
       });
+    }
 
-    // erro inesperado
-    request.log.error({
-      err: error,
-      url: request.url,
-      method: request.method,
-    });
+    // fallback
+    request.log.error(error);
 
     return reply.status(500).send({
       error: "INTERNAL_ERROR",
