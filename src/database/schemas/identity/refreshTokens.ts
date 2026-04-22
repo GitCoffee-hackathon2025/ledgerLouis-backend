@@ -5,9 +5,9 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { id, foreignId, timestamps } from "../../columns.helpers";
-import { users } from "./users";
-import { sessions } from "./sessions";
+import { id, foreignId, timestamps } from "../../columns.helpers.js";
+import { users } from "./users.js";
+import { sessions } from "./sessions.js";
 
 export const refreshTokens = mysqlTable(
   "refresh_tokens",

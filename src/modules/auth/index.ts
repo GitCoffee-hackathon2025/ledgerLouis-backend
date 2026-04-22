@@ -1,13 +1,13 @@
 import fp from "fastify-plugin";
-import { FastifyInstance } from "fastify";
-import { buildAuthRoutes } from "./routes";
+import type { FastifyInstance } from "fastify";
+import { buildAuthRoutes } from "./routes.js";
 import {
   ErrorResponse,
   RefreshBody,
   AuthResponse,
   EmptyResponse,
   AuthHeader,
-} from "./schema";
+} from "./schema.js";
 export default fp(
   async function (app: FastifyInstance) {
     const routes = buildAuthRoutes();

@@ -1,25 +1,23 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
-import path from "path";
-
 // Função que cria a instância que permite maior validação com o Ajv
-import { createValidator } from "./lib/validator";
+import { createValidator } from "./lib/validator/index.js";
 
 // Core Plugins, só podem ser importados nesse arquivo e precisam ser carregados primeiro
 // Para maior organização importe-os na ordem correta de registro
-import env from "./plugins/core/env";
-import cors from "./plugins/core/cors";
-import db from "./plugins/core/db";
-import auth from "./plugins/core/auth";
+import env from "./plugins/core/env.js";
+import cors from "./plugins/core/cors.js";
+import db from "./plugins/core/db.js";
+import auth from "./plugins/core/auth.js";
 
 // Erros
-import { transformAjvErrors } from "./lib/validation/transformAjvErrors";
-import { isAjvError } from "./lib/validation/isAjvError";
-import { AppError, ValidationError } from "./shared/errors";
+import { transformAjvErrors } from "./lib/validation/transformAjvErrors.js";
+import { isAjvError } from "./lib/validation/isAjvError.js";
+import { AppError, ValidationError } from "./shared/errors/index.js";
 
 // Adaptador pro Fastify com TypeBox
-import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -33,8 +31,15 @@ O limite por IP não é para limitar usuários, é para limitar origens de tráf
 */
 
 // Cria o path global para utilização do Autoload
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const root = __dirname;
 
+// Função
 async function buildApp() {
   // Criando ajv próprio
   const ajv = createValidator();
@@ -91,12 +96,12 @@ async function buildApp() {
 
   // Plugins mais isolados
   await app.register(Autoload, {
-    dir: path.join(root, "plugins/infra"),
+    dir: join(root, "plugins/infra"),
   });
 
   // Carregamento das rotas
   await app.register(Autoload, {
-    dir: path.join(root, "modules"),
+    dir: join(root, "modules"),
     indexPattern: /^index\.(ts|js)$/,
   });
 

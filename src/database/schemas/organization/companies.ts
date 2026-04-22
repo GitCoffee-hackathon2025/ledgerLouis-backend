@@ -1,5 +1,5 @@
 import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
-import { id, timestamps } from "../../columns.helpers";
+import { id, timestamps } from "../../columns.helpers.js";
 
 export const companies = mysqlTable("companies", {
   id,

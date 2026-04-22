@@ -1,10 +1,10 @@
 import fp from "fastify-plugin";
 import { type FastifyInstance } from "fastify";
 
-import { AppError } from "../../shared/errors";
+import { AppError } from "../../shared/errors/index.js";
 
-import { buildAuthModule } from "../../modules/auth/module";
-import { startKeyRotation } from "../../modules/auth/services/scheduler.service";
+import { buildAuthModule } from "../../modules/auth/module.js";
+import { startKeyRotation } from "../../modules/auth/services/scheduler.service.js";
 
 export default fp(
   async function (app: FastifyInstance) {

@@ -1,12 +1,12 @@
 import "fastify";
-import type { Env } from "../schemas/env.schema";
+import type { Env } from "../schemas/env.schema.js";
 
 import type { MySql2Database } from "drizzle-orm/mysql2";
-import * as schema from "../database/schemas";
+import * as schema from "../database/schemas/index.js";
 
-import type { buildAuthModule } from "../modules/auth/module";
-import { buildUserModule } from "../modules/users/module";
-import { type ULID } from "../lib/id";
+import type { buildAuthModule } from "../modules/auth/module.js";
+import { buildUserModule } from "../modules/users/module.js";
+import { type ULID } from "../lib/id.js";
 
 declare module "fastify" {
   interface FastifyInstance {

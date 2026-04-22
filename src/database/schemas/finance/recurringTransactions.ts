@@ -6,11 +6,11 @@ import {
   mysqlTable,
   text,
 } from "drizzle-orm/mysql-core";
-import { foreignId, id } from "../../columns.helpers";
-import { projects } from "../projects/projects";
-import { accounts } from "./accounts";
-import { companies } from "../organization/companies";
-import { frequencyEnum } from "../../../shared/enums";
+import { foreignId, id } from "../../columns.helpers.js";
+import { projects } from "../projects/projects.js";
+import { accounts } from "./accounts.js";
+import { companies } from "../organization/companies.js";
+import { frequencyEnum } from "../../../shared/enums/index.js";
 
 export const recurringTransactions = mysqlTable("recurring_transactions", {
   id,

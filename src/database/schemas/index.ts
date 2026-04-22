@@ -1,21 +1,21 @@
 // finance
-export * from "./finance/accounts";
-export * from "./finance/installments";
-export * from "./finance/ledgerEntries";
-export * from "./finance/recurringTransactions";
-// export * from "./finance/transactionDocuments";
-export * from "./finance/transactions";
+export * from "./finance/accounts.js";
+export * from "./finance/installments.js";
+export * from "./finance/ledgerEntries.js";
+export * from "./finance/recurringTransactions.js";
+// export * from "./finance/transactionDocuments.js";
+export * from "./finance/transactions.js";
 
 // identity
-export * from "./identity/jwtKeys";
-export * from "./identity/refreshTokens";
-export * from "./identity/sessions";
-export * from "./identity/users";
+export * from "./identity/jwtKeys.js";
+export * from "./identity/refreshTokens.js";
+export * from "./identity/sessions.js";
+export * from "./identity/users.js";
 
 // organization
-export * from "./organization/companies";
-export * from "./organization/companyUsers";
-export * from "./organization/invites";
+export * from "./organization/companies.js";
+export * from "./organization/companyUsers.js";
+export * from "./organization/invites.js";
 
 // projects
-export * from "./projects/projects";
+export * from "./projects/projects.js";

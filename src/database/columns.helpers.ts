@@ -1,6 +1,6 @@
-import { AnyMySqlColumn, char, timestamp } from "drizzle-orm/mysql-core";
+import { type AnyMySqlColumn, char, timestamp } from "drizzle-orm/mysql-core";
 
-import { type ULID, generateId } from "../lib/id";
+import { type ULID, generateId } from "../lib/id.js";
 
 export const id = char("id", { length: 26 })
   .$type<ULID>()

@@ -1,7 +1,7 @@
 import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
-import { foreignId, id, timestamps } from "../../columns.helpers";
-import { transactions } from "./transactions";
-import { companies } from "../organization/companies";
+import { foreignId, id, timestamps } from "../../columns.helpers.js";
+import { transactions } from "./transactions.js";
+import { companies } from "../organization/companies.js";
 
 // Essa tabela está desativada
 

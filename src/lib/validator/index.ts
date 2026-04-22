@@ -1,4 +1,4 @@
-import Ajv from "ajv";
+import { Ajv } from "ajv";
 import addFormats from "ajv-formats";
 
 export function createValidator() {
@@ -8,10 +8,10 @@ export function createValidator() {
     allErrors: true,
     useDefaults: true,
     strict: false,
-    allowUnionTypes: true
+    allowUnionTypes: true,
   });
 
-  addFormats(ajv);
+  addFormats.default(ajv);
 
   return ajv;
 }

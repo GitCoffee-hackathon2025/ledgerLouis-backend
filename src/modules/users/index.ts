@@ -1,11 +1,10 @@
 import fp from "fastify-plugin";
-import { FastifyInstance } from "fastify";
-import { buildUserModule } from "./module";
-import { buildUserRoutes } from "./routes";
+import type { FastifyInstance } from "fastify";
+import { buildUserModule } from "./module.js";
+import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, LoginBody, UserResponse, ErrorResponse } from "./schema";
-
-import { AuthResponse } from "../auth/schema";
+import { RegisterBody, LoginBody, UserResponse, ErrorResponse } from "./schema.js";
+import { AuthResponse } from "../auth/schema.js";
 
 export default fp(
   async function (app: FastifyInstance) {

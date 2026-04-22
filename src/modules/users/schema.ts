@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
-import { IdSchema } from "../../schemas/primitives/id.schema";
-import { ErrorResponse } from "../../schemas/common/error.schema";
+import { IdSchema } from "../../schemas/primitives/id.schema.js";
+import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 // primitives locais
 export const Email = Type.String({ format: "email" });

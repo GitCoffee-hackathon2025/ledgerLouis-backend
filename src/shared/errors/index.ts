@@ -1,19 +1,6 @@
-import { errorMap, type ErrorCode } from "./errorMap";
+import { errorMap, type ErrorCode } from "./errorMap.js";
 
 type FieldErrors = Record<string, string[]>;
-
-// Erro básico
-// export class AppError extends Error {
-//   code: ErrorCode;
-//   statusCode: number;
-
-//   constructor(code: ErrorCode, customMessage?: string) {
-//     const config = errorMap[code];
-//     super(customMessage ?? config.message);
-//     this.code = code;
-//     this.statusCode = config.statusCode;
-//   }
-// }
 
 export class AppError extends Error {
   code: ErrorCode;

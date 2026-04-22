@@ -20,7 +20,7 @@
   },
   "license": "ISC",
   "author": "William Chormiak",
-  "type": "commonjs",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

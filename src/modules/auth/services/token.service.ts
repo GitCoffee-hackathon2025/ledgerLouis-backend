@@ -1,9 +1,9 @@
-import { type createKeyService } from "./key.service";
-import { AppError } from "../../../shared/errors";
-import { authPolicy } from "../auth.policy";
+import type { createKeyService } from "./key.service.js";
+import { AppError } from "../../../shared/errors/index.js";
+import { authPolicy } from "../auth.policy.js";
 
 import { SignJWT, jwtVerify, decodeProtectedHeader } from "jose";
-import { ULID } from "../../../lib/id";
+import type { ULID } from "../../../lib/id.js";
 
 type AccessPayload = {
   sub: ULID;
@@ -96,9 +96,7 @@ export const createTokenService = (
 
         return payload;
       } catch (err: any) {
-        if (err.code === "ERR_JWT_EXPIRED") {
-          throw new AppError("TOKEN_EXPIRED");
-        }
+        if (err.code === "ERR_JWT_EXPIRED") throw new AppError("TOKEN_EXPIRED");
 
         throw new AppError("INVALID_TOKEN");
       }

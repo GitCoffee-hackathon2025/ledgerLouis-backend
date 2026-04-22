@@ -1,7 +1,7 @@
 import { type InferInsertModel, isNull, lt } from "drizzle-orm";
 
-import type { DB } from "../../../types/db";
-import { jwtKeys } from "../../../database/schemas";
+import type { DB } from "../../../types/db.js";
+import { jwtKeys } from "../../../database/schemas/index.js";
 
 type JwtKeysInsert = InferInsertModel<typeof jwtKeys>;
 

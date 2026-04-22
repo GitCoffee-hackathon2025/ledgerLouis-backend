@@ -1,8 +1,8 @@
-import { createTokenService } from "./services/token.service";
-import { createSessionService } from "./services/session.service";
-import { createRefreshService } from "./services/refresh.service";
+import { createTokenService } from "./services/token.service.js";
+import { createSessionService } from "./services/session.service.js";
+import { createRefreshService } from "./services/refresh.service.js";
 
-import { type ULID, generateId } from "../../lib/id";
+import { type ULID, generateId } from "../../lib/id.js";
 
 export const createAuthService = (
   tokenService: ReturnType<typeof createTokenService>,

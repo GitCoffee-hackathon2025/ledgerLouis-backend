@@ -1,5 +1,5 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import { AppError } from "../../shared/errors";
+import type { FastifyRequest, FastifyReply } from "fastify";
+import { AppError } from "../../shared/errors/index.js";
 
 export const buildAuthRoutes = () => ({
   async refresh(req: FastifyRequest, reply: FastifyReply) {

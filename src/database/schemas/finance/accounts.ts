@@ -4,9 +4,9 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { foreignId, id, timestamps } from "../../columns.helpers";
-import { companies } from "../organization/companies";
-import { accountTypesEnum } from "../../../shared/enums";
+import { foreignId, id, timestamps } from "../../columns.helpers.js";
+import { companies } from "../organization/companies.js";
+import { accountTypesEnum } from "../../../shared/enums/index.js";
 
 export const accounts = mysqlTable(
   "accounts",

@@ -1,14 +1,14 @@
 import { type FastifyInstance } from "fastify";
 
-import { createKeyRepository } from "./repositories/key.repository";
-import { createSessionRepository } from "./repositories/session.repository";
-import { createRefreshRepository } from "./repositories/refresh.repository";
+import { createKeyRepository } from "./repositories/key.repository.js";
+import { createSessionRepository } from "./repositories/session.repository.js";
+import { createRefreshRepository } from "./repositories/refresh.repository.js";
 
-import { createKeyService } from "./services/key.service";
-import { createSessionService } from "./services/session.service";
-import { createRefreshService } from "./services/refresh.service";
-import { createTokenService } from "./services/token.service";
-import { createAuthService } from "./service";
+import { createKeyService } from "./services/key.service.js";
+import { createSessionService } from "./services/session.service.js";
+import { createRefreshService } from "./services/refresh.service.js";
+import { createTokenService } from "./services/token.service.js";
+import { createAuthService } from "./service.js";
 
 export function buildAuthModule(app: FastifyInstance) {
   const db = app.db;

@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
-import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema";
-import { ErrorResponse } from "../../schemas/common/error.schema";
+import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
+import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 // headers
 export const AuthHeader = Type.Object(

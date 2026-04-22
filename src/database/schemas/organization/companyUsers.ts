@@ -1,8 +1,8 @@
 import { mysqlEnum, mysqlTable, uniqueIndex } from "drizzle-orm/mysql-core";
-import { foreignId, id, timestamps } from "../../columns.helpers";
-import { companies } from "./companies";
-import { users } from "../identity/users";
-import { permissionsEnum } from "../../../shared/enums";
+import { foreignId, id, timestamps } from "../../columns.helpers.js";
+import { companies } from "./companies.js";
+import { users } from "../identity/users.js";
+import { permissionsEnum } from "../../../shared/enums/index.js";
 
 export const companyUsers = mysqlTable(
   "company_users",

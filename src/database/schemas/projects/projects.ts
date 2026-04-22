@@ -1,6 +1,6 @@
 import { date, mysqlTable, text, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
-import { foreignId, id, timestamps } from "../../columns.helpers";
-import { companies } from "../organization/companies";
+import { foreignId, id, timestamps } from "../../columns.helpers.js";
+import { companies } from "../organization/companies.js";
 
 export const projects = mysqlTable("projects", {
   id,

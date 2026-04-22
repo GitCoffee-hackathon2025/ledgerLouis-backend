@@ -1,9 +1,9 @@
 import { decimal, mysqlEnum, mysqlTable } from "drizzle-orm/mysql-core";
-import { foreignId, id, timestamps } from "../../columns.helpers";
-import { companies } from "../organization/companies";
-import { transactions } from "./transactions";
-import { accounts } from "./accounts";
-import { entryTypesEnum } from "../../../shared/enums";
+import { foreignId, id, timestamps } from "../../columns.helpers.js";
+import { companies } from "../organization/companies.js";
+import { transactions } from "./transactions.js";
+import { accounts } from "./accounts.js";
+import { entryTypesEnum } from "../../../shared/enums/index.js";
 
 export const ledgerEntries = mysqlTable("ledger_entries", {
   id,

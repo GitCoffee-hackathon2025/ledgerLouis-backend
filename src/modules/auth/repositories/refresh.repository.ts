@@ -1,7 +1,7 @@
 import { and, eq, gt, isNull, type InferInsertModel } from "drizzle-orm";
 
-import type { DB } from "../../../types/db";
-import { refreshTokens } from "../../../database/schemas";
+import type { DB } from "../../../types/db.js";
+import { refreshTokens } from "../../../database/schemas/index.js";
 
 type RefreshInsert = InferInsertModel<typeof refreshTokens>;
 
