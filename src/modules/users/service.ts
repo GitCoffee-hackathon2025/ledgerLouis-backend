@@ -13,9 +13,8 @@ export const createUserService = (
   async register(name: string, email: string, password: string) {
     email = normalizeEmail(email);
 
-    const existing = await repo.findByEmail(email);
-
-    if (existing) throw new AppError("EMAIL_ALREADY_EXISTS");
+    if (await repo.findByEmail(email))
+      throw new AppError("EMAIL_ALREADY_EXISTS");
 
     const passwordHash = await hashPassword(password);
 
