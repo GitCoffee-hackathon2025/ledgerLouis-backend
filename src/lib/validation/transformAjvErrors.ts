@@ -20,7 +20,7 @@ function getMessage(err: ErrorObject): string {
       return `Must have at least ${err.params.limit} characters`;
 
     case "maxLength":
-      return `Must have at most ${(err.params).limit} characters`;
+      return `Must have at most ${err.params.limit} characters`;
 
     case "format":
       if ((err.params as Record<string, string>).format === "email")
@@ -45,7 +45,7 @@ export function transformAjvErrors(errors: ErrorObject[]) {
     field = field.replace(/\//g, ".").replace(/\.(\d+)(?=\.|$)/g, "[$1]");
 
     if (!field) field = "body";
-    if (!fields[field]) fields[field] ??= [];
+    fields[field] ??= [];
 
     fields[field]!.push(getMessage(err));
   }
