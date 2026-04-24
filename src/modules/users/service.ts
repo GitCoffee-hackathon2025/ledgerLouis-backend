@@ -7,16 +7,6 @@ function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
-// function aaaaaaaaaaaaaaa(hash: string, password: string) {
-//   const cleanHash = String(hash).trim();
-
-//   if (!cleanHash.startsWith("$")) {
-//     throw new Error("INVALID_HASH_FORMAT");
-//   }
-
-//   return verifyPassword(cleanHash, password);
-// }
-
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
 ) => ({
@@ -35,18 +25,4 @@ export const createUserService = (
 
     return user;
   },
-
-  // async validateCredentials(email: string, password: string) {
-  //   email = normalizeEmail(email);
-  //   const user = await repo.findByEmail(email);
-
-  //   if (!user) throw new AppError("INVALID_CREDENTIALS");
-
-  //   // const valid = await verifyPassword(password, user.password);
-  //   const valid = await verifyPassword(user.password, password);
-
-  //   if (!valid) throw new AppError("INVALID_CREDENTIALS");
-
-  //   return user;
-  // },
 });

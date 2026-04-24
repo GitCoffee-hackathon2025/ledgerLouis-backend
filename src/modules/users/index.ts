@@ -2,11 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import {
-  RegisterBody,
-  UserResponse,
-  ErrorResponse,
-} from "./schema.js";
+import { RegisterBody, UserResponse, ErrorResponse } from "./schema.js";
 
 export default async function (app: FastifyInstance) {
   const routes = buildUserRoutes(buildUserModule(app));
@@ -27,20 +23,4 @@ export default async function (app: FastifyInstance) {
     },
     routes.register,
   );
-
-  // app.post(
-  //   "/login",
-  //   {
-  //     schema: {
-  //       tags: ["auth"],
-  //       summary: "Login user",
-  //       body: LoginBody,
-  //       response: {
-  //         200: AuthResponse,
-  //         401: ErrorResponse,
-  //       },
-  //     },
-  //   },
-  //   routes.login,
-  // );
 }
