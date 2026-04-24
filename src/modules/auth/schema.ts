@@ -1,4 +1,5 @@
 import { Type } from "@sinclair/typebox";
+import { Email, Password } from "../../schemas/primitives/user.schema.js";
 import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
@@ -13,6 +14,14 @@ export const AuthHeader = Type.Object(
 );
 
 // bodies
+export const LoginBody = Type.Object(
+  {
+    email: Email,
+    password: Password,
+  },
+  { additionalProperties: false },
+);
+
 export const RefreshBody = Type.Object(
   {
     refreshToken: JwtSchema,

@@ -4,20 +4,18 @@ import Autoload from "@fastify/autoload";
 // Função que cria a instância que permite maior validação com o Ajv
 import { createValidator } from "./lib/validator/index.js";
 
+// Erros
+import { handleError } from "./shared/errors/handler.js";
+
+// Adaptador pro Fastify com TypeBox
+import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+
 // Core Plugins, só podem ser importados nesse arquivo e precisam ser carregados primeiro
 // Para maior organização importe-os na ordem correta de registro
 import env from "./plugins/core/env.js";
 import cors from "./plugins/core/cors.js";
 import db from "./plugins/core/db.js";
-import auth from "./plugins/core/auth.js";
-
-// Erros
-import { transformAjvErrors } from "./lib/validation/transformAjvErrors.js";
-import { isAjvError } from "./lib/validation/isAjvError.js";
-import { AppError, ValidationError } from "./shared/errors/index.js";
-
-// Adaptador pro Fastify com TypeBox
-import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import auth from "./plugins/core/auth.js";1
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -52,41 +50,8 @@ async function buildApp() {
     return ajv.compile(schema);
   });
 
-  app.setErrorHandler((error, request, reply) => {
-    // AJV
-    if (isAjvError(error)) {
-      return reply.status(400).send({
-        error: "VALIDATION_ERROR",
-        message: "Invalid input",
-        fields: transformAjvErrors(error.validation),
-      });
-    }
-
-    // ValidationError
-    if (error instanceof ValidationError) {
-      return reply.status(error.statusCode).send({
-        error: error.code,
-        message: error.message,
-        fields: error.fields,
-      });
-    }
-
-    // AppError
-    if (error instanceof AppError) {
-      return reply.status(error.statusCode).send({
-        error: error.code,
-        message: error.message,
-      });
-    }
-
-    // fallback
-    request.log.error(error);
-
-    return reply.status(500).send({
-      error: "INTERNAL_ERROR",
-      message: "Something went wrong",
-    });
-  });
+  // Gerenciador de erros
+  app.setErrorHandler(handleError);
 
   // Plugins fundamentais para o carregamento
   await app.register(env, { ajv });
@@ -102,7 +67,7 @@ async function buildApp() {
   // Carregamento das rotas
   await app.register(Autoload, {
     dir: join(root, "modules"),
-    indexPattern: /^index\.(ts|js)$/,
+    dirNameRoutePrefix: true,
   });
 
   return app;
