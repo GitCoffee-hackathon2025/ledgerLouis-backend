@@ -10,7 +10,7 @@ export const transactions = mysqlTable(
   {
     id,
     companyId: foreignId("company_id", () => companies.id).notNull(),
-    projectId: foreignId("project_id", () => projects.id).notNull(),
+    projectId: foreignId("project_id", () => projects.id),
     description: text("description"),
     ...timestamps,
   },
