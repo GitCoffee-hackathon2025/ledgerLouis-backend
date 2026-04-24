@@ -15,15 +15,14 @@ import { frequencyEnum } from "../../../shared/enums/index.js";
 export const recurringTransactions = mysqlTable("recurring_transactions", {
   id,
   companyId: foreignId("company_id", () => companies.id).notNull(),
-  projectId: foreignId("project_id", () => projects.id).notNull(),
   description: text("description"),
   amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
   sourceAccountId: foreignId("source_account_id", () => accounts.id).notNull(),
   categoryAccountId: foreignId(
     "category_account_id",
-    () => companies.id,
+    () => accounts.id,
   ).notNull(),
-  frequency: mysqlEnum("frequnecy", frequencyEnum).notNull(),
+  frequency: mysqlEnum("frequency", frequencyEnum).notNull(),
   intervalValue: int("interval_value").$defaultFn(() => 1),
   startDate: date("start_date").notNull(),
   endDate: date("end_date"),

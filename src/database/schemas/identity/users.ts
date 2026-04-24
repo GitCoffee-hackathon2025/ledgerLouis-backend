@@ -5,7 +5,7 @@ export const users = mysqlTable("users", {
   id,
   name: varchar("name", { length: 150 }).notNull(),
   email: varchar("email", { length: 150 }).notNull().unique(),
-  password: varchar("passaword", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
   isVerified: timestamp("is_verified"),
   ...timestamps,
 });
