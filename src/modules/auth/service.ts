@@ -1,18 +1,37 @@
 import { createTokenService } from "./services/token.service.js";
 import { createSessionService } from "./services/session.service.js";
 import { createRefreshService } from "./services/refresh.service.js";
+import type { createUserRepository } from "../users/repository.js";
 
+import { AppError } from "../../shared/errors/index.js";
 import { type ULID, generateId } from "../../lib/id.js";
+import { verifyPassword } from "../../shared/security/hash/password.js";
 
 export const createAuthService = (
   tokenService: ReturnType<typeof createTokenService>,
   refreshService: ReturnType<typeof createRefreshService>,
   sessionService: ReturnType<typeof createSessionService>,
+  userRepo: ReturnType<typeof createUserRepository>,
 ) => ({
   /**
    * LOGIN
    */
-  async login(userId: ULID, ctx: { ipAddress?: string; userAgent?: string }) {
+  async login(
+    email: string,
+    password: string,
+    ctx: { ipAddress?: string; userAgent?: string },
+  ) {
+    // procura pelo user
+    const user = await userRepo.findByEmail(email.trim().toLowerCase());
+
+    if (!user) throw new AppError("INVALID_CREDENTIALS");
+
+    // valida senha
+    if (!(await verifyPassword(user.password, password)))
+      throw new AppError("INVALID_CREDENTIALS");
+
+    const userId = user.id;
+
     // cria sessão
     const sessionId = generateId();
     await sessionService.create({ id: sessionId, userId }, ctx);
@@ -69,7 +88,7 @@ export const createAuthService = (
       jti: newRefreshId,
     });
 
-    // 7. salva novo refresh
+    // salva novo refresh
     await refreshService.create(
       { id: newRefreshId, userId: sub, sessionId: sid },
       newRefresh.token,

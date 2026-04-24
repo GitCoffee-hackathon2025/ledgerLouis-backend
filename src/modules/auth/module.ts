@@ -3,6 +3,7 @@ import { type FastifyInstance } from "fastify";
 import { createKeyRepository } from "./repositories/key.repository.js";
 import { createSessionRepository } from "./repositories/session.repository.js";
 import { createRefreshRepository } from "./repositories/refresh.repository.js";
+import { createUserRepository } from "../users/repository.js";
 
 import { createKeyService } from "./services/key.service.js";
 import { createSessionService } from "./services/session.service.js";
@@ -16,6 +17,7 @@ export function buildAuthModule(app: FastifyInstance) {
   const keyRepo = createKeyRepository(db);
   const sessionRepo = createSessionRepository(db);
   const refreshRepo = createRefreshRepository(db);
+  const userRepo = createUserRepository(db);
 
   const keyService = createKeyService(keyRepo);
   const sessionService = createSessionService(sessionRepo);
@@ -26,6 +28,7 @@ export function buildAuthModule(app: FastifyInstance) {
     tokenService,
     refreshService,
     sessionService,
+    userRepo,
   );
 
   return {
