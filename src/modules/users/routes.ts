@@ -11,10 +11,6 @@ export const buildUserRoutes = (user: ReturnType<typeof buildUserModule>) => ({
 
     const created = await user.userService.register(name, email, password);
 
-    return reply.status(201).send({
-      id: created.id,
-      name: created.name,
-      email: created.email,
-    });
+    return reply.status(201).send(created);
   },
 });
