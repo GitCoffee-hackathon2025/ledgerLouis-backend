@@ -1,7 +1,7 @@
 {
   "name": "ledger-louis-backend",
   "version": "1.0.0",
-  "description": "Servidor backend da LegderLouis",
+  "description": "Servidor backend da ledgerLouis",
   "keywords": [
     "fastify",
     "backend",

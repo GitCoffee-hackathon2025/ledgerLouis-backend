@@ -8,7 +8,7 @@ export default fp(
     await app.register(swagger, {
       openapi: {
         info: {
-          title: "LegderLouis API",
+          title: "ledgerLouis API",
           description: "Backend API", // Rascunho
           version: "1.0.0",
         },

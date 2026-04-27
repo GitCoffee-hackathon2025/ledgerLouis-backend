@@ -25,7 +25,7 @@ Váriaveis de ambiente:
 - DB_PORT=3306
 - DB_USER="admin"
 - DB_PASS="senha"
-- DATABASE="legder"
+- DATABASE="ledger"
 
 Envie os schemas do Drizzle para o banco:
 

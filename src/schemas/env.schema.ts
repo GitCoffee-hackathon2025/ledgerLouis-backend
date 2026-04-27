@@ -19,7 +19,7 @@ export const EnvSchema = Type.Object({
   // Banco de dados
   DB_HOST: Type.String({ format: "hostname" }),
   DB_PORT: Type.Number({ default: 3306 }),
-  DATABASE: Type.String({ default: "legder" }),
+  DATABASE: Type.String({ default: "ledger" }),
   DB_USER: Type.String(),
   DB_PASS: Type.String(),
 
