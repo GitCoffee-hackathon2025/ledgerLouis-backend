@@ -1,0 +1,1 @@
+ALTER TABLE `jwt_keys` RENAME COLUMN `createdAt` TO `created_at`;
