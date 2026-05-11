@@ -2,7 +2,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import type { buildUserModule } from "./module.js";
 
 export const buildUserRoutes = (user: ReturnType<typeof buildUserModule>) => ({
-  async register(req: FastifyRequest, reply: FastifyReply) {
+  async register(req: FastifyRequest, res: FastifyReply) {
     const { name, email, password } = req.body as {
       name: string;
       email: string;
@@ -11,6 +11,6 @@ export const buildUserRoutes = (user: ReturnType<typeof buildUserModule>) => ({
 
     const created = await user.userService.register(name, email, password);
 
-    return reply.status(201).send(created);
+    return res.status(201).send(created);
   },
 });

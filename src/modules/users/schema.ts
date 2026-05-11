@@ -1,5 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import { IdSchema } from "../../schemas/primitives/id.schema.js";
+import { AuthSchema } from "../companies/schema.js";
 import { Name, Email, Password } from "../../schemas/primitives/user.schema.js";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
@@ -20,4 +21,4 @@ export const UserResponse = Type.Object({
   email: Email,
 });
 
-export { ErrorResponse };
+export { AuthSchema, ErrorResponse };
