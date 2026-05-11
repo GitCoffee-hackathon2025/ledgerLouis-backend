@@ -7,7 +7,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
 import { id } from "../../columns.helpers.js";
-
 import { generateId, type ULID } from "../../../lib/id.js";
 
 export const jwtKeys = mysqlTable(

@@ -18,30 +18,3 @@ export const transactions = mysqlTable(
     uniqueIndex("uq_transactions_id_company").on(table.id, table.companyId),
   ],
 );
-/* 
-CREATE TABLE transactions (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  company_id BIGINT UNSIGNED NOT NULL,
-  project_id BIGINT UNSIGNED NULL,
-
-  description TEXT,
-
-  created_by BIGINT UNSIGNED,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP NULL,
-
-  UNIQUE (id, company_id),
-
-  FOREIGN KEY (company_id)
-    REFERENCES companies(id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (project_id)
-    REFERENCES projects(id)
-    ON DELETE SET NULL,
-
-  FOREIGN KEY (created_by)
-    REFERENCES users(id)
-    ON DELETE SET NULL
-);
-*/

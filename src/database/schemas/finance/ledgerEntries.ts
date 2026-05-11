@@ -14,30 +14,4 @@ export const ledgerEntries = mysqlTable("ledger_entries", {
   amount: decimal("amount", { precision: 15, scale: 2 }).notNull(), // amount > 0
   ...timestamps,
 });
-// amount DECIMAL(15,2) NOT NULL CHECK (amount >= 0)
-
-/* 
-CREATE TABLE ledger_entries (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  company_id BIGINT UNSIGNED NOT NULL,
-  transaction_id BIGINT UNSIGNED NOT NULL,
-  account_id BIGINT UNSIGNED NOT NULL,
-
-  entry_type ENUM('debit','credit') NOT NULL,
-  amount DECIMAL(15,2) NOT NULL CHECK (amount >= 0),
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  FOREIGN KEY (company_id)
-    REFERENCES companies(id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (transaction_id, company_id)
-    REFERENCES transactions(id, company_id)
-    ON DELETE RESTRICT,
-
-  FOREIGN KEY (account_id, company_id)
-    REFERENCES accounts(id, company_id)
-    ON DELETE RESTRICT
-);
-*/
+// amount deve ser modificado para estar em centavos e deve ser maior que zero

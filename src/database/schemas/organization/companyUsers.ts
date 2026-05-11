@@ -20,24 +20,3 @@ export const companyUsers = mysqlTable(
     ),
   ],
 );
-
-/* 
-CREATE TABLE company_users (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  company_id BIGINT UNSIGNED NOT NULL,
-  user_id BIGINT UNSIGNED NOT NULL,
-  role ENUM('owner','admin','viewer') NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP NULL,
-
-  UNIQUE (company_id, user_id),
-
-  FOREIGN KEY (company_id)
-    REFERENCES companies(id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
-);
-*/

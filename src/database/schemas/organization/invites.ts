@@ -23,27 +23,3 @@ export const invites = mysqlTable(
   },
   (table) => [uniqueIndex("uq_token_invites").on(table.token)],
 );
-
-/* 
-CREATE TABLE invites (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  company_id BIGINT UNSIGNED NOT NULL,
-
-  email VARCHAR(150) NOT NULL,
-  role ENUM('admin','viewer') NOT NULL,
-
-  token VARCHAR(255) NOT NULL,
-  expires_at DATETIME NOT NULL,
-  accepted_at DATETIME,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP NULL,
-
-  UNIQUE (token),
-  UNIQUE (company_id, email),
-
-  FOREIGN KEY (company_id)
-    REFERENCES companies(id)
-    ON DELETE CASCADE
-);
-*/
