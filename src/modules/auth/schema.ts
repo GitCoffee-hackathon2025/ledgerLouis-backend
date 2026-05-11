@@ -1,6 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import { Email, Password } from "../../schemas/primitives/user.schema.js";
 import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
+import { AuthSchema } from "../companies/schema.js";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 // headers
@@ -37,4 +38,4 @@ export const AuthResponse = Type.Object({
 
 export const EmptyResponse = Type.Null();
 
-export { ErrorResponse };
+export { AuthSchema, ErrorResponse };

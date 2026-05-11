@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { buildAuthRoutes } from "./routes.js";
 import {
+  AuthSchema,
   ErrorResponse,
   LoginBody,
   RefreshBody,
@@ -33,6 +34,7 @@ export default async function (app: FastifyInstance) {
       schema: {
         tags: ["auth"],
         summary: "Refresh token",
+        ...AuthSchema,
         body: RefreshBody,
         response: {
           200: AuthResponse,
@@ -46,10 +48,11 @@ export default async function (app: FastifyInstance) {
   app.post(
     "/logout",
     {
-      preHandler: app.verifyAccessToken,
+      preHandler: app.verifyAccess,
       schema: {
         tags: ["auth"],
         summary: "Logout current session",
+        ...AuthSchema,
         headers: AuthHeader,
         response: {
           204: EmptyResponse,
@@ -63,10 +66,11 @@ export default async function (app: FastifyInstance) {
   app.post(
     "/logout-all",
     {
-      preHandler: app.verifyAccessToken,
+      preHandler: app.verifyAccess,
       schema: {
         tags: ["auth"],
         summary: "Logout all sessions",
+        ...AuthSchema,
         headers: AuthHeader,
         response: {
           204: EmptyResponse,

@@ -64,7 +64,7 @@ export const createTokenService = (
         ),
       };
     },
-    async verifyAccessToken(token: string) {
+    async verifyAccess(token: string) {
       let kid: ULID | undefined;
 
       try {

@@ -118,8 +118,8 @@ export const createAuthService = (
   /**
    * VERIFY ACCESS TOKEN
    */
-  async verifyAccessToken(token: string) {
-    const payload = await tokenService.verifyAccessToken(token);
+  async verifyAccess(token: string) {
+    const payload = await tokenService.verifyAccess(token);
     await sessionService.touch(payload.sid);
 
     await sessionService.assertActive(payload.sid);

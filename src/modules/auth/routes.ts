@@ -2,7 +2,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import { AppError } from "../../shared/errors/index.js";
 
 export const buildAuthRoutes = () => ({
-  async login(req: FastifyRequest, reply: FastifyReply) {
+  async login(req: FastifyRequest, res: FastifyReply) {
     const { auth } = req.server;
 
     const { email, password } = req.body as { email: string; password: string };
@@ -14,36 +14,36 @@ export const buildAuthRoutes = () => ({
       }),
     });
 
-    return reply.send(tokens);
+    return res.send(tokens);
   },
 
-  async refresh(req: FastifyRequest, reply: FastifyReply) {
+  async refresh(req: FastifyRequest, res: FastifyReply) {
     const { auth } = req.server;
 
     const { refreshToken } = req.body as { refreshToken: string };
 
     const tokens = await auth.authService.refresh(refreshToken);
 
-    return reply.send(tokens);
+    return res.send(tokens);
   },
 
-  async logout(req: FastifyRequest, reply: FastifyReply) {
+  async logout(req: FastifyRequest, res: FastifyReply) {
     const { auth } = req.server;
 
     if (!req.authUser) throw new AppError("UNAUTHORIZED");
 
     await auth.authService.logout(req.authUser.sid);
 
-    return reply.status(204).send();
+    return res.status(204).send();
   },
 
-  async logoutAll(req: FastifyRequest, reply: FastifyReply) {
+  async logoutAll(req: FastifyRequest, res: FastifyReply) {
     const { auth } = req.server;
 
     if (!req.authUser) throw new AppError("UNAUTHORIZED");
 
     await auth.authService.logoutAll(req.authUser.sub);
 
-    return reply.status(204).send();
+    return res.status(204).send();
   },
 });
