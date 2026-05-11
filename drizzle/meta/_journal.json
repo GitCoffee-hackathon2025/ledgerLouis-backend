@@ -50,6 +50,13 @@
       "when": 1777301644595,
       "tag": "0006_shallow_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1777315142622,
+      "tag": "0007_kind_kang",
+      "breakpoints": true
     }
   ]
 }
