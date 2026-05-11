@@ -1,7 +1,7 @@
 import { Ajv } from "ajv";
 import addFormats from "ajv-formats";
 
-import { isValidCPF } from "cnpj-cpf-validator";
+import { isValidCNPJ } from "cnpj-cpf-validator";
 
 export function createValidator() {
   const ajv = new Ajv({
@@ -17,7 +17,7 @@ export function createValidator() {
 
   ajv.addFormat("cnpj", {
     type: "string",
-    validate: (value: string) => isValidCPF(value),
+    validate: (value: string) => isValidCNPJ(value),
   });
 
   return ajv;
