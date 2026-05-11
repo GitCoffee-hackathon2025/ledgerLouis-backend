@@ -31,10 +31,7 @@ export const createSessionService = (
   async assertActive(sessionId: ULID) {
     const session = await repo.findActiveById(sessionId);
 
-    if (!session) {
-      console.log("3")
-      throw new AppError("INVALID_TOKEN");
-    } 
+    if (!session) throw new AppError("INVALID_TOKEN");
 
     return session;
   },

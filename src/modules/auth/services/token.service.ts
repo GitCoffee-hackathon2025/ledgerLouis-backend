@@ -71,14 +71,10 @@ export const createTokenService = (
         const header = decodeProtectedHeader(token);
         kid = header.kid as ULID;
       } catch {
-        console.log("4")
         throw new AppError("INVALID_TOKEN");
       }
 
-      if (!kid) {
-        console.log("5")
-        throw new AppError("INVALID_TOKEN");
-      }
+      if (!kid) throw new AppError("INVALID_TOKEN");
 
       try {
         const { payload } = await jwtVerify<AccessPayload>(
@@ -94,15 +90,12 @@ export const createTokenService = (
           typeof payload.sub !== "string" ||
           typeof payload.sid !== "string" ||
           "jti" in payload // access NÃO deve ter jti
-        ) {
-          console.log("6")
+        )
           throw new AppError("INVALID_TOKEN");
-        }
 
         return payload;
       } catch (err: any) {
         if (err.code === "ERR_JWT_EXPIRED") throw new AppError("TOKEN_EXPIRED");
-        console.log("7")
         throw new AppError("INVALID_TOKEN");
       }
     },
@@ -112,7 +105,6 @@ export const createTokenService = (
         kid = decodeProtectedHeader(token).kid as ULID;
         if (!kid) throw new Error();
       } catch (error) {
-        console.log("8");
         throw new AppError("INVALID_TOKEN");
       }
       const publicKey = await keyService.getPublicKeyByKid(kid);
@@ -125,10 +117,8 @@ export const createTokenService = (
         typeof payload.sub !== "string" ||
         typeof payload.sid !== "string" ||
         !("jti" in payload)
-      ) {
-        console.log("9")
+      )
         throw new AppError("INVALID_TOKEN");
-      }
 
       return payload;
     },
