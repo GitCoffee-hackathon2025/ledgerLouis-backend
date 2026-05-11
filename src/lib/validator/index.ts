@@ -1,6 +1,8 @@
 import { Ajv } from "ajv";
 import addFormats from "ajv-formats";
 
+import { isValidCPF } from "cnpj-cpf-validator";
+
 export function createValidator() {
   const ajv = new Ajv({
     coerceTypes: true,
@@ -12,6 +14,11 @@ export function createValidator() {
   });
 
   addFormats.default(ajv);
+
+  ajv.addFormat("cnpj", {
+    type: "string",
+    validate: (value: string) => isValidCPF(value),
+  });
 
   return ajv;
 }
