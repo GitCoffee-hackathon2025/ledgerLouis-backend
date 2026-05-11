@@ -12,6 +12,15 @@ export default fp(
           description: "Backend API", // Rascunho
           version: "1.0.0",
         },
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+            },
+          },
+        },
       },
     });
 
