@@ -14,14 +14,14 @@ export default fp(
 
     app.decorate("auth", auth);
 
-    app.decorate("verifyAccessToken", async function (request, reply) {
+    app.decorate("verifyAccess", async function (request, reply) {
       const header = request.headers.authorization;
 
       if (!header?.startsWith("Bearer ")) throw new AppError("UNAUTHORIZED");
 
       const token = header.slice(7);
 
-      const payload = await auth.authService.verifyAccessToken(token);
+      const payload = await auth.authService.verifyAccess(token);
 
       request.authUser = payload;
     });
