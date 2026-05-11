@@ -14,7 +14,7 @@ declare module "fastify" {
 
     auth: ReturnType<typeof buildAuthModule>;
 
-    verifyAccessToken: (
+    verifyAccess: (
       request: FastifyRequest,
       reply: FastifyReply,
     ) => Promise<void>;
