@@ -20,7 +20,7 @@ export const createUserService = (
     try {
       await repo.create({ id, name, email, password: passwordHash });
     } catch (error) {
-      if (isUniqueConstraint(error))
+      if (isUniqueConstraint(error, "users_email_unique"))
         throw new AppError("EMAIL_ALREADY_EXISTS");
       throw error;
     }
