@@ -78,9 +78,10 @@ export const createAuthService = (
 
     const newRefreshId = generateId();
 
-    await refreshService.rotate(jti, newRefreshId);
-
-    const access = await tokenService.signAccessToken({ sub, sid });
+    const access = await tokenService.signAccessToken({
+      sub,
+      sid,
+    });
 
     const newRefresh = await tokenService.signRefreshToken({
       sub,
@@ -88,17 +89,23 @@ export const createAuthService = (
       jti: newRefreshId,
     });
 
-    // salva novo refresh
     await refreshService.create(
-      { id: newRefreshId, userId: sub, sessionId: sid },
+      {
+        id: newRefreshId,
+        userId: sub,
+        sessionId: sid,
+      },
       newRefresh.token,
     );
+
+    await refreshService.rotate(jti, newRefreshId);
 
     return {
       accessToken: access.token,
       refreshToken: newRefresh.token,
     };
   },
+
   /**
    * LOGOUT (sessão atual)
    */

@@ -34,7 +34,6 @@ export default async function (app: FastifyInstance) {
       schema: {
         tags: ["auth"],
         summary: "Refresh token",
-        ...AuthSchema,
         body: RefreshBody,
         response: {
           200: AuthResponse,

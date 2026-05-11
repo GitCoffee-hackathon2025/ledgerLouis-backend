@@ -43,10 +43,16 @@ export const createRefreshService = (
   async validate(token: string, jti: ULID) {
     const stored = await repo.findValidById(jti);
 
-    if (!stored) throw new AppError("INVALID_TOKEN");
-
-    if (!(await verifyToken(stored.tokenHash, token)))
+    if (!stored) {
+      console.log("1")
       throw new AppError("INVALID_TOKEN");
+    } 
+
+    if (!(await verifyToken(stored.tokenHash, token))) {
+      console.log("2")
+      throw new AppError("INVALID_TOKEN");
+
+    }
 
     return stored;
   },

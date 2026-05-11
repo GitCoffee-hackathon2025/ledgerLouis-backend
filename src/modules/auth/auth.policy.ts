@@ -1,5 +1,6 @@
 export const authPolicy = {
-  session: 15 * 60 * 1000, // 15 min
+  access: 15 * 60 * 1000, // 15 min
+  session: 7 * 24 * 60 * 60 * 1000, // 7 day
   refresh: 7 * 24 * 60 * 60 * 1000, // 7 day
   rotationInternal: 24 * 60 * 60 * 1000, // 1 day
   key: 8 * 24 * 60 * 60 * 1000, // 7 day + margem
