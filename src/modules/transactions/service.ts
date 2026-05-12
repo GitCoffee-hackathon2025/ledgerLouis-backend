@@ -5,6 +5,7 @@ import type { TransactionBodyType } from "./schema.js";
 
 export const createTransactionService = (repo: ReturnType<typeof createTransactionRepository>) => ({
     async register(Transaction: Omit<TransactionBodyType, 'id'>) {
+        console.log("Registering Transaction with data:", Transaction);
         const newTransaction = await repo.create(Transaction as any);
         return newTransaction;
     },  

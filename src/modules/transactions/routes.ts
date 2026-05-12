@@ -11,10 +11,17 @@ export const buildTransactionRoutes = (
             try {
                 const transactionData = req.body;
                 const createdTransaction = await transaction.transactionService.register(transactionData);
+                console.log("Created Transaction:", createdTransaction);
                 return reply.status(201).send(createdTransaction);
             }
             catch (error) {
-                return reply.status(400).send({ error: "Failed to register transaction", details: error instanceof Error ? error.message : String(error) })
+                console.error("Error registering transaction:", error);
+                return reply.status(400).send({
+                    error: "BAD_REQUEST",
+                    message: error instanceof Error
+                      ? error.message
+                      : "Failed to register transaction"
+                  });
             };
         },
         async getAll(
@@ -25,7 +32,12 @@ export const buildTransactionRoutes = (
                 return reply.status(200).send(transactions);
             }
             catch (error) {
-                return reply.status(400).send({ error: "Failed to get transactions", details: error instanceof Error ? error.message : String(error) })
+                return reply.status(400).send({
+                    error: "BAD_REQUEST",
+                    message: error instanceof Error
+                      ? error.message
+                      : "Failed to register transaction"
+                  });
             };
         },
         async getById(
@@ -40,7 +52,12 @@ export const buildTransactionRoutes = (
                 return reply.status(200).send(transactionData);
             }
             catch (error) {
-                return reply.status(400).send({ error: "Failed to get transaction", details: error instanceof Error ? error.message : String(error) })
+                return reply.status(400).send({
+                    error: "BAD_REQUEST",
+                    message: error instanceof Error
+                      ? error.message
+                      : "Failed to register transaction"
+                  });
             }
 
         },
@@ -58,7 +75,12 @@ export const buildTransactionRoutes = (
                 return reply.status(200).send(updatedTransaction);
             }
             catch (error) {
-                return reply.status(400).send({ error: "Failed to update transaction", details: error instanceof Error ? error.message : String(error) })
+                return reply.status(400).send({
+                    error: "BAD_REQUEST",
+                    message: error instanceof Error
+                      ? error.message
+                      : "Failed to register transaction"
+                  });
             }
 
         },
@@ -72,7 +94,13 @@ export const buildTransactionRoutes = (
                 return reply.status(204).send();
             }
             catch (error) {
-                return reply.status(400).send({ error: "Failed to delete transaction", details: error instanceof Error ? error.message : String(error) })
-            } 
+                console.error("Error deleting transaction:", error);
+                return reply.status(400).send({
+                    error: "BAD_REQUEST",
+                    message: error instanceof Error
+                      ? error.message
+                      : "Failed to register transaction"
+                  });
+                }
         }
     });

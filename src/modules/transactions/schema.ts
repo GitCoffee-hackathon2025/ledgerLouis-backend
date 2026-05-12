@@ -7,8 +7,8 @@ export const TransactionBody = Type.Object(
     {
         id: IdSchema,
         description: Type.String(),
-        idCompany: IdSchema,
-        idProject: IdSchema,
+        companyId: IdSchema,
+        projectId: IdSchema,
     }
     
 );
@@ -16,8 +16,8 @@ export const TransactionResponse = Type.Object({
     id: IdSchema,
     amount: Type.Number(),
     description: Type.String(),
-    idCompany: IdSchema,
-    idProject: IdSchema,
+    companyId: IdSchema,
+    projectId: IdSchema,
 });
 
 export type TransactionBodyType = Static<typeof TransactionBody>;
