@@ -1,6 +1,6 @@
-import { type DB } from "../../types/db.js";
+import { type DB } from "../../../types/db.js";
 import { and, eq, isNull, type InferInsertModel } from "drizzle-orm";
-import { companies } from "../../database/schemas/index.js";
+import { companies } from "../../../database/schemas/index.js";
 
 type CompanyInsert = InferInsertModel<typeof companies>;
 

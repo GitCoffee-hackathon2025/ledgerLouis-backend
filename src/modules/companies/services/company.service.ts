@@ -1,7 +1,7 @@
-import { createCompanyRepository } from "./repository.js";
-import { AppError } from "../../shared/errors/index.js";
-import { generateId, type ULID } from "../../lib/id.js";
-import { isUniqueConstraint } from "../../lib/database/error.js";
+import { createCompanyRepository } from "../repositories/company.repository.js";
+import { AppError } from "../../../shared/errors/index.js";
+import { generateId, type ULID } from "../../../lib/id.js";
+import { isUniqueConstraint } from "../../../lib/database/error.js";
 
 /* 
 Quando for criado a base de companyUser deve ser adicionado a validação da permissão que o usuário possui
