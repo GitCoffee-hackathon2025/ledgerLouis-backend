@@ -9,6 +9,7 @@ type TransactionInsert = InferInsertModel<typeof transactions>;
 export const createTransactionRepository = (db: DB) => ({
 
     async create(Transaction: TransactionInsert) {
+        console.log("FINAL INSERT:", Transaction);
         const newTransaction = await db.insert(transactions).values(Transaction);
         return newTransaction;
     },
