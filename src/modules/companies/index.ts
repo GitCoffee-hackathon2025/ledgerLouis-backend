@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { buildCompanyRoutes } from "./routes.js";
+import { buildCompanyRoutes } from "./routes/company.router.js";
 import { buildCompanyModule } from "./module.js";
 import { Type } from "@sinclair/typebox";
 import {
