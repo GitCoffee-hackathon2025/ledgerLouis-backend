@@ -10,7 +10,7 @@ import {
   ErrorResponse,
   UpdateBody,
   IdParam,
-} from "./schema.js";
+} from "./schemas/company.schema.js";
 
 export default async function (app: FastifyInstance) {
   const router = buildCompanyRoutes(buildCompanyModule(app));
