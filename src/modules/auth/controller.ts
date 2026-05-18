@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { AppError } from "../../shared/errors/index.js";
 
-export const buildAuthRoutes = () => ({
+export const createAuthController = () => ({
   async login(req: FastifyRequest, res: FastifyReply) {
     const { auth } = req.server;
 
