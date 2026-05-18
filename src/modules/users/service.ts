@@ -44,6 +44,7 @@ export const createUserService = (
     return { id, ...user };
   },
   async getAll(){
+    console.log("FETCHING ALL USERS");
     return repo.findAll();
   },
 

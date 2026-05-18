@@ -2,10 +2,11 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, UserResponse, ErrorResponse, UpdateBody } from "./schema.js";
+import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse } from "./schema.js";
+import { Type } from "@sinclair/typebox";
 
 export default async function (app: FastifyInstance) {
-  const routes = buildUserRoutes(buildUserModule(app));
+  const routes = buildUserRoutes(app.auth.authService, buildUserModule(app));
 
   app.post(
     "/register",
@@ -46,7 +47,7 @@ export default async function (app: FastifyInstance) {
         tags: ["users"],
         summary: "Get all users",
         response: {
-          200: UserResponse,
+          200: UserListResponse,
           400: ErrorResponse,
           409: ErrorResponse,
         },
@@ -54,6 +55,9 @@ export default async function (app: FastifyInstance) {
     },
     routes.getAll
   );
+
+  app.auth.authService.logoutAll
+
   app.delete(
     "/",
     {
@@ -61,7 +65,7 @@ export default async function (app: FastifyInstance) {
         tags: ["users"],
         summary: "Delete user",
         response: {
-          204: {},
+          204: Type.Null(),
           400: ErrorResponse,
           409: ErrorResponse,
         },

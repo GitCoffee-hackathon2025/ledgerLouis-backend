@@ -29,6 +29,7 @@ export const UserResponse = Type.Object({
   name: Name,
   email: Email,
 });
+export const UserListResponse = Type.Array(UserResponse);
 
 export type RegisterBodyType = Static<typeof RegisterBody>;
 export type UserResponseType = Static<typeof UserResponse>;
