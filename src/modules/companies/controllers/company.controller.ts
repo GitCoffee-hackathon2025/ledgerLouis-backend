@@ -1,12 +1,12 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { buildCompanyModule } from "../module.js";
 import { AppError } from "../../../shared/errors/index.js";
-import type { CreateBodyType, UpdateBodyType } from "../schema.js";
+import type { CreateBodyType, UpdateBodyType } from "../schemas/company.schema.js";
 import type { ULID } from "../../../lib/id.js";
 
 type IdParamType = { id: ULID };
 
-export const buildCompanyRoutes = (
+export const createCompanyController = (
   company: ReturnType<typeof buildCompanyModule>,
 ) => ({
   async create(req: FastifyRequest, res: FastifyReply) {

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { buildCompanyRoutes } from "./routes/company.router.js";
+import { createCompanyController } from "./controllers/company.controller.js";
 import { buildCompanyModule } from "./module.js";
 import { Type } from "@sinclair/typebox";
 import {
@@ -13,7 +13,7 @@ import {
 } from "./schemas/company.schema.js";
 
 export default async function (app: FastifyInstance) {
-  const router = buildCompanyRoutes(buildCompanyModule(app));
+  const router = createCompanyController(buildCompanyModule(app));
 
   app.get(
     "/:id",
