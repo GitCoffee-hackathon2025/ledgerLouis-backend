@@ -2,6 +2,7 @@ import { Ajv } from "ajv";
 import addFormats from "ajv-formats";
 
 import { isValidCNPJ } from "cnpj-cpf-validator";
+import { isValidId } from "../id.js";
 
 export function createValidator() {
   const ajv = new Ajv({
@@ -15,9 +16,14 @@ export function createValidator() {
 
   addFormats.default(ajv);
 
+  ajv.addFormat("ulid", {
+    type: "string",
+    validate: (v: string) => isValidId(v),
+  });
+
   ajv.addFormat("cnpj", {
     type: "string",
-    validate: (value: string) => isValidCNPJ(value),
+    validate: (v: string) => isValidCNPJ(v),
   });
 
   return ajv;
