@@ -15,6 +15,11 @@ export const errorMap = {
   TOKEN_EXPIRED: [401, "Token expired"],
   TOKEN_NOT_FOUND: [401, "Token not found"],
   TOKEN_REUSE_DETECTED: [401, "Session compromised"],
+  MEMBER_ALREADY_EXISTS: [409, "User is already a company member"],
+  MEMBER_NOT_FOUND: [404, "Member not found"],
+  FORBIDDEN: [403, "Insufficient permissions"],
+  CANNOT_REMOVE_LAST_OWNER: [409, "Cannot remove the last owner"],
+  CANNOT_CHANGE_OWN_ROLE: [403, "You cannot change your own role"],
 } as const;
 
 export type ErrorCode = keyof typeof errorMap;

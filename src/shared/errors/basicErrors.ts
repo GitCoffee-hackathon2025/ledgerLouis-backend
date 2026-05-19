@@ -1,27 +1,24 @@
 import { errorMap, type ErrorCode } from "./errorMap.js";
-
-type FieldErrors = Record<string, string[]>;
+import type { FieldErrorsType } from "../../schemas/common/error.schema.js";
 
 export class AppError extends Error {
-  code: ErrorCode;
   statusCode: number;
 
-  constructor(code: ErrorCode, customMessage?: string) {
+  constructor(
+    public code: ErrorCode,
+    customMessage?: string,
+  ) {
     const [statusCode, message] = errorMap[code];
 
     super(customMessage ?? message);
 
-    this.code = code;
     this.statusCode = statusCode;
   }
 }
 
 // Erro para algum campo inválido
 export class ValidationError extends AppError {
-  fields: FieldErrors;
-
-  constructor(fields: FieldErrors) {
+  constructor(public fields: FieldErrorsType) {
     super("VALIDATION_ERROR");
-    this.fields = fields;
   }
 }

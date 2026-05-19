@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { buildCompanyModule } from "../module.js";
-import { AppError } from "../../../shared/errors/index.js";
+import { AppError } from "../../../shared/errors/basicErrors.js";
 import { toId } from "../../../lib/id.js";
 
 import type {

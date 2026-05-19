@@ -3,7 +3,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { handleFastifyError } from "./fastify.js";
 import { transformAjvErrors } from "../../lib/validation/transformAjvErrors.js";
 import { isAjvError } from "../../lib/validation/isAjvError.js";
-import { AppError, ValidationError } from "./index.js";
+import { AppError, ValidationError } from "./basicErrors.js";
 
 export function handleError(
   error: unknown,

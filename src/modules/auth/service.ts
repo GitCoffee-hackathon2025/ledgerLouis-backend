@@ -3,7 +3,7 @@ import { createSessionService } from "./services/session.service.js";
 import { createRefreshService } from "./services/refresh.service.js";
 import type { createUserRepository } from "../users/repository.js";
 
-import { AppError } from "../../shared/errors/index.js";
+import { AppError } from "../../shared/errors/basicErrors.js";
 import { type ULID, generateId } from "../../lib/id.js";
 import { verifyPassword } from "../../shared/security/hash/password.js";
 

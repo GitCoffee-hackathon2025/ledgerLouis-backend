@@ -2,7 +2,7 @@ import { type createKeyRepository } from "../repositories/key.repository.js";
 
 import { computeKeyExpiration } from "../auth.policy.js";
 
-import { AppError } from "../../../shared/errors/index.js";
+import { AppError } from "../../../shared/errors/basicErrors.js";
 import { type ULID } from "../../../lib/id.js";
 
 async function generateKeyPair() {

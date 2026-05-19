@@ -1,5 +1,5 @@
 import { createUserRepository } from "./repository.js";
-import { AppError } from "../../shared/errors/index.js";
+import { AppError } from "../../shared/errors/basicErrors.js";
 import { hashPassword } from "../../shared/security/hash/password.js";
 import { generateId } from "../../lib/id.js";
 import { isUniqueConstraint } from "../../lib/database/error.js";
