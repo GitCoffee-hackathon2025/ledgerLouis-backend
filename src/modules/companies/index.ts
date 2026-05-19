@@ -9,6 +9,6 @@ export default async function (app: FastifyInstance) {
   });
 
   // await app.register(memberRoutes, {
-  //   prefix: "/:id/members",
+  //   prefix: "/companies/:id/members",
   // });
 }

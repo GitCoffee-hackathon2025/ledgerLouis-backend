@@ -5,8 +5,10 @@ import { ErrorResponse } from "../../../schemas/common/error.schema.js";
 
 // primitives
 const NameCompany = Type.String({ minLength: 3, maxLength: 150 });
+
 const Cnpj = Type.String({ format: "cnpj" });
 
+// shared
 const CompanyData = Type.Object({
   id: IdSchema,
   name: NameCompany,
@@ -17,9 +19,8 @@ const CompanyData = Type.Object({
 });
 
 // params
-export const IdParam = Type.Object({
-  id: IdSchema,
-});
+export const IdParam = Type.Object({ id: IdSchema });
+export type IdParamType = Static<typeof IdParam>;
 
 // bodies
 export const CreateBody = Type.Object(
@@ -33,6 +34,15 @@ export const UpdateBody = Type.Object(
   { additionalProperties: false },
 );
 export type UpdateBodyType = Static<typeof UpdateBody>;
+
+// route generics
+export type GetCompanyRoute = { Params: IdParamType };
+
+export type CreateCompanyRoute = { Body: CreateBodyType };
+
+export type UpdateCompanyRoute = { Params: IdParamType; Body: UpdateBodyType };
+
+export type DeleteCompanyRoute = { Params: IdParamType };
 
 // responses
 export const CompanyResponse = CompanyData;

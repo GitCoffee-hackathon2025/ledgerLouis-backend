@@ -1,31 +1,20 @@
-import type { FastifyRequest, FastifyReply } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import type { buildCompanyModule } from "../module.js";
 import { AppError } from "../../../shared/errors/index.js";
-import type { CreateBodyType, UpdateBodyType } from "../schemas/company.schema.js";
-import type { ULID } from "../../../lib/id.js";
+import { toId } from "../../../lib/id.js";
 
-type IdParamType = { id: ULID };
+import type {
+  CreateCompanyRoute,
+  DeleteCompanyRoute,
+  GetCompanyRoute,
+  UpdateCompanyRoute,
+} from "../schemas/company.schema.js";
 
 export const createCompanyController = (
   company: ReturnType<typeof buildCompanyModule>,
 ) => ({
-  async create(req: FastifyRequest, res: FastifyReply) {
-    const { name, cnpj } = req.body as CreateBodyType;
-
-    return res.status(201).send(await company.create(name, cnpj));
-  },
-
-  async update(req: FastifyRequest, res: FastifyReply) {
-    const { id } = req.params as IdParamType;
-    const { name } = req.body as UpdateBodyType;
-
-    return res.status(200).send(await company.update(id, name));
-  },
-
-  async get(req: FastifyRequest, res: FastifyReply) {
-    const { id } = req.params as IdParamType;
-    const comp = await company.find(id);
-
+  async get(req: FastifyRequest<GetCompanyRoute>, res: FastifyReply) {
+    const comp = await company.find(toId(req.params.id));
     if (!comp) throw new AppError("COMPANY_NOT_FOUND");
 
     return res.status(200).send(comp);
@@ -35,11 +24,19 @@ export const createCompanyController = (
     return res.status(200).send(await company.list());
   },
 
-  async delete(req: FastifyRequest, res: FastifyReply) {
-    const { id } = req.params as IdParamType;
-    
-    await company.delete(id);
+  async create(req: FastifyRequest<CreateCompanyRoute>, res: FastifyReply) {
+    const { name, cnpj } = req.body;
+    return res.status(201).send(await company.create(name, cnpj));
+  },
 
+  async update(req: FastifyRequest<UpdateCompanyRoute>, res: FastifyReply) {
+    return res
+      .status(200)
+      .send(await company.update(toId(req.params.id), req.body.name));
+  },
+
+  async delete(req: FastifyRequest<DeleteCompanyRoute>, res: FastifyReply) {
+    await company.delete(toId(req.params.id));
     return res.status(204).send();
   },
 });

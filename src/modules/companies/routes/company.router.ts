@@ -11,12 +11,16 @@ import {
   ErrorResponse,
   UpdateBody,
   IdParam,
+  type GetCompanyRoute,
+  type CreateCompanyRoute,
+  type UpdateCompanyRoute,
+  type DeleteCompanyRoute,
 } from "../schemas/company.schema.js";
 
 export async function companyRoutes(app: FastifyInstance) {
   const controller = createCompanyController(buildCompanyModule(app));
 
-  app.get(
+  app.get<GetCompanyRoute>(
     "/:id",
     {
       preHandler: app.verifyAccess,
@@ -52,7 +56,7 @@ export async function companyRoutes(app: FastifyInstance) {
     controller.list,
   );
 
-  app.post(
+  app.post<CreateCompanyRoute>(
     "/",
     {
       preHandler: app.verifyAccess,
@@ -72,7 +76,7 @@ export async function companyRoutes(app: FastifyInstance) {
     controller.create,
   );
 
-  app.patch(
+  app.patch<UpdateCompanyRoute>(
     "/:id",
     {
       preHandler: app.verifyAccess,
@@ -93,7 +97,7 @@ export async function companyRoutes(app: FastifyInstance) {
     controller.update,
   );
 
-  app.delete(
+  app.delete<DeleteCompanyRoute>(
     "/:id",
     {
       preHandler: app.verifyAccess,
