@@ -4,6 +4,10 @@ import { hashPassword } from "../../shared/security/hash/password.js";
 import { generateId, type ULID } from "../../lib/id.js";
 import type { RegisterBodyType, UpdateBodyType } from "./schema.js";
 import { register } from "node:module";
+import fs from "node:fs";
+import path from "node:path";
+import { pipeline } from "node:stream/promises";
+
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -25,6 +29,24 @@ export const createUserService = (
     await repo.create(user);
 
     return user;
+  },
+  async uploadUserAvatar(id: ULID, file: any) {
+    const user = await repo.findById(id);
+    if (!user) throw new AppError("KEY_NOT_FOUND");
+  
+    const filename = `${Date.now()}-${file.filename}`;
+    const filepath = path.join("uploads", filename);
+  
+    await pipeline(
+      file.file,
+      fs.createWriteStream(filepath)
+    );
+  
+    await repo.uploadAvatar(id, `/uploads/${filename}`);
+  
+    return {
+      avatar: `/uploads/${filename}`,
+    };
   },
   async update(id: ULID, user: Partial<UpdateBodyType>) {
     // Futuro: troca de email, vai enviar um e-mail para o novo para confirmar a troca

@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse } from "./schema.js";
+import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse, UploadAvatarBody } from "./schema.js";
 import { Type } from "@sinclair/typebox";
 
 export default async function (app: FastifyInstance) {
@@ -40,6 +40,22 @@ export default async function (app: FastifyInstance) {
     },
     routes.update
   );
+  app.post(
+    "/avatar",
+    {
+      schema: {
+        tags: ["users"],
+        summary: "Upload user avatar",
+        body: UploadAvatarBody,
+        response: {
+          200: UserResponse,
+          400: ErrorResponse,
+          409: ErrorResponse,
+        },
+      },
+    },
+    routes.uploadAvatar
+  );  
   app.get(
     "/",
     {

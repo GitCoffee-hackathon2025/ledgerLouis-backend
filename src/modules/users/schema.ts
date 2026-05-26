@@ -14,6 +14,14 @@ export const RegisterBody = Type.Object(
   { additionalProperties: false },
 );
 
+
+
+export const UploadAvatarBody = Type.Object({
+  file: Type.String({ format: "binary" }),
+});
+
+export type UploadAvatarBodyType = Static<typeof UploadAvatarBody>;
+
 export const UpdateBody = Type.Object(
   {
     name: Name,
@@ -28,6 +36,7 @@ export const UserResponse = Type.Object({
   id: IdSchema,
   name: Name,
   email: Email,
+  avatar: Type.Optional(Type.String({ format: "uri" })),
 });
 export const UserListResponse = Type.Array(UserResponse);
 
