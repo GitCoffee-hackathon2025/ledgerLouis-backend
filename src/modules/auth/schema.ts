@@ -1,22 +1,40 @@
-// Uso do TypeBox
+import { Type } from "@sinclair/typebox";
+import { Email, Password } from "../../schemas/primitives/user.schema.js";
+import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
+import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
-// usado para validação das rotas e criação do Swagger. 
+// headers
+export const AuthHeader = Type.Object(
+  {
+    authorization: Type.String({
+      pattern: `^Bearer ${JwtPattern}$`,
+    }),
+  },
+  { additionalProperties: true },
+);
 
-/* O que é necessário para que o Swagger funcione de forma completa e é necessário que esse schema esteja dentro da rota
-schema: {
-  tags: ["auth"],
-  summary: "User login",
+// bodies
+export const LoginBody = Type.Object(
+  {
+    email: Email,
+    password: Password,
+  },
+  { additionalProperties: false },
+);
 
-  body: LoginBody,
+export const RefreshBody = Type.Object(
+  {
+    refreshToken: JwtSchema,
+  },
+  { additionalProperties: false },
+);
 
-  params: ParamsSchema,
-  querystring: QuerySchema,
-  headers: HeaderSchema,
+// responses
+export const AuthResponse = Type.Object({
+  accessToken: JwtSchema,
+  refreshToken: JwtSchema,
+});
 
-  response: {
-    200: SuccessResponse,
-    401: UnauthorizedResponse,
-    400: ValidationError
-  }
-}
-*/
+export const EmptyResponse = Type.Null();
+
+export { ErrorResponse };

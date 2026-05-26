@@ -1,7 +1,79 @@
-// O arquivo index.ts é o que sempre será lido pelo Autoload então aqui onde ficará a função que registra as rotas do serviço, é importante ressaltar que plugins/ serão usados para configuração do ambiente, como jwt, env, multipart, mysql. 
+import type { FastifyInstance } from "fastify";
+import { buildAuthRoutes } from "./routes.js";
+import {
+  ErrorResponse,
+  LoginBody,
+  RefreshBody,
+  AuthResponse,
+  EmptyResponse,
+  AuthHeader,
+} from "./schema.js";
+export default async function (app: FastifyInstance) {
+  const routes = buildAuthRoutes();
 
-// E devesse ser usado "export default" para a função que será lida pelo Autoload
+  app.post(
+    "/login",
+    {
+      schema: {
+        tags: ["auth"],
+        summary: "Login user",
+        body: LoginBody,
+        response: {
+          200: AuthResponse,
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.login,
+  );
 
-// É um estilo parecido com a arquitetura do Django (automátizada) então QUALQUER DÚVIDA pergunte para William Chormiak
+  app.post(
+    "/refresh",
+    {
+      schema: {
+        tags: ["auth"],
+        summary: "Refresh token",
+        body: RefreshBody,
+        response: {
+          200: AuthResponse,
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.refresh,
+  );
 
-// Cada pasta (serviço) dentro de modules
+  app.post(
+    "/logout",
+    {
+      preHandler: app.verifyAccessToken,
+      schema: {
+        tags: ["auth"],
+        summary: "Logout current session",
+        headers: AuthHeader,
+        response: {
+          204: EmptyResponse,
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.logout,
+  );
+
+  app.post(
+    "/logout-all",
+    {
+      preHandler: app.verifyAccessToken,
+      schema: {
+        tags: ["auth"],
+        summary: "Logout all sessions",
+        headers: AuthHeader,
+        response: {
+          204: EmptyResponse,
+          401: ErrorResponse,
+        },
+      },
+    },
+    routes.logoutAll,
+  );
+}

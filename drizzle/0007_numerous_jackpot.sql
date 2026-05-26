@@ -1,0 +1,1 @@
+ALTER TABLE `jwt_keys` RENAME COLUMN `revoke_at` TO `revoked_at`;
