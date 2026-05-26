@@ -50,6 +50,13 @@
       "when": 1777301644595,
       "tag": "0006_shallow_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1779121686443,
+      "tag": "0007_numerous_jackpot",
+      "breakpoints": true
     }
   ]
 }

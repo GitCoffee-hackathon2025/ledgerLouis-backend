@@ -21,7 +21,7 @@ export const jwtKeys = mysqlTable(
     publicKey: text("public_key").notNull(),
     privateKey: text("private_key").notNull(),
     expiresAt: datetime("expires_at").notNull(),
-    revokedAt: timestamp("revoke_at"),
+    revokedAt: timestamp("revoked_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [uniqueIndex("uq_jwt_keys_kid").on(table.kid)],

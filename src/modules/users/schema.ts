@@ -1,7 +1,8 @@
-import { Type } from "@sinclair/typebox";
+import { Type, type Static } from "@sinclair/typebox";
 import { IdSchema } from "../../schemas/primitives/id.schema.js";
 import { Name, Email, Password } from "../../schemas/primitives/user.schema.js";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
+
 
 // bodies
 export const RegisterBody = Type.Object(
@@ -13,11 +14,24 @@ export const RegisterBody = Type.Object(
   { additionalProperties: false },
 );
 
+export const UpdateBody = Type.Object(
+  {
+    name: Name,
+    email: Email,
+  },
+  { additionalProperties: false },
+);
+export type UpdateBodyType = Static<typeof UpdateBody>;
+
 // responses
 export const UserResponse = Type.Object({
   id: IdSchema,
   name: Name,
   email: Email,
 });
+export const UserListResponse = Type.Array(UserResponse);
+
+export type RegisterBodyType = Static<typeof RegisterBody>;
+export type UserResponseType = Static<typeof UserResponse>;
 
 export { ErrorResponse };
