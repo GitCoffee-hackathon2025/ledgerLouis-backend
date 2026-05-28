@@ -45,7 +45,10 @@ export const buildUserRoutes = (
       file
     );
   
-    return reply.status(200).send(data);
+    const dataUser =
+  await user.userService
+    .getById(req.authUser.sub);
+    return reply.status(200).send(dataUser);
   },
   async getAll(req: FastifyRequest, reply: FastifyReply) {
     const users = await user.userService.getAll();

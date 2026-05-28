@@ -20,12 +20,14 @@ export const createUserRepository = (db: DB) => ({
       where: (table, { isNull }) => isNull(table.deletedAt),
     });
   },
+
   async uploadAvatar(id: NonNullable<UserInsert["id"]>, avatar: string) {
     return db.
       update(users)
       .set({ avatar })
       .where(and(eq(users.id, id), isNull(users.deletedAt)));
   },
+
   async delete(id: NonNullable<UserInsert["id"]>) {
     return db.
       update(users)
@@ -39,7 +41,6 @@ export const createUserRepository = (db: DB) => ({
       .set({ ...data})
       .where(and(eq(users.id, id), isNull(users.deletedAt)));
   },
-
 
   async findById(id: NonNullable<UserInsert["id"]>) {
     return db.query.users.findFirst({

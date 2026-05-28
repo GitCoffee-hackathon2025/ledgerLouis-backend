@@ -41,21 +41,24 @@ export default async function (app: FastifyInstance) {
     routes.update
   );
   app.post(
-    "/avatar",
-    {
-      schema: {
-        tags: ["users"],
-        summary: "Upload user avatar",
-        body: UploadAvatarBody,
-        response: {
-          200: UserResponse,
-          400: ErrorResponse,
-          409: ErrorResponse,
-        },
+  "/me/profile-image",
+  {
+    schema: {
+      tags: ["users"],
+      summary: "Upload user avatar",
+
+      consumes: [
+        "multipart/form-data"
+      ],
+
+      response: {
+        200: UserResponse,
+        400: ErrorResponse,
       },
     },
-    routes.uploadAvatar
-  );  
+  },
+  routes.uploadAvatar
+);
   app.get(
     "/",
     {
