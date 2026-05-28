@@ -1,16 +1,12 @@
-import { errorMap, type ErrorCode } from "./errorMap.js";
-import type { FieldErrorsType } from "../../schemas/common/error.schema.js";
+import { errorMap, type ErrorCode } from "../definitions/map.js";
+import type { FieldErrorsType } from "../../../schemas/common/error.schema.js";
 
 export class AppError extends Error {
   statusCode: number;
 
-  constructor(
-    public code: ErrorCode,
-    customMessage?: string,
-  ) {
+  constructor(public code: ErrorCode) {
     const [statusCode, message] = errorMap[code];
-
-    super(customMessage ?? message);
+    super(message);
 
     this.statusCode = statusCode;
   }

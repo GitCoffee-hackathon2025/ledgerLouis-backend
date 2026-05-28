@@ -3,7 +3,7 @@ import { hashToken, verifyToken } from "../../../shared/security/hash/token.js";
 import { computeRefreshTokenExpiration } from "../auth.policy.js";
 
 import { AppError } from "../../../shared/errors/basicErrors.js";
-import { type ULID } from "../../../lib/id.js";
+import { type ULID } from "../../../domain/shared/id.js";
 
 export const createRefreshService = (
   repo: ReturnType<typeof createRefreshRepository>,

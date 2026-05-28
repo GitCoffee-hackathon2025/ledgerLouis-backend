@@ -1,9 +1,9 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { handleFastifyError } from "./fastify.js";
-import { transformAjvErrors } from "../../lib/validation/transformAjvErrors.js";
-import { isAjvError } from "../../lib/validation/isAjvError.js";
-import { AppError, ValidationError } from "./basicErrors.js";
+import { handleFastifyError } from "../adapters/fastify.adapter.js";
+import { isAjvError } from "../../../infrastructure/validation/ajv/errors/isAjvError.js";
+import { transformAjvErrors } from "../../../infrastructure/validation/ajv/errors/transformAjvErrors.js";
+import { AppError, ValidationError } from "../domain/launchers.js";
 
 export function handleError(
   error: unknown,

@@ -4,7 +4,7 @@ import { createRefreshService } from "./services/refresh.service.js";
 import type { createUserRepository } from "../users/repository.js";
 
 import { AppError } from "../../shared/errors/basicErrors.js";
-import { type ULID, generateId } from "../../lib/id.js";
+import { type ULID, generateId } from "../../domain/shared/id.js";
 import { verifyPassword } from "../../shared/security/hash/password.js";
 
 export const createAuthService = (

@@ -2,7 +2,7 @@ import { Ajv } from "ajv";
 import addFormats from "ajv-formats";
 
 import { isValidCNPJ } from "cnpj-cpf-validator";
-import { isValidId } from "../id.js";
+import { isValidId } from "../../../domain/shared/id.js";
 
 export function createValidator() {
   const ajv = new Ajv({
@@ -14,6 +14,7 @@ export function createValidator() {
     allowUnionTypes: true,
   });
 
+  // Formatos personalizados
   addFormats.default(ajv);
 
   ajv.addFormat("ulid", {

@@ -3,7 +3,7 @@ import { type createKeyRepository } from "../repositories/key.repository.js";
 import { computeKeyExpiration } from "../auth.policy.js";
 
 import { AppError } from "../../../shared/errors/basicErrors.js";
-import { type ULID } from "../../../lib/id.js";
+import { type ULID } from "../../../domain/shared/id.js";
 
 async function generateKeyPair() {
   const keys = await crypto.subtle.generateKey({ name: "Ed25519" }, true, [
@@ -66,7 +66,7 @@ export const createKeyService = (
   async getPublicKeyByKid(kid: ULID) {
     const key = await repo.findKeyPairByKid(kid);
 
-    if (!key) throw new AppError("KEY_NOT_FOUND");
+    if (!key) throw new AppError("INTERNAL_ERROR");
 
     return this.importPublicKey(key.publicKey);
   },
@@ -81,7 +81,7 @@ export const createKeyService = (
       key = await repo.findLatestValidKey();
     }
 
-    if (!key) throw new AppError("KEY_NOT_FOUND");
+    if (!key) throw new AppError("INTERNAL_ERROR");
 
     return {
       kid: key.kid,

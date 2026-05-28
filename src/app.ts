@@ -2,10 +2,10 @@ import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
 // Função que cria a instância que permite maior validação com o Ajv
-import { createValidator } from "./lib/validator/index.js";
+import { createValidator } from "./infrastructure/validation/ajv/createValidator.js";
 
 // Erros
-import { handleError } from "./shared/errors/handler.js";
+import { handleError } from "./shared/errors/http/handler.js";
 
 // Adaptador pro Fastify com TypeBox
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
@@ -15,7 +15,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import env from "./plugins/core/env.js";
 import cors from "./plugins/core/cors.js";
 import db from "./plugins/core/db.js";
-import auth from "./plugins/core/auth.js";1
+import auth from "./plugins/core/auth.js";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.

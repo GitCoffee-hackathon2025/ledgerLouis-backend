@@ -3,7 +3,7 @@ import { AppError } from "../../../shared/errors/basicErrors.js";
 import { authPolicy } from "../auth.policy.js";
 
 import { SignJWT, jwtVerify, decodeProtectedHeader } from "jose";
-import type { ULID } from "../../../lib/id.js";
+import type { ULID } from "../../../domain/shared/id.js";
 
 type AccessPayload = {
   sub: ULID;

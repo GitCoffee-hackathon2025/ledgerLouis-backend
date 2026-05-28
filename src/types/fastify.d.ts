@@ -5,7 +5,7 @@ import type { MySql2Database } from "drizzle-orm/mysql2";
 import * as schema from "../database/schemas/index.js";
 
 import type { buildAuthModule } from "../modules/auth/module.js";
-import { type ULID } from "../lib/id.js";
+import { type ULID } from "../domain/shared/id.ts";
 
 declare module "fastify" {
   interface FastifyInstance {
