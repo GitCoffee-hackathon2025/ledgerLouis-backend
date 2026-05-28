@@ -57,6 +57,7 @@ export default async function (app: FastifyInstance) {
       },
     },
   },
+
   routes.uploadAvatar
 );
   app.get(

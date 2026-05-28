@@ -57,6 +57,13 @@
       "when": 1779121686443,
       "tag": "0007_numerous_jackpot",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1779932144204,
+      "tag": "0008_abnormal_zodiak",
+      "breakpoints": true
     }
   ]
 }

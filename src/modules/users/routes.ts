@@ -41,13 +41,13 @@ export const buildUserRoutes = (
     }
   
     const data = await user.userService.uploadUserAvatar(
-      req.authUser.sub,
+      "01KRCQ5B4M68BERFNQB4GK34PD" as ULID,
       file
     );
   
     const dataUser =
   await user.userService
-    .getById(req.authUser.sub);
+    .getById("01KRCQ5B4M68BERFNQB4GK34PD" as ULID);
     return reply.status(200).send(dataUser);
   },
   async getAll(req: FastifyRequest, reply: FastifyReply) {
