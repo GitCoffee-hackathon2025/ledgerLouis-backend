@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse, UploadAvatarBody } from "./schema.js";
+import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse, UploadAvatarBody, UploadAvatarResponse } from "./schema.js";
 import { Type } from "@sinclair/typebox";
 
 export default async function (app: FastifyInstance) {
@@ -43,6 +43,7 @@ export default async function (app: FastifyInstance) {
   app.post(
   "/me/profile-image",
   {
+    preHandler: app.verifyAccessToken,
     schema: {
       tags: ["users"],
       summary: "Upload user avatar",
@@ -52,7 +53,7 @@ export default async function (app: FastifyInstance) {
       ],
 
       response: {
-        200: UserResponse,
+        200: UploadAvatarResponse,
         400: ErrorResponse,
       },
     },

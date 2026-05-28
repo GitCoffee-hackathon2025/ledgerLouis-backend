@@ -20,6 +20,13 @@ export const UploadAvatarBody = Type.Object({
   file: Type.String({ format: "binary" }),
 });
 
+
+export const UploadAvatarResponse = Type.Object({
+  fileId : IdSchema,
+  avatarUrl: Type.String({ format: "uri" }),
+  path: Type.Optional(Type.String()),
+});
+
 export type UploadAvatarBodyType = Static<typeof UploadAvatarBody>;
 
 export const UpdateBody = Type.Object(

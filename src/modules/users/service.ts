@@ -66,8 +66,7 @@ export const createUserService = (
     id: ULID,
     file: MultipartFile
   ) {
-    const user =
-      await repo.findById(id);
+    const user = await repo.findById(id);
 
     if (!user) {
       throw new AppError(
@@ -83,13 +82,14 @@ export const createUserService = (
     // temporário
     // depois vai virar
     // user_profile_images
-
+    const url = `${process.env.BASE_URL}/${uploaded.path}`;
+    console.log("URL da imagem:", url);
     await repo.uploadAvatar(
       id,
-      uploaded.path
+      uploaded.path,
     );
 
-    return uploaded;
+    return { fileId: uploaded.id, avatarUrl: url, path: uploaded.path };
   },
 
   async update(

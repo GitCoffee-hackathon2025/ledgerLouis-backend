@@ -3,7 +3,6 @@ import type { buildUserModule } from "./module.js";
 import type { RegisterBodyType, UpdateBodyType } from "./schema.js";
 import type { ULID } from "../../lib/id.js";
 import type { createAuthService } from "../auth/service.js";
-import type { UploadAvatarBodyType} from './schema.js';
 export const buildUserRoutes = (
   auth: ReturnType<typeof createAuthService>,
   user: ReturnType<typeof buildUserModule>,
@@ -33,22 +32,23 @@ export const buildUserRoutes = (
   },
   async uploadAvatar(req: FastifyRequest, reply: FastifyReply) {
     const file = await req.file();
-  
+
     if (!file) {
       return reply.status(400).send({
         message: "Arquivo obrigatório",
       });
     }
-  
+
+    if (!req.authUser) {
+  return reply.status(401).send({ message: "Unauthorized" })
+}
+
     const data = await user.userService.uploadUserAvatar(
-      "01KRCQ5B4M68BERFNQB4GK34PD" as ULID,
+      req.authUser.sub,
       file
     );
-  
-    const dataUser =
-  await user.userService
-    .getById("01KRCQ5B4M68BERFNQB4GK34PD" as ULID);
-    return reply.status(200).send(dataUser);
+
+    return reply.status(200).send(data);
   },
   async getAll(req: FastifyRequest, reply: FastifyReply) {
     const users = await user.userService.getAll();
