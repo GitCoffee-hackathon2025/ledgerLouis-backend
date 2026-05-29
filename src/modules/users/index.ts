@@ -82,6 +82,7 @@ export default async function (app: FastifyInstance) {
   app.delete(
     "/",
     {
+      preHandler: app.verifyAccessToken,
       schema: {
         tags: ["users"],
         summary: "Delete user",
@@ -97,6 +98,7 @@ export default async function (app: FastifyInstance) {
   app.get(
     "/byID",
     {
+      preHandler: app.verifyAccessToken,
       schema: {
         tags: ["users"],
         summary: "Get user by ID",

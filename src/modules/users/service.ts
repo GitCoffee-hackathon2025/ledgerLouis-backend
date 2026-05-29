@@ -86,10 +86,10 @@ export const createUserService = (
     console.log("URL da imagem:", url);
     await repo.uploadAvatar(
       id,
-      uploaded.path,
+      url
     );
 
-    return { fileId: uploaded.id, avatarUrl: url, path: uploaded.path };
+    return { fileId: uploaded.id, avatarUrl: url};
   },
 
   async update(
