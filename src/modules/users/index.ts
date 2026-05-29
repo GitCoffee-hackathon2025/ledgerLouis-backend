@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse } from "./schema.js";
+import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse, UploadAvatarBody, UploadAvatarResponse } from "./schema.js";
 import { Type } from "@sinclair/typebox";
 
 export default async function (app: FastifyInstance) {
@@ -40,6 +40,27 @@ export default async function (app: FastifyInstance) {
     },
     routes.update
   );
+  app.post(
+  "/me/profile-image",
+  {
+    preHandler: app.verifyAccessToken,
+    schema: {
+      tags: ["users"],
+      summary: "Upload user avatar",
+
+      consumes: [
+        "multipart/form-data"
+      ],
+
+      response: {
+        200: UploadAvatarResponse,
+        400: ErrorResponse,
+      },
+    },
+  },
+
+  routes.uploadAvatar
+);
   app.get(
     "/",
     {
@@ -61,6 +82,7 @@ export default async function (app: FastifyInstance) {
   app.delete(
     "/",
     {
+      preHandler: app.verifyAccessToken,
       schema: {
         tags: ["users"],
         summary: "Delete user",
@@ -76,6 +98,7 @@ export default async function (app: FastifyInstance) {
   app.get(
     "/byID",
     {
+      preHandler: app.verifyAccessToken,
       schema: {
         tags: ["users"],
         summary: "Get user by ID",

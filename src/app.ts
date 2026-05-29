@@ -30,7 +30,7 @@ O limite por IP não é para limitar usuários, é para limitar origens de tráf
 
 // Cria o path global para utilização do Autoload
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import path, { dirname, join } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -58,7 +58,11 @@ async function buildApp() {
   await app.register(cors);
   await app.register(db);
   await app.register(auth);
-
+  await app.register(import("@fastify/multipart"));
+  await app.register(import("@fastify/static"), {
+    root: path.join(process.cwd(), "uploads"),
+    prefix: "/uploads/",
+  });
   // Plugins mais isolados
   await app.register(Autoload, {
     dir: join(root, "plugins/infra"),

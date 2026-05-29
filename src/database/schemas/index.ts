@@ -19,3 +19,7 @@ export * from "./organization/invites.js";
 
 // projects
 export * from "./projects/projects.js";
+
+// image
+export * from "./image/files.js";
+export * from "./image/userProfileImages.js";

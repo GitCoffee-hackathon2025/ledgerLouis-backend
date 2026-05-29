@@ -19,7 +19,6 @@ declare module "fastify" {
       reply: FastifyReply,
     ) => Promise<void>;
   }
-
   interface FastifyRequest {
     authUser: {
       sub: ULID;
