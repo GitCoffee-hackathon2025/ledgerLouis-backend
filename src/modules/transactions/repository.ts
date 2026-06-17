@@ -18,7 +18,7 @@ export const createTransactionRepository = (db: DB) => ({
         return transaction[0];
     },
     async update(id: string, Transaction: TransactionInsert) {
-        const updatedTransaction = await db.update(transactions).set(Transaction).where(eq(transactions.id, id as any));
+        const updatedTransaction = await db.update(transactions).set(Transaction).where(eq(transactions.id, id as any)).returning({ id: transactions.id });
         return updatedTransaction;
     },
     async delete(id: string) {

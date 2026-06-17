@@ -1,11 +1,11 @@
-import { mysqlTable, varchar } from "drizzle-orm/mysql-core";
+import { pgTable, varchar } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { transactions } from "./transactions.js";
 import { companies } from "../organization/companies.js";
 
 // Essa tabela está desativada
 
-export const transactionDocuments = mysqlTable("transaction_documents", {
+export const transactionDocuments = pgTable("transaction_documents", {
   id,
   transationId: foreignId("transaction_id", () => transactions.id).notNull(),
   companyId: foreignId("company_id", () => companies.id).notNull(),

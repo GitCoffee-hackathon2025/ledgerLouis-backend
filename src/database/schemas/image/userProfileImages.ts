@@ -1,7 +1,7 @@
 import {
-  mysqlTable,
+  pgTable,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 
 import {
   id,
@@ -9,7 +9,7 @@ import {
 } from "../../columns.helpers.js";
 
 export const userProfileImages =
-  mysqlTable("user_profile_images", {
+  pgTable("user_profile_images", {
     id,
 
     userId: varchar("user_id", {

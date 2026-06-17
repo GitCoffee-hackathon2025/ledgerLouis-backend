@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default defineConfig({
-  dialect: "mysql",
+  dialect: "postgresql",
   schema: "./src/database/schemas",
   out: "./drizzle",
 

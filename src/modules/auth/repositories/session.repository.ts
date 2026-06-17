@@ -48,7 +48,8 @@ export const createSessionRepository = (db: DB) => ({
     return db
       .update(sessions)
       .set({ revokedAt: new Date() })
-      .where(eq(sessions.id, id));
+      .where(eq(sessions.id, id))
+      .returning({ id: sessions.id });
   },
   /**
    * revoga TODAS as sessions do user
@@ -57,7 +58,8 @@ export const createSessionRepository = (db: DB) => ({
     return db
       .update(sessions)
       .set({ revokedAt: new Date() })
-      .where(eq(sessions.userId, userId));
+      .where(eq(sessions.userId, userId))
+      .returning({ id: sessions.id });
   },
   /**
    * atualiza à última vez que session foi usado
@@ -66,6 +68,7 @@ export const createSessionRepository = (db: DB) => ({
     return db
       .update(sessions)
       .set({ lastActivityAt: new Date() })
-      .where(eq(sessions.id, id));
+      .where(eq(sessions.id, id))
+      .returning({ id: sessions.id });
   },
 });

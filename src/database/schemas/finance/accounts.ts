@@ -1,20 +1,20 @@
 import {
-  mysqlEnum,
-  mysqlTable,
+  pgEnum,
+  pgTable,
   uniqueIndex,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 import { accountTypesEnum } from "../../../shared/enums/index.js";
-
-export const accounts = mysqlTable(
+export const accountTypes = pgEnum("account_type", accountTypesEnum);
+export const accounts = pgTable(
   "accounts",
   {
     id,
     companyId: foreignId("company_id", () => companies.id).notNull(),
     name: varchar("name", { length: 100 }).notNull(),
-    type: mysqlEnum("type", accountTypesEnum).notNull(),
+    type: accountTypes().notNull(),
     ...timestamps,
   },
   (table) => [

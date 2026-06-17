@@ -1,7 +1,7 @@
-import { mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 import { id, timestamps } from "../../columns.helpers.js";
 
-export const users = mysqlTable("users", {
+export const users = pgTable("users", {
   id,
   name: varchar("name", { length: 150 }).notNull(),
   email: varchar("email", { length: 150 }).notNull().unique(),

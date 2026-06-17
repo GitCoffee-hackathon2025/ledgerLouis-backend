@@ -42,6 +42,7 @@
     "@fastify/swagger-ui": "^5.2.6",
     "@fastify/type-provider-typebox": "^6.1.0",
     "@sinclair/typebox": "^0.34.48",
+    "@types/pg": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "argon2": "^0.44.0",
     "dotenv": "^17.3.1",
@@ -49,7 +50,7 @@
     "fastify": "^5.8.2",
     "fastify-plugin": "^5.1.0",
     "jose": "^6.2.2",
-    "mysql2": "^3.19.0",
+    "pg": "^8.21.0",
     "ulid": "^3.0.2"
   },
   "devDependencies": {

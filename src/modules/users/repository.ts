@@ -25,21 +25,24 @@ export const createUserRepository = (db: DB) => ({
     return db.
       update(users)
       .set({ avatar })
-      .where(and(eq(users.id, id), isNull(users.deletedAt)));
+      .where(and(eq(users.id, id), isNull(users.deletedAt)))
+      .returning({ id: users.id });
   },
 
   async delete(id: NonNullable<UserInsert["id"]>) {
     return db.
       update(users)
       .set({ deletedAt: new Date() })
-      .where(and(eq(users.id, id), isNull(users.deletedAt)));
+      .where(and(eq(users.id, id), isNull(users.deletedAt)))
+      .returning({ id: users.id });
   },
 
   async update(id: NonNullable<UserInsert["id"]>, data: Partial<UserInsert>) {
     return db.
       update(users)
       .set({ ...data})
-      .where(and(eq(users.id, id), isNull(users.deletedAt)));
+      .where(and(eq(users.id, id), isNull(users.deletedAt)))
+      .returning({ id: users.id });
   },
 
   async findById(id: NonNullable<UserInsert["id"]>) {

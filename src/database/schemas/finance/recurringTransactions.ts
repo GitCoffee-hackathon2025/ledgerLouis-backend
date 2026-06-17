@@ -1,18 +1,18 @@
 import {
   date,
   decimal,
-  int,
-  mysqlEnum,
-  mysqlTable,
+  integer,
+  pgEnum,
+  pgTable,
   text,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 import { foreignId, id } from "../../columns.helpers.js";
 import { projects } from "../projects/projects.js";
 import { accounts } from "./accounts.js";
 import { companies } from "../organization/companies.js";
 import { frequencyEnum } from "../../../shared/enums/index.js";
-
-export const recurringTransactions = mysqlTable("recurring_transactions", {
+export const frequency = pgEnum("frequency", frequencyEnum);
+export const recurringTransactions = pgTable("recurring_transactions", {
   id,
   companyId: foreignId("company_id", () => companies.id).notNull(),
   description: text("description"),
@@ -22,8 +22,8 @@ export const recurringTransactions = mysqlTable("recurring_transactions", {
     "category_account_id",
     () => accounts.id,
   ).notNull(),
-  frequency: mysqlEnum("frequency", frequencyEnum).notNull(),
-  intervalValue: int("interval_value").$defaultFn(() => 1),
+  frequency: frequency().notNull(),
+  intervalValue: integer("interval_value").$defaultFn(() => 1),
   startDate: date("start_date").notNull(),
   endDate: date("end_date"),
   nextRunDate: date("next_run_date").notNull(),

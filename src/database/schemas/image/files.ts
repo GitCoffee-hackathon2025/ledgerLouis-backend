@@ -1,15 +1,15 @@
 import {
-  mysqlTable,
+  pgTable,
   varchar,
-  int,
-} from "drizzle-orm/mysql-core";
+  integer,
+} from "drizzle-orm/pg-core";
 
 import {
   id,
   timestamps,
 } from "../../columns.helpers.js";
 
-export const files = mysqlTable("files", {
+export const files = pgTable("files", {
   id,
 
   originalName: varchar("original_name", {
@@ -32,7 +32,7 @@ export const files = mysqlTable("files", {
     length: 500,
   }).notNull(),
 
-  size: int("size").notNull(),
+  size: integer("size").notNull(),
 
   ...timestamps,
 });

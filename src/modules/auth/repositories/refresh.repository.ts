@@ -43,7 +43,8 @@ export const createRefreshRepository = (db: DB) => ({
     return db
       .update(refreshTokens)
       .set({ revokedAt: new Date() })
-      .where(and(eq(refreshTokens.id, id), isNull(refreshTokens.revokedAt)));
+      .where(and(eq(refreshTokens.id, id), isNull(refreshTokens.revokedAt)))
+      .returning({ id: refreshTokens.id });
   },
 
   /**
@@ -55,7 +56,8 @@ export const createRefreshRepository = (db: DB) => ({
       .set({ revokedAt: new Date() })
       .where(
         and(eq(refreshTokens.userId, userId), isNull(refreshTokens.revokedAt)),
-      );
+      )
+      .returning({ id: refreshTokens.id });
   },
 
   /**
@@ -70,7 +72,8 @@ export const createRefreshRepository = (db: DB) => ({
           eq(refreshTokens.sessionId, sessionId),
           isNull(refreshTokens.revokedAt),
         ),
-      );
+      )
+      .returning({ id: refreshTokens.id });
   },
   /**
    * vincula o refresh novo com o antigo
@@ -91,6 +94,7 @@ export const createRefreshRepository = (db: DB) => ({
           isNull(refreshTokens.revokedAt),
           isNull(refreshTokens.replacedBy),
         ),
-      );
+      )
+      .returning({ id: refreshTokens.id });
   },
 });

@@ -77,8 +77,8 @@ export const createRefreshService = (
   async rotate(oldId: ULID, newId: ULID) {
     const result = await repo.markAsReplaced(oldId, newId);
 
-    // drizzle geralmente retorna um objeto de execução
-    if (!result || result[0].affectedRows === 0) {
+    // PostgreSQL retorna um array com os registros afetados via .returning()
+    if (!result || result.length === 0) {
       throw new AppError("TOKEN_REUSE_DETECTED");
     }
   },
