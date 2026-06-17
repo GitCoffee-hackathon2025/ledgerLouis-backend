@@ -17,7 +17,7 @@ function createErrorSchema<E extends ErrorCode>(
 ) {
   return Type.Object({
     error: Type.Literal(code),
-    message: Type.Literal(message),
+    message: Type.String(),
   });
 }
 

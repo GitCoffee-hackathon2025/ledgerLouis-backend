@@ -1,3 +1,7 @@
+/* 
+ESSE CÓDIGO TERÁ QUE SER REFEITO PARA SUPORTAR POSTGRESS E NÃO MYSQL
+*/
+
 export function isUniqueConstraint(err: unknown, constraint?: string): boolean {
   const error = err as any;
 

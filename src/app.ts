@@ -43,7 +43,16 @@ async function buildApp() {
   const ajv = createValidator();
 
   // Criando instância fastify
-  const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
+  const app = fastify({
+    logger: {
+      transport: {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+        },
+      },
+    },
+  }).withTypeProvider<TypeBoxTypeProvider>();
 
   // Declarando AJV e tratamento de erro
   app.setValidatorCompiler(({ schema }) => {

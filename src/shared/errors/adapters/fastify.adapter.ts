@@ -8,6 +8,12 @@ export function handleFastifyError(error: any, reply: FastifyReply) {
         message: "Content-Type must be application/json",
       });
 
+    case "FST_ERR_CTP_EMPTY_JSON_BODY":
+      return reply.status(400).send({
+        error: "INVALID_JSON",
+        message: "Malformed JSON body",
+      });
+
     case "FST_ERR_CTP_INVALID_JSON_BODY":
       return reply.status(400).send({
         error: "INVALID_JSON",
@@ -16,8 +22,11 @@ export function handleFastifyError(error: any, reply: FastifyReply) {
 
     case "FST_ERR_VALIDATION":
       return reply.status(400).send({
-        error: "VALIDATION_ERROR",
-        message: "Invalid input",
+        error: "INVALID_JSON",
+        message: "Malformed JSON body",
+        // error: "VALIDATION_ERROR",
+        // message: "Invalid input",
+        // fields: {},
       });
 
     default:

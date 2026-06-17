@@ -12,9 +12,6 @@ export function handleError(
 ) {
   const code = (error as { code: string })?.code;
 
-  if (typeof code === "string" && code.startsWith("FST_"))
-    return handleFastifyError(error, res);
-
   // AJV
   if (isAjvError(error))
     return res.status(400).send({
@@ -22,6 +19,9 @@ export function handleError(
       message: "Invalid input",
       fields: transformAjvErrors(error.validation),
     });
+
+  if (typeof code === "string" && code.startsWith("FST_"))
+    return handleFastifyError(error, res);
 
   // AppError
   if (error instanceof AppError)
