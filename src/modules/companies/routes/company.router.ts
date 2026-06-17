@@ -1,14 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import { createCompanyController } from "../controllers/company.controller.js";
 import { buildCompanyModule } from "../module.js";
-import { Type } from "@sinclair/typebox";
 
 import {
   AuthSchema,
   CompaniesListResponse,
   CompanyResponse,
   CreateBody,
-  ErrorResponse,
   UpdateBody,
   IdParam,
   type GetCompanyRoute,
@@ -16,6 +14,11 @@ import {
   type UpdateCompanyRoute,
   type DeleteCompanyRoute,
 } from "../schemas/company.schema.js";
+
+import {
+  createErrorResponses,
+  routeGroups,
+} from "../../../shared/errors/schemas/responses.js";
 
 export async function companyRoutes(app: FastifyInstance) {
   const controller = createCompanyController(buildCompanyModule(app));
@@ -31,8 +34,11 @@ export async function companyRoutes(app: FastifyInstance) {
         params: IdParam,
         response: {
           200: CompanyResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.auth,
+            ...routeGroups.company,
+          ]),
         },
       },
     },
@@ -49,7 +55,7 @@ export async function companyRoutes(app: FastifyInstance) {
         ...AuthSchema,
         response: {
           200: CompaniesListResponse,
-          401: ErrorResponse,
+          ...createErrorResponses([...routeGroups.common, ...routeGroups.auth]),
         },
       },
     },
@@ -67,9 +73,13 @@ export async function companyRoutes(app: FastifyInstance) {
         body: CreateBody,
         response: {
           201: CompanyResponse,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          409: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form,
+            ...routeGroups.auth,
+            ...routeGroups.company,
+            "CNPJ_ALREADY_EXISTS",
+          ]),
         },
       },
     },
@@ -88,9 +98,12 @@ export async function companyRoutes(app: FastifyInstance) {
         body: UpdateBody,
         response: {
           200: CompanyResponse,
-          400: ErrorResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form,
+            ...routeGroups.auth,
+            ...routeGroups.company,
+          ]),
         },
       },
     },
@@ -107,9 +120,12 @@ export async function companyRoutes(app: FastifyInstance) {
         ...AuthSchema,
         params: IdParam,
         response: {
-          204: Type.Null(),
-          401: ErrorResponse,
-          404: ErrorResponse,
+          204: { type: "null" },
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.auth,
+            ...routeGroups.company,
+          ]),
         },
       },
     },

@@ -1,5 +1,5 @@
 import { createCompanyRepository } from "../repositories/company.repository.js";
-import { AppError } from "../../../shared/errors/basicErrors.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 import { generateId, type ULID } from "../../../domain/shared/id.js";
 import { isUniqueConstraint } from "../../../infrastructure/database/errors/isUniqueConstraint.js";
 

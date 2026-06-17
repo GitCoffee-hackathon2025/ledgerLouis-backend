@@ -3,7 +3,7 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { handleFastifyError } from "../adapters/fastify.adapter.js";
 import { isAjvError } from "../../../infrastructure/validation/ajv/errors/isAjvError.js";
 import { transformAjvErrors } from "../../../infrastructure/validation/ajv/errors/transformAjvErrors.js";
-import { AppError, ValidationError } from "../domain/launchers.js";
+import { AppError } from "../domain/errors.js";
 
 export function handleError(
   error: unknown,
@@ -21,14 +21,6 @@ export function handleError(
       error: "VALIDATION_ERROR",
       message: "Invalid input",
       fields: transformAjvErrors(error.validation),
-    });
-
-  // ValidationError
-  if (error instanceof ValidationError)
-    return res.status(error.statusCode).send({
-      error: error.code,
-      message: error.message,
-      fields: error.fields,
     });
 
   // AppError

@@ -1,7 +1,7 @@
 import { computeSessionTokenExpiration } from "../auth.policy.js";
 import { createSessionRepository } from "../repositories/session.repository.js";
 import { type ULID } from "../../../domain/shared/id.js";
-import { AppError } from "../../../shared/errors/basicErrors.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 
 export const createSessionService = (
   repo: ReturnType<typeof createSessionRepository>,

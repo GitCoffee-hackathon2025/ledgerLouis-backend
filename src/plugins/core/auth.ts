@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import { type FastifyInstance } from "fastify";
 
-import { AppError } from "../../shared/errors/basicErrors.js";
+import { AppError } from "../../shared/errors/domain/errors.js";
 
 import { buildAuthModule } from "../../modules/auth/module.js";
 import { startKeyRotation } from "../../modules/auth/services/scheduler.service.js";

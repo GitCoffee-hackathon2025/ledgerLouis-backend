@@ -2,7 +2,7 @@ import { type createKeyRepository } from "../repositories/key.repository.js";
 
 import { computeKeyExpiration } from "../auth.policy.js";
 
-import { AppError } from "../../../shared/errors/basicErrors.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 import { type ULID } from "../../../domain/shared/id.js";
 
 async function generateKeyPair() {
@@ -66,7 +66,7 @@ export const createKeyService = (
   async getPublicKeyByKid(kid: ULID) {
     const key = await repo.findKeyPairByKid(kid);
 
-    if (!key) throw new AppError("INTERNAL_ERROR");
+    if (!key) throw new AppError("INVALID_TOKEN");
 
     return this.importPublicKey(key.publicKey);
   },

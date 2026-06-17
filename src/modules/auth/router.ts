@@ -2,13 +2,17 @@ import type { FastifyInstance } from "fastify";
 import { createAuthController } from "./controller.js";
 import {
   AuthSchema,
-  ErrorResponse,
   LoginBody,
   RefreshBody,
   AuthResponse,
   EmptyResponse,
   AuthHeader,
 } from "./schema.js";
+
+import {
+  createErrorResponses,
+  routeGroups,
+} from "../../shared/errors/schemas/responses.js";
 
 export async function authRouter(app: FastifyInstance) {
   const routes = createAuthController();
@@ -22,7 +26,11 @@ export async function authRouter(app: FastifyInstance) {
         body: LoginBody,
         response: {
           200: AuthResponse,
-          401: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form,
+            "INVALID_CREDENTIALS",
+          ]),
         },
       },
     },
@@ -38,14 +46,20 @@ export async function authRouter(app: FastifyInstance) {
         body: RefreshBody,
         response: {
           200: AuthResponse,
-          401: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form,
+            "INVALID_TOKEN",
+            "TOKEN_EXPIRED",
+            "TOKEN_REUSE_DETECTED",
+          ]),
         },
       },
     },
     routes.refresh,
   );
 
-  app.post(
+  app.delete(
     "/logout",
     {
       preHandler: app.verifyAccess,
@@ -56,14 +70,20 @@ export async function authRouter(app: FastifyInstance) {
         headers: AuthHeader,
         response: {
           204: EmptyResponse,
-          401: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form,
+            "UNAUTHORIZED",
+            "INVALID_TOKEN",
+            "TOKEN_EXPIRED",
+          ]),
         },
       },
     },
     routes.logout,
   );
 
-  app.post(
+  app.delete(
     "/logout-all",
     {
       preHandler: app.verifyAccess,
@@ -74,7 +94,11 @@ export async function authRouter(app: FastifyInstance) {
         headers: AuthHeader,
         response: {
           204: EmptyResponse,
-          401: ErrorResponse,
+          ...createErrorResponses([
+            ...routeGroups.common,
+            ...routeGroups.form, "UNAUTHORIZED", 
+            "INVALID_TOKEN", "TOKEN_EXPIRED"
+          ]),
         },
       },
     },

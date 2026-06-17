@@ -1,5 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { AppError } from "../../shared/errors/basicErrors.js";
+import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createAuthController = () => ({
   async login(req: FastifyRequest, res: FastifyReply) {

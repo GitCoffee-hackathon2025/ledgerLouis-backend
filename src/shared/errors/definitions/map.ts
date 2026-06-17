@@ -24,6 +24,13 @@
 // Erros do próprio sistema
 import { commonErrors } from "./common/common.errors.js";
 import { httpErrors } from "./common/http.errors.js";
+import { userErrors } from "./common/user.errors.js";
+
+import { authErrors } from "../../../modules/auth/errors.js";
+import {
+  companyErrors,
+  memberErrors,
+} from "../../../modules/companies/errors.js";
 
 // Erros dos modulos
 
@@ -45,46 +52,12 @@ function generateErrorMap<const T extends readonly ErrorBranch[]>(
 }
 
 // Variável mestre
-export const errorMap = generateErrorMap(commonErrors, httpErrors);
+export const errorMap = generateErrorMap(
+  commonErrors,
+  httpErrors,
+  userErrors,
+  authErrors,
+  companyErrors,
+  memberErrors,
+);
 export type ErrorCode = keyof typeof errorMap;
-
-/* 
-// modules/auth/errors.ts
-export const authErrors = {
-  INVALID_CREDENTIALS: [401, "Invalid credentials"],
-  INVALID_TOKEN: [401, "Invalid token"],
-  TOKEN_EXPIRED: [401, "Token expired"],
-  TOKEN_NOT_FOUND: [401, "Token not found"],
-  TOKEN_REUSE_DETECTED: [401, "Session compromised"],
-  KEY_NOT_FOUND: [500, "No signing key available"],
-} as const;
-
-// modules/users/errors.ts
-export const userErrors = {
-  USER_NOT_FOUND: [404, "User not found"],
-  EMAIL_ALREADY_EXISTS: [409, "Email already in use"],
-} as const;
-
-// modules/companies/errors.ts
-export const companyErrors = {
-  COMPANY_NOT_FOUND: [404, "Company not found"],
-  CNPJ_ALREADY_EXISTS: [409, "CNPJ already in use"],
-
-  MEMBER_ALREADY_EXISTS: [
-    409,
-    "User is already a company member",
-  ],
-
-  MEMBER_NOT_FOUND: [404, "Member not found"],
-
-  CANNOT_REMOVE_LAST_OWNER: [
-    409,
-    "Cannot remove the last owner",
-  ],
-
-  CANNOT_CHANGE_OWN_ROLE: [
-    403,
-    "You cannot change your own role",
-  ],
-} as const;
-*/

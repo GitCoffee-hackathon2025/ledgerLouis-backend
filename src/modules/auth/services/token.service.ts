@@ -1,5 +1,5 @@
 import type { createKeyService } from "./key.service.js";
-import { AppError } from "../../../shared/errors/basicErrors.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 import { authPolicy } from "../auth.policy.js";
 
 import { SignJWT, jwtVerify, decodeProtectedHeader } from "jose";

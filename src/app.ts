@@ -67,7 +67,7 @@ async function buildApp() {
   // Carregamento das rotas
   await app.register(Autoload, {
     dir: join(root, "modules"),
-    dirNameRoutePrefix: true,
+    dirNameRoutePrefix: false,
   });
 
   return app;

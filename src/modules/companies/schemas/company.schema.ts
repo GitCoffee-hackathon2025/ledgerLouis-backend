@@ -1,7 +1,6 @@
 import { Type, type Static } from "@sinclair/typebox";
 import { IdSchema } from "../../../schemas/primitives/id.schema.js";
 import { AuthSchema } from "../../../schemas/common/auth.schema.js";
-import { ErrorResponse } from "../../../schemas/common/error.schema.js";
 
 // primitives
 const NameCompany = Type.String({ minLength: 3, maxLength: 150 });
@@ -49,4 +48,4 @@ export const CompanyResponse = CompanyData;
 
 export const CompaniesListResponse = Type.Array(CompanyData);
 
-export { AuthSchema, ErrorResponse };
+export { AuthSchema };
