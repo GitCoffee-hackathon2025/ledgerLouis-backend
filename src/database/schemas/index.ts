@@ -21,5 +21,5 @@ export * from "./organization/invites.js";
 export * from "./projects/projects.js";
 
 // image
-export * from "./image/files.js";
-export * from "./image/userProfileImages.js";
+export * from "./files/files.js";
+export * from "./files/userProfileImages.js";
