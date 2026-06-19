@@ -1,5 +1,4 @@
-import { Type, type Static }
-  from "@sinclair/typebox";
+import { Type, type Static } from "@sinclair/typebox";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 export const FileResponse = Type.Object({
@@ -15,7 +14,6 @@ export const FileResponse = Type.Object({
   }),
 });
 
-export type FileResponseType =
-  Static<typeof FileResponse>;
+export type FileResponseType = Static<typeof FileResponse>;
 
 export { ErrorResponse };

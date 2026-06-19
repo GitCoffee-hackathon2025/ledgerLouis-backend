@@ -1,29 +1,17 @@
-import type { DB }
-  from "../../types/db.js";
+import type { DB } from "../../types/db.js";
 
-import { LocalStorageProvider }
-  from "./localStorage.js";
+import { LocalStorageProvider } from "./localStorage.js";
 
-import { createUploadService }
-  from "./service.js";
+import { createUploadService } from "./service.js";
 
-import { createFileRepository }
-  from "./repository.js";
+import { createFileRepository } from "./repository.js";
 
-export const buildUploaderModule = (
-  db: DB
-) => {
-  const storage =
-    new LocalStorageProvider();
+export const buildUploaderModule = (db: DB) => {
+  const storage = new LocalStorageProvider();
 
-  const fileRepository =
-    createFileRepository(db);
+  const fileRepository = createFileRepository(db);
 
-  const uploadService =
-    createUploadService(
-      storage,
-      fileRepository
-    );
+  const uploadService = createUploadService(storage, fileRepository);
 
   return {
     uploadService,
