@@ -5,10 +5,12 @@ import {
   LoginBody,
   RefreshBody,
   AuthResponse,
-  EmptyResponse,
   AuthHeader,
+  type LoginRoute,
+  type RefreshRoute,
+  type LogoutRoute,
+  type LogoutAllRoute,
 } from "./schema.js";
-
 import {
   createErrorResponses,
   routeGroups,
@@ -17,7 +19,7 @@ import {
 export async function authRouter(app: FastifyInstance) {
   const routes = createAuthController();
 
-  app.post(
+  app.post<LoginRoute>(
     "/login",
     {
       schema: {
@@ -37,7 +39,7 @@ export async function authRouter(app: FastifyInstance) {
     routes.login,
   );
 
-  app.post(
+  app.post<RefreshRoute>(
     "/refresh",
     {
       schema: {
@@ -59,7 +61,7 @@ export async function authRouter(app: FastifyInstance) {
     routes.refresh,
   );
 
-  app.delete(
+  app.delete<LogoutRoute>(
     "/logout",
     {
       preHandler: app.verifyAccess,
@@ -69,7 +71,7 @@ export async function authRouter(app: FastifyInstance) {
         ...SchemaEnablesAuth,
         headers: AuthHeader,
         response: {
-          204: EmptyResponse,
+          204: { type: "null" },
           ...createErrorResponses([
             ...routeGroups.common,
             ...routeGroups.form,
@@ -83,7 +85,7 @@ export async function authRouter(app: FastifyInstance) {
     routes.logout,
   );
 
-  app.delete(
+  app.delete<LogoutAllRoute>(
     "/logout-all",
     {
       preHandler: app.verifyAccess,
@@ -93,7 +95,7 @@ export async function authRouter(app: FastifyInstance) {
         ...SchemaEnablesAuth,
         headers: AuthHeader,
         response: {
-          204: EmptyResponse,
+          204: { type: "null" },
           ...createErrorResponses([
             ...routeGroups.common,
             ...routeGroups.form,
