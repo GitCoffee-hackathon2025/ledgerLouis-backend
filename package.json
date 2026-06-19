@@ -25,12 +25,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "preview": "node dist/server.js",
-    "start": "node dist/server.js",
+    "preview": "node dist/src/server.js",
+    "start": "node dist/src/server.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@fastify/autoload": "^6.3.1",
