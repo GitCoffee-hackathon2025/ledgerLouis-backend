@@ -1,6 +1,8 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
+import dns from "dns";
 
+dns.setDefaultResultOrder("ipv4first");
 // Função que cria a instância que permite maior validação com o Ajv
 import { createValidator } from "./lib/validator/index.js";
 
@@ -42,6 +44,8 @@ async function buildApp() {
   // Criando ajv próprio
   const ajv = createValidator();
 
+
+dns.setDefaultResultOrder("ipv4first");
   // Criando instância fastify
   const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 
