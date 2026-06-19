@@ -1,1 +1,0 @@
-ALTER TABLE `jwt_keys` ADD `revoke_at` timestamp;

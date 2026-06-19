@@ -3,19 +3,15 @@ import { drizzle } from "drizzle-orm/node-postgres";
 
 import * as schema from "./schemas/index.js";
 
-export async function createDatabase(
-  host: string,
-  port: number,
-  user: string,
-  password: string,
-  database: string,
-) {
+export async function createDatabase() {
+  const connectionString = process.env.DB_URL;
+
+  if (!connectionString) {
+    throw new Error("DB_URL não definida no ambiente");
+  }
+
   const pool = new Pool({
-    host,
-    port,
-    user,
-    password,
-    database,
+    connectionString,
 
     max: 10,
     connectionTimeoutMillis: 10000,
@@ -24,7 +20,7 @@ export async function createDatabase(
 
   await pool.query("SELECT 1");
 
-  const db = drizzle<typeof schema>(pool, {
+  const db = drizzle(pool, {
     schema,
     casing: "snake_case",
   });

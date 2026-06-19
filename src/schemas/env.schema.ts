@@ -17,12 +17,12 @@ export const EnvSchema = Type.Object({
   ALLOWED_ORIGINS: Type.String({ default: "" }), // formato: "http://localhost, https:vercel.app/slaoque"
 
   // Banco de dados
-  DB_HOST: Type.String({ format: "hostname" }),
-  DB_PORT: Type.Number({ default: 3306 }),
-  DATABASE: Type.String({ default: "ledger" }),
-  DB_USER: Type.String(),
-  DB_PASS: Type.String(),
-
+  // DB_HOST: Type.String({ format: "hostname" }),
+  // DB_PORT: Type.Number({ default: 3306 }),
+  // DATABASE: Type.String({ default: "ledger" }),
+  // DB_USER: Type.String(),
+  // DB_PASS: Type.String(),
+  DB_URL: Type.String({ format: "uri" }),
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
 });
