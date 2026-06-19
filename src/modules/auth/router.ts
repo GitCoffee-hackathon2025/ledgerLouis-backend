@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { createAuthController } from "./controller.js";
+import { SchemaEnablesAuth } from "../../schemas/common/auth.schema.js";
 import {
-  AuthSchema,
   LoginBody,
   RefreshBody,
   AuthResponse,
@@ -66,7 +66,7 @@ export async function authRouter(app: FastifyInstance) {
       schema: {
         tags: ["auth"],
         summary: "Logout current session",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         headers: AuthHeader,
         response: {
           204: EmptyResponse,
@@ -90,14 +90,16 @@ export async function authRouter(app: FastifyInstance) {
       schema: {
         tags: ["auth"],
         summary: "Logout all sessions",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         headers: AuthHeader,
         response: {
           204: EmptyResponse,
           ...createErrorResponses([
             ...routeGroups.common,
-            ...routeGroups.form, "UNAUTHORIZED", 
-            "INVALID_TOKEN", "TOKEN_EXPIRED"
+            ...routeGroups.form,
+            "UNAUTHORIZED",
+            "INVALID_TOKEN",
+            "TOKEN_EXPIRED",
           ]),
         },
       },

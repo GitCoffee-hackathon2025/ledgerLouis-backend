@@ -1,4 +1,4 @@
-export const AuthSchema = {
+export const SchemaEnablesAuth = {
   security: [
     {
       bearerAuth: [],

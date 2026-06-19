@@ -1,8 +1,6 @@
 import { Type, type Static } from "@sinclair/typebox";
 import { IdSchema } from "../../../schemas/primitives/id.schema.js";
-import { AuthSchema } from "../../../schemas/common/auth.schema.js";
 
 // params
-
 
 // bodies

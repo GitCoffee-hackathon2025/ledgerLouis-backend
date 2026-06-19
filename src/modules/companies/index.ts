@@ -5,7 +5,7 @@ import { companyRoutes } from "./routes/company.router.js";
 
 export default async function (app: FastifyInstance) {
   await app.register(companyRoutes, {
-    prefix: "/companies"
+    prefix: "/companies",
   });
 
   // await app.register(memberRoutes, {

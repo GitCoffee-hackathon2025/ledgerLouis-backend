@@ -1,9 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import { createCompanyController } from "../controllers/company.controller.js";
 import { buildCompanyModule } from "../module.js";
-
+import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
 import {
-  AuthSchema,
   CompaniesListResponse,
   CompanyResponse,
   CreateBody,
@@ -30,7 +29,7 @@ export async function companyRoutes(app: FastifyInstance) {
       schema: {
         tags: ["companies"],
         summary: "Find company by id",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         params: IdParam,
         response: {
           200: CompanyResponse,
@@ -52,7 +51,7 @@ export async function companyRoutes(app: FastifyInstance) {
       schema: {
         tags: ["companies"],
         summary: "List all companies",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         response: {
           200: CompaniesListResponse,
           ...createErrorResponses([...routeGroups.common, ...routeGroups.auth]),
@@ -69,7 +68,7 @@ export async function companyRoutes(app: FastifyInstance) {
       schema: {
         tags: ["companies"],
         summary: "Create company",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         body: CreateBody,
         response: {
           201: CompanyResponse,
@@ -93,7 +92,7 @@ export async function companyRoutes(app: FastifyInstance) {
       schema: {
         tags: ["companies"],
         summary: "Update company",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         params: IdParam,
         body: UpdateBody,
         response: {
@@ -117,7 +116,7 @@ export async function companyRoutes(app: FastifyInstance) {
       schema: {
         tags: ["companies"],
         summary: "Delete company",
-        ...AuthSchema,
+        ...SchemaEnablesAuth,
         params: IdParam,
         response: {
           204: { type: "null" },
