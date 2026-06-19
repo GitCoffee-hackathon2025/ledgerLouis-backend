@@ -1,38 +1,28 @@
-import { createPool } from "mysql2";
-import { drizzle } from "drizzle-orm/mysql2";
+import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
 
 import * as schema from "./schemas/index.js";
 
-export async function createDatabase(
-  host: string,
-  port: number,
-  user: string,
-  password: string,
-  database: string,
-) {
-  const pool = createPool({
-    host,
-    port,
-    user,
-    password,
-    database,
+export async function createDatabase() {
+  const connectionString = process.env.DB_URL;
 
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+  if (!connectionString) {
+    throw new Error("DB_URL não definida no ambiente");
+  }
 
-    connectTimeout: 10000,
-    enableKeepAlive: true,
-    timezone: "Z",
-    charset: "utf8mb4",
+  const pool = new Pool({
+    connectionString,
+
+    max: 10,
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
   });
 
-  await pool.promise().query("SELECT 1");
+  await pool.query("SELECT 1");
 
-  const db = drizzle<typeof schema>(pool, {
+  const db = drizzle(pool, {
     schema,
     casing: "snake_case",
-    mode: "default",
   });
 
   return { db, pool };

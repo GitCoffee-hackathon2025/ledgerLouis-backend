@@ -1,16 +1,15 @@
 import {
   char,
-  datetime,
-  mysqlTable,
-  text,
   timestamp,
+  pgTable,
+  text,
   uniqueIndex,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 import { id } from "../../columns.helpers.js";
 
 import { generateId, type ULID } from "../../../lib/id.js";
 
-export const jwtKeys = mysqlTable(
+export const jwtKeys = pgTable(
   "jwt_keys",
   {
     id,
@@ -20,7 +19,7 @@ export const jwtKeys = mysqlTable(
       .$defaultFn(() => generateId()),
     publicKey: text("public_key").notNull(),
     privateKey: text("private_key").notNull(),
-    expiresAt: datetime("expires_at").notNull(),
+    expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
     revokedAt: timestamp("revoked_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },

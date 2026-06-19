@@ -1,8 +1,8 @@
-import { date, mysqlTable, text, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import { date, pgTable, text, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 
-export const projects = mysqlTable("projects", {
+export const projects = pgTable("projects", {
   id,
   companyId: foreignId("company_id", () => companies.id).notNull(),
   name: varchar("name", { length: 150 }).notNull(),

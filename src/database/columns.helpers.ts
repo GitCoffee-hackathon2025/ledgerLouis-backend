@@ -1,4 +1,4 @@
-import { type AnyMySqlColumn, char, timestamp } from "drizzle-orm/mysql-core";
+import { type AnyPgColumn, char, timestamp } from "drizzle-orm/pg-core";
 
 import { type ULID, generateId } from "../lib/id.js";
 
@@ -9,14 +9,14 @@ export const id = char("id", { length: 26 })
 
 export const foreignId = (
   name: string,
-  ref: () => AnyMySqlColumn
+  ref: () => AnyPgColumn
 ) =>
   char(name, { length: 26 })
     .$type<ULID>()
     .references(ref, { onDelete: "restrict" });
 
 export const timestamps = {
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at"),
-  deletedAt: timestamp("deleted_at"),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }),
+  deletedAt: timestamp("deleted_at", { mode: "date" }),
 };

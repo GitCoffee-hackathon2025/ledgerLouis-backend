@@ -69,7 +69,7 @@ export const buildTransactionRoutes = (
                 const { id } = req.params;
                 const transactionData = req.body;
                 const updatedTransaction = await transaction.transactionService.update(id, transactionData);
-                if (!updatedTransaction) {
+                if (!updatedTransaction || updatedTransaction.length === 0) {
                     return reply.status(404).send({ error: "Transaction not found" });
                 }
                 return reply.status(200).send(updatedTransaction);

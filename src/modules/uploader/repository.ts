@@ -39,6 +39,7 @@ export const createFileRepository = (
   ) {
     return db
       .delete(files)
-      .where(eq(files.id, id));
+      .where(eq(files.id, id))
+      .returning({ id: files.id });
   },
 });

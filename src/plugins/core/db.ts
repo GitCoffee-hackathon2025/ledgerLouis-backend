@@ -16,7 +16,7 @@ export default fp(
     app.decorate("db", db);
 
     app.addHook("onClose", async () => {
-      await pool.promise().end();
+      await pool.end();
     });
   },
   {

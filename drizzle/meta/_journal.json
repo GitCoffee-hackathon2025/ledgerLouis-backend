@@ -1,68 +1,12 @@
 {
   "version": "7",
-  "dialect": "mysql",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1775492898380,
-      "tag": "0000_premium_cargill",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1776089491298,
-      "tag": "0001_organic_magdalene",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1776455633655,
-      "tag": "0002_classy_tomas",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1776457539965,
-      "tag": "0003_fresh_mother_askani",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1776461008541,
-      "tag": "0004_legal_living_tribunal",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1777036526452,
-      "tag": "0005_neat_hardball",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1777301644595,
-      "tag": "0006_shallow_firebrand",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1779121686443,
-      "tag": "0007_numerous_jackpot",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1779932144204,
-      "tag": "0008_abnormal_zodiak",
+      "version": "7",
+      "when": 1781871239401,
+      "tag": "0000_overconfident_archangel",
       "breakpoints": true
     }
   ]

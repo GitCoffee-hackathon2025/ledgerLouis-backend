@@ -1,11 +1,11 @@
-import { mysqlTable, text, uniqueIndex } from "drizzle-orm/mysql-core";
+import { pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 import { projects } from "../projects/projects.js";
 
 // Adicionar futuramente o campo de documento (imagem, pdf)
 
-export const transactions = mysqlTable(
+export const transactions = pgTable(
   "transactions",
   {
     id,

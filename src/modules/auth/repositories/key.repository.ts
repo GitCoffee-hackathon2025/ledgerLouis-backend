@@ -45,6 +45,7 @@ export const createKeyRepository = (db: DB) => ({
     return db
       .update(jwtKeys)
       .set({ revokedAt: new Date() })
-      .where(isNull(jwtKeys.revokedAt));
+      .where(isNull(jwtKeys.revokedAt))
+      .returning({ id: jwtKeys.id });
   },
 });
