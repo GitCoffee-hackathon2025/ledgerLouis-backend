@@ -22,7 +22,7 @@ export const EnvSchema = Type.Object({
   // DATABASE: Type.String({ default: "ledger" }),
   // DB_USER: Type.String(),
   // DB_PASS: Type.String(),
-  DB_URL: Type.String({ format: "uri" }),
+  DATABASE_URL: Type.String({ format: "uri" }),
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
 });

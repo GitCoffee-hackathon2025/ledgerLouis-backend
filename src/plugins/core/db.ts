@@ -5,13 +5,7 @@ import { createDatabase } from "../../database/index.js";
 
 export default fp(
   async function (app: FastifyInstance) {
-    const { db, pool } = await createDatabase(
-      app.config.DB_HOST,
-      app.config.DB_PORT,
-      app.config.DB_USER,
-      app.config.DB_PASS,
-      app.config.DATABASE,
-    );
+    const { db, pool } = await createDatabase(app.config.DATABASE_URL);
 
     app.decorate("db", db);
 
