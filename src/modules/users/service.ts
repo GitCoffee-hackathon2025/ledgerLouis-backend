@@ -4,15 +4,11 @@ import { hashPassword } from "../../shared/security/hash/password.js";
 import { generateId } from "../../domain/shared/id.js";
 import { isUniqueConstraint } from "../../infrastructure/database/errors/isUniqueConstraint.js";
 
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
-}
-
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
 ) => ({
   async register(name: string, email: string, password: string) {
-    email = normalizeEmail(email);
+    email = email.trim();
 
     const passwordHash = await hashPassword(password);
     const id = generateId();
