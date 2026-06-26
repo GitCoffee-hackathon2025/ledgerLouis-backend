@@ -14,10 +14,6 @@ export default fp(
       credentials: true,
       maxAge: 300, // Meia hora
       origin: (origin, cb) => {
-        console.log('config')
-        console.log(app.config.NODE_ENV)
-        console.log('origin')
-        console.log(origin)
         if (!origin) return cb(null, true);
 
         if (
