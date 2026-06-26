@@ -8,7 +8,7 @@ async function start() {
   await app.ready();
 
   try {
-    await app.listen({ port: app.config.PORT });
+    await app.listen({ port: app.config.PORT, host: '0.0.0.0' });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
