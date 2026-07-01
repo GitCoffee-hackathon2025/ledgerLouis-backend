@@ -14,7 +14,7 @@ export const createCompanyController = (
   company: ReturnType<typeof buildCompanyModule>,
 ) => ({
   async get(req: FastifyRequest<GetCompanyRoute>, res: FastifyReply) {
-    const comp = await company.find(toId(req.params.id));
+    const comp = await company.find(toId(req.params.id), req.authUser.sub);
     if (!comp) throw new AppError("COMPANY_NOT_FOUND");
 
     return res.status(200).send(comp);
@@ -26,17 +26,25 @@ export const createCompanyController = (
 
   async create(req: FastifyRequest<CreateCompanyRoute>, res: FastifyReply) {
     const { name, cnpj } = req.body;
-    return res.status(201).send(await company.create(name, cnpj));
+    return res
+      .status(201)
+      .send(await company.create(req.authUser.sub, name, cnpj));
   },
 
   async update(req: FastifyRequest<UpdateCompanyRoute>, res: FastifyReply) {
     return res
       .status(200)
-      .send(await company.update(toId(req.params.id), req.body.name));
+      .send(
+        await company.update(
+          toId(req.params.id),
+          req.authUser.sub,
+          req.body.name,
+        ),
+      );
   },
 
   async delete(req: FastifyRequest<DeleteCompanyRoute>, res: FastifyReply) {
-    await company.delete(toId(req.params.id));
+    await company.delete(toId(req.params.id), req.authUser.sub);
     return res.status(204).send();
   },
 });
