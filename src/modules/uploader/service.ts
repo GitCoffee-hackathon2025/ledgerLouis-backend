@@ -25,7 +25,7 @@ export const createUploadService = (
       originalName: file.filename,
       storageName: saved.storageName,
       mimeType: file.mimetype,
-      provider: "local",
+      provider: storage.provider,
       path: saved.path,
       size: file.file.bytesRead,
     });
