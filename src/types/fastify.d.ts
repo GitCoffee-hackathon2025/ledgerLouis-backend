@@ -1,8 +1,6 @@
 import "fastify";
 import type { Env } from "../schemas/env.schema.js";
-
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import * as schema from "../database/schemas/index.js";
+import type { DB } from "./db.ts";
 
 import type { buildAuthModule } from "../modules/auth/module.js";
 import { type ULID } from "../lib/id.js";

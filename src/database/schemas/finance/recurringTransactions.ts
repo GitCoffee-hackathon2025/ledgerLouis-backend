@@ -1,22 +1,16 @@
-import {
-  date,
-  decimal,
-  integer,
-  pgEnum,
-  pgTable,
-  text,
-} from "drizzle-orm/pg-core";
+import { date, integer, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
 import { foreignId, id } from "../../columns.helpers.js";
-import { projects } from "../projects/projects.js";
 import { accounts } from "./accounts.js";
 import { companies } from "../organization/companies.js";
 import { frequencyEnum } from "../../../shared/enums/index.js";
+
 export const frequency = pgEnum("frequency", frequencyEnum);
+
 export const recurringTransactions = pgTable("recurring_transactions", {
   id,
   companyId: foreignId("company_id", () => companies.id).notNull(),
   description: text("description"),
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  amount: integer("amount").notNull(),
   sourceAccountId: foreignId("source_account_id", () => accounts.id).notNull(),
   categoryAccountId: foreignId(
     "category_account_id",
@@ -28,42 +22,3 @@ export const recurringTransactions = pgTable("recurring_transactions", {
   endDate: date("end_date"),
   nextRunDate: date("next_run_date").notNull(),
 });
-/* 
-CREATE TABLE recurring_transactions (
-  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  company_id BIGINT UNSIGNED NOT NULL,
-  project_id BIGINT UNSIGNED NULL,
-
-  description TEXT,
-  amount DECIMAL(15,2) NOT NULL,
-
-  source_account_id BIGINT UNSIGNED NOT NULL,
-  category_account_id BIGINT UNSIGNED NOT NULL,
-
-  frequency ENUM('weekly','monthly','yearly') NOT NULL,
-  interval_value INT DEFAULT 1,
-
-  start_date DATE NOT NULL,
-  end_date DATE,
-  next_run_date DATE NOT NULL,
-
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP NULL,
-
-  FOREIGN KEY (company_id)
-    REFERENCES companies(id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (project_id)
-    REFERENCES projects(id)
-    ON DELETE SET NULL,
-
-  FOREIGN KEY (source_account_id, company_id)
-    REFERENCES accounts(id, company_id)
-    ON DELETE RESTRICT,
-
-  FOREIGN KEY (category_account_id, company_id)
-    REFERENCES accounts(id, company_id)
-    ON DELETE RESTRICT
-);
-*/

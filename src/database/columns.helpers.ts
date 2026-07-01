@@ -7,10 +7,7 @@ export const id = char("id", { length: 26 })
   .primaryKey()
   .$defaultFn(() => generateId());
 
-export const foreignId = (
-  name: string,
-  ref: () => AnyPgColumn
-) =>
+export const foreignId = (name: string, ref: () => AnyPgColumn) =>
   char(name, { length: 26 })
     .$type<ULID>()
     .references(ref, { onDelete: "restrict" });

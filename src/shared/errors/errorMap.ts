@@ -1,6 +1,8 @@
 export const errorMap = {
   BAD_REQUEST: [400, "Request error"],
   EMAIL_ALREADY_EXISTS: [409, "Email already in use"],
+  USER_NOT_FOUND: [404, "User not found"],
+  FILE_REQUIRED: [400, "File is required"],
   INVALID_CREDENTIALS: [401, "Invalid credentials"],
   INVALID_JSON: [400, "Malformed JSON body"],
   INVALID_TOKEN: [401, "Invalid token"],

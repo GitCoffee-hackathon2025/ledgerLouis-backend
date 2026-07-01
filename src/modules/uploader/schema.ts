@@ -1,5 +1,4 @@
-import { Type, type Static }
-  from "@sinclair/typebox";
+import { Type, type Static } from "@sinclair/typebox";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 export const FileResponse = Type.Object({
@@ -10,12 +9,9 @@ export const FileResponse = Type.Object({
   provider: Type.String(),
   path: Type.String(),
   size: Type.Number(),
-  createdAt: Type.String({
-    format: "date-time",
-  }),
+  createdAt: Type.String({ format: "date-time" }),
 });
 
-export type FileResponseType =
-  Static<typeof FileResponse>;
+export type FileResponseType = Static<typeof FileResponse>;
 
 export { ErrorResponse };

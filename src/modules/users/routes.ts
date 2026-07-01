@@ -1,10 +1,12 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { buildUserModule } from "./module.js";
+
+import type { buildAuthModule } from "../auth/module.js";
 import type { RegisterBodyType, UpdateBodyType } from "./schema.js";
-import type { ULID } from "../../lib/id.js";
-import type { createAuthService } from "../auth/service.js";
+import { AppError } from "../../shared/errors/index.js";
+
 export const buildUserRoutes = (
-  auth: ReturnType<typeof createAuthService>,
+  authService: ReturnType<typeof buildAuthModule>["authService"],
   user: ReturnType<typeof buildUserModule>,
 ) => ({
   async register(req: FastifyRequest, reply: FastifyReply) {
@@ -33,40 +35,29 @@ export const buildUserRoutes = (
   async uploadAvatar(req: FastifyRequest, reply: FastifyReply) {
     const file = await req.file();
 
-    if (!file) {
-      return reply.status(400).send({
-        message: "Arquivo obrigatório",
-      });
-    }
-
-    if (!req.authUser) {
-  return reply.status(401).send({ message: "Unauthorized" })
-}
+    if (!file) throw new AppError("FILE_REQUIRED");
 
     const data = await user.userService.uploadUserAvatar(
       req.authUser.sub,
-      file
+      file,
     );
 
     return reply.status(200).send(data);
   },
   async getAll(req: FastifyRequest, reply: FastifyReply) {
-    const users = await user.userService.getAll();
-    return reply.status(200).send(users);
+    return reply.status(200).send(await user.userService.getAll());
   },
 
   async delete(req: FastifyRequest, reply: FastifyReply) {
-    await auth.logoutAll(req.authUser.sub);
+    await authService.logoutAll(req.authUser.sub);
     await user.userService.delete(req.authUser.sub);
     return reply.status(204).send();
   },
 
   async getById(req: FastifyRequest, reply: FastifyReply) {
-    const userId = req.authUser.sub as ULID;
-    const userData = await user.userService.getById(userId);
-    if (userData === null || userData === undefined) {
-      return reply.status(404).send({ message: "User not found" });
-    }
+    const userData = await user.userService.getById(req.authUser.sub);
+    if (!userData) throw new AppError("USER_NOT_FOUND");
+
     return reply.status(200).send(userData);
   },
 });

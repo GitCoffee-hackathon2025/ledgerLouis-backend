@@ -8,34 +8,15 @@ import type {
   SavedFile,
 } from "./storageProvider.js";
 
-export class LocalStorageProvider
-  implements StorageProvider
-{
-  async save({
-    filename,
-    folder,
-    file,
-  }: SaveFileParams): Promise<SavedFile> {
-    const uploadFolder = path.join(
-      "uploads",
-      folder
-    );
+export class LocalStorageProvider implements StorageProvider {
+  async save({ filename, folder, file }: SaveFileParams): Promise<SavedFile> {
+    const uploadFolder = path.join("uploads", folder);
 
-    if (!fs.existsSync(uploadFolder)) {
-      fs.mkdirSync(uploadFolder, {
-        recursive: true,
-      });
-    }
+    if (!fs.existsSync(uploadFolder))
+      fs.mkdirSync(uploadFolder, { recursive: true });
 
-    const filepath = path.join(
-      uploadFolder,
-      filename
-    );
-
-    await pipeline(
-      file,
-      fs.createWriteStream(filepath)
-    );
+    const filepath = path.join(uploadFolder, filename);
+    await pipeline(file, fs.createWriteStream(filepath));
 
     return {
       storageName: filename,
@@ -44,8 +25,6 @@ export class LocalStorageProvider
   }
 
   async delete(filepath: string): Promise<void> {
-    if (fs.existsSync(filepath)) {
-      await fs.promises.unlink(filepath);
-    }
+    if (fs.existsSync(filepath)) await fs.promises.unlink(filepath);
   }
 }

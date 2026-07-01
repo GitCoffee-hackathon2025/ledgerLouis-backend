@@ -1,8 +1,6 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
-import dns from "dns";
 
-dns.setDefaultResultOrder("ipv4first");
 // Função que cria a instância que permite maior validação com o Ajv
 import { createValidator } from "./lib/validator/index.js";
 
@@ -17,7 +15,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import env from "./plugins/core/env.js";
 import cors from "./plugins/core/cors.js";
 import db from "./plugins/core/db.js";
-import auth from "./plugins/core/auth.js";1
+import auth from "./plugins/core/auth.js";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -44,8 +42,6 @@ async function buildApp() {
   // Criando ajv próprio
   const ajv = createValidator();
 
-
-dns.setDefaultResultOrder("ipv4first");
   // Criando instância fastify
   const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 
@@ -62,11 +58,15 @@ dns.setDefaultResultOrder("ipv4first");
   await app.register(cors);
   await app.register(db);
   await app.register(auth);
+
+  // Instalando manualmente o multipart
   await app.register(import("@fastify/multipart"));
+
   await app.register(import("@fastify/static"), {
     root: path.join(process.cwd(), "uploads"),
     prefix: "/uploads/",
   });
+
   // Plugins mais isolados
   await app.register(Autoload, {
     dir: join(root, "plugins/infra"),
