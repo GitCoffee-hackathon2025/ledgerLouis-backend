@@ -1,60 +1,30 @@
-import type { MultipartFile }
-  from "@fastify/multipart";
+import type { MultipartFile } from "@fastify/multipart";
 
-import { createUserRepository }
-  from "./repository.js";
+import { createUserRepository } from "./repository.js";
+import { generateId, type ULID } from "../../lib/id.js";
+import { hashPassword } from "../../shared/security/hash/password.js";
 
-import { AppError }
-  from "../../shared/errors/index.js";
+import type { buildUploaderModule } from "../uploader/module.js";
+import { AppError } from "../../shared/errors/index.js";
 
-import { hashPassword }
-  from "../../shared/security/hash/password.js";
-
-import {
-  generateId,
-  type ULID,
-} from "../../lib/id.js";
-
-import type {
-  UpdateBodyType,
-} from "./schema.js";
-
-import type {
-  buildUploaderModule,
-} from "../uploader/module.js";
-
-function normalizeEmail(email: string) {
-  return email.trim().toLowerCase();
-}
+import type { UpdateBodyType } from "./schema.js";
 
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
 
-  uploader: ReturnType<
-    typeof buildUploaderModule
-  >,
+  uploader: ReturnType<typeof buildUploaderModule>,
 ) => ({
-  async register(
-    name: string,
-    email: string,
-    password: string
-  ) {
-    email = normalizeEmail(email);
+  async register(name: string, email: string, password: string) {
+    email = email.trim();
 
-    if (await repo.findByEmail(email)) {
-      throw new AppError(
-        "EMAIL_ALREADY_EXISTS"
-      );
-    }
-
-    const passwordHash =
-      await hashPassword(password);
+    if (await repo.findByEmail(email))
+      throw new AppError("EMAIL_ALREADY_EXISTS");
 
     const user = {
       id: generateId(),
       name,
       email,
-      password: passwordHash,
+      password: await hashPassword(password),
     };
 
     await repo.create(user);
@@ -62,67 +32,39 @@ export const createUserService = (
     return user;
   },
 
-  async uploadUserAvatar(
-    id: ULID,
-    file: MultipartFile
-  ) {
+  async uploadUserAvatar(id: ULID, file: MultipartFile) {
     const user = await repo.findById(id);
+    if (!user) throw new AppError("USER_NOT_FOUND");
 
-    if (!user) {
-      throw new AppError(
-        "KEY_NOT_FOUND"
-      );
-    }
-
-    const uploaded =
-      await uploader
-        .uploadService
-        .uploadImage(file);
+    const uploaded = await uploader.uploadImage(file);
 
     // temporário
     // depois vai virar
     // user_profile_images
     const url = `${process.env.BASE_URL}/${uploaded.path}`;
     console.log("URL da imagem:", url);
-    await repo.uploadAvatar(
-      id,
-      url
-    );
+    await repo.uploadAvatar(id, url);
 
-    return { fileId: uploaded.id, avatarUrl: url};
+    return { fileId: uploaded.id, avatarUrl: url };
   },
 
-  async update(
-    id: ULID,
-    user: Partial<UpdateBodyType>
-  ) {
+  async update(id: ULID, user: Partial<UpdateBodyType>) {
     if (user.email) {
-      user.email =
-        normalizeEmail(user.email);
+      /// ALERTA
+      user.email = user.email.trim();
 
-      const existingUser =
-        await repo.findByEmail(
-          user.email
-        );
+      const existingUser = await repo.findByEmail(user.email);
 
-      if (
-        existingUser &&
-        existingUser.id !== id
-      ) {
-        throw new AppError(
-          "EMAIL_ALREADY_EXISTS"
-        );
-      }
+      if (existingUser && existingUser.id !== id)
+        throw new AppError("EMAIL_ALREADY_EXISTS");
     }
 
     await repo.update(id, user);
 
-    return {
-      id,
-      ...user,
-    };
+    return { id, ...user };
   },
 
+  /// TESTES - MUITO CUIDADO 
   async getAll() {
     return repo.findAll();
   },

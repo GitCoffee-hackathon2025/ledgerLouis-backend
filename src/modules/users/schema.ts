@@ -3,7 +3,6 @@ import { IdSchema } from "../../schemas/primitives/id.schema.js";
 import { Name, Email, Password } from "../../schemas/primitives/user.schema.js";
 import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
-
 // bodies
 export const RegisterBody = Type.Object(
   {
@@ -14,15 +13,12 @@ export const RegisterBody = Type.Object(
   { additionalProperties: false },
 );
 
-
-
 export const UploadAvatarBody = Type.Object({
   file: Type.String({ format: "binary" }),
 });
 
-
 export const UploadAvatarResponse = Type.Object({
-  fileId : IdSchema,
+  fileId: IdSchema,
   avatarUrl: Type.String({ format: "uri" }),
   path: Type.Optional(Type.String()),
 });

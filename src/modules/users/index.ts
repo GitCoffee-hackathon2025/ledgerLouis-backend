@@ -2,7 +2,15 @@ import type { FastifyInstance } from "fastify";
 import { buildUserModule } from "./module.js";
 import { buildUserRoutes } from "./routes.js";
 
-import { RegisterBody, UserResponse, ErrorResponse, UpdateBody, UserListResponse, UploadAvatarBody, UploadAvatarResponse } from "./schema.js";
+import {
+  RegisterBody,
+  UserResponse,
+  ErrorResponse,
+  UpdateBody,
+  UserListResponse,
+  UploadAvatarBody,
+  UploadAvatarResponse,
+} from "./schema.js";
 import { Type } from "@sinclair/typebox";
 
 export default async function (app: FastifyInstance) {
@@ -38,29 +46,24 @@ export default async function (app: FastifyInstance) {
         },
       },
     },
-    routes.update
+    routes.update,
   );
   app.post(
-  "/me/profile-image",
-  {
-    preHandler: app.verifyAccessToken,
-    schema: {
-      tags: ["users"],
-      summary: "Upload user avatar",
-
-      consumes: [
-        "multipart/form-data"
-      ],
-
-      response: {
-        200: UploadAvatarResponse,
-        400: ErrorResponse,
+    "/me/profile-image",
+    {
+      preHandler: app.verifyAccessToken,
+      schema: {
+        tags: ["users"],
+        summary: "Upload user avatar",
+        consumes: ["multipart/form-data"],
+        response: {
+          200: UploadAvatarResponse,
+          400: ErrorResponse,
+        },
       },
     },
-  },
-
-  routes.uploadAvatar
-);
+    routes.uploadAvatar,
+  );
   app.get(
     "/",
     {
@@ -74,10 +77,10 @@ export default async function (app: FastifyInstance) {
         },
       },
     },
-    routes.getAll
+    routes.getAll,
   );
 
-  app.auth.authService.logoutAll
+  app.auth.authService.logoutAll;
 
   app.delete(
     "/",
@@ -93,10 +96,10 @@ export default async function (app: FastifyInstance) {
         },
       },
     },
-    routes.delete
-  );  
+    routes.delete,
+  );
   app.get(
-    "/byID",
+    "/me",
     {
       preHandler: app.verifyAccessToken,
       schema: {
@@ -108,6 +111,6 @@ export default async function (app: FastifyInstance) {
         },
       },
     },
-    routes.getById
+    routes.getById,
   );
 }

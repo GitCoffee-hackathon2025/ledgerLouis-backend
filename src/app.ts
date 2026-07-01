@@ -62,10 +62,10 @@ async function buildApp() {
   // Instalando manualmente o multipart
   await app.register(import("@fastify/multipart"));
 
-  // await app.register(import("@fastify/static"), {
-  //   root: path.join(process.cwd(), "uploads"),
-  //   prefix: "/uploads/",
-  // });
+  await app.register(import("@fastify/static"), {
+    root: path.join(process.cwd(), "uploads"),
+    prefix: "/uploads/",
+  });
 
   // Plugins mais isolados
   await app.register(Autoload, {

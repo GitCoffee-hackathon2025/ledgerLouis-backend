@@ -1,17 +1,13 @@
 import type { DB } from "../../types/db.js";
-
 import type { InferInsertModel } from "drizzle-orm";
-
 import { eq } from "drizzle-orm";
-
-import { files } from "../../database/schemas/image/files.js";
+import { files } from "../../database/schemas/files/files.js";
 
 type FileInsert = InferInsertModel<typeof files>;
 
 export const createFileRepository = (db: DB) => ({
   async create(data: FileInsert) {
     await db.insert(files).values(data);
-
     return data;
   },
 

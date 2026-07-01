@@ -9,9 +9,7 @@ export const FileResponse = Type.Object({
   provider: Type.String(),
   path: Type.String(),
   size: Type.Number(),
-  createdAt: Type.String({
-    format: "date-time",
-  }),
+  createdAt: Type.String({ format: "date-time" }),
 });
 
 export type FileResponseType = Static<typeof FileResponse>;
