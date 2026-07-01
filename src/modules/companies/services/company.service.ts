@@ -37,7 +37,11 @@ export const createCompanyService = (
       throw error;
     }
 
-    await memberRepo.create({ companyId: id, userId: userId, role: "owner" });
+    await memberRepo.create({
+      companyId: id,
+      userId: userId,
+      role: "owner",
+    });
 
     return { id, name, cnpj };
   },

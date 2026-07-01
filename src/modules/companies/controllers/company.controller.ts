@@ -11,7 +11,7 @@ import type {
 } from "../schemas/company.schema.js";
 
 export const createCompanyController = (
-  company: ReturnType<typeof buildCompanyModule>,
+  company: ReturnType<typeof buildCompanyModule>['companyService'],
 ) => ({
   async get(req: FastifyRequest<GetCompanyRoute>, res: FastifyReply) {
     const comp = await company.find(toId(req.params.id), req.authUser.sub);

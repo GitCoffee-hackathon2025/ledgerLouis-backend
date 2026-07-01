@@ -48,7 +48,43 @@ export const ChangeRoleBody = Type.Object(
 
 export type ChangeRoleBodyType = Static<typeof ChangeRoleBody>;
 
-// Route generics
+// responses
+
+const RoleSchema = Type.Union(
+  permissionsEnum.map((permission) => Type.Literal(permission)),
+);
+
+export const MemberResponse = Type.Object({
+  userId: IdSchema,
+  name: Type.String(),
+  email: Type.String({ format: "email" }),
+  role: RoleSchema,
+  createdAt: Type.String({ format: "date-time" }),
+});
+
+export const MembersListResponse = Type.Object({
+  items: Type.Array(MemberResponse),
+  total: Type.Number(),
+  limit: Type.Number(),
+  offset: Type.Number(),
+});
+
+export const MemberMutationResponse = Type.Object({
+  targetUserId: IdSchema,
+  companyId: IdSchema,
+  role: RoleSchema,
+});
+
+export const UserCompanyResponse = Type.Object({
+  companyId: IdSchema,
+  companyName: Type.String(),
+  role: RoleSchema,
+  createdAt: Type.String({ format: "date-time" }),
+});
+
+export const UserCompaniesResponse = Type.Array(UserCompanyResponse);
+
+// route generics
 
 export type ListMembersRoute = {
   Params: CompanyIdParamType;

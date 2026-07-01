@@ -44,7 +44,7 @@ export function createErrorResponses<T extends ErrorCode[]>(errors: [...T]) {
 export const routeGroups = {
   common: ["BAD_REQUEST", "INTERNAL_ERROR", "UNSUPPORTED_MEDIA_TYPE"],
   form: ["INVALID_JSON", "VALIDATION_ERROR"],
-  auth: ["INVALID_TOKEN", "TOKEN_EXPIRED"],
+  auth: ["INVALID_TOKEN", "TOKEN_EXPIRED", "UNAUTHORIZED"],
   user: ["USER_NOT_FOUND", "EMAIL_ALREADY_EXISTS"],
   permission: ["FORBIDDEN"],
   company: ["COMPANY_NOT_FOUND"],

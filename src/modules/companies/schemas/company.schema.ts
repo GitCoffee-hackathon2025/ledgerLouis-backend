@@ -11,9 +11,9 @@ const CompanyData = Type.Object({
   id: IdSchema,
   name: NameCompany,
   cnpj: Cnpj,
-  createdAt: Type.String({ format: "date-time" }),
-  updatedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
-  deletedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
+  // createdAt: Type.String({ format: "date-time" }),
+  // updatedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
+  // deletedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
 });
 
 // params

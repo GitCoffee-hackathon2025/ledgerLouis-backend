@@ -18,5 +18,5 @@ export function buildCompanyModule(app: FastifyInstance) {
     memberService,
   );
 
-  return companyService;
+  return { companyService, memberService };
 }

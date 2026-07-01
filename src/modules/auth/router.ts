@@ -75,9 +75,7 @@ export async function authRouter(app: FastifyInstance) {
           ...createErrorResponses([
             ...routeGroups.common,
             ...routeGroups.form,
-            "UNAUTHORIZED",
-            "INVALID_TOKEN",
-            "TOKEN_EXPIRED",
+            ...routeGroups.auth,
           ]),
         },
       },
@@ -99,9 +97,7 @@ export async function authRouter(app: FastifyInstance) {
           ...createErrorResponses([
             ...routeGroups.common,
             ...routeGroups.form,
-            "UNAUTHORIZED",
-            "INVALID_TOKEN",
-            "TOKEN_EXPIRED",
+            ...routeGroups.auth,
           ]),
         },
       },
