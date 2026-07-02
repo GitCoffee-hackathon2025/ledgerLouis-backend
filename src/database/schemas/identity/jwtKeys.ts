@@ -6,8 +6,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { id } from "../../columns.helpers.js";
-
-import { generateId, type ULID } from "../../../lib/id.js";
+import { generateId, type ULID } from "../../../domain/shared/id.js";
 
 export const jwtKeys = pgTable(
   "jwt_keys",

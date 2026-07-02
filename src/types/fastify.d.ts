@@ -3,7 +3,7 @@ import type { Env } from "../schemas/env.schema.js";
 import type { DB } from "./db.ts";
 
 import type { buildAuthModule } from "../modules/auth/module.js";
-import { type ULID } from "../lib/id.js";
+import { type ULID } from "../domain/shared/id.ts";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -12,7 +12,7 @@ declare module "fastify" {
 
     auth: ReturnType<typeof buildAuthModule>;
 
-    verifyAccessToken: (
+    verifyAccess: (
       request: FastifyRequest,
       reply: FastifyReply,
     ) => Promise<void>;

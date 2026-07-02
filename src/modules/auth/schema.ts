@@ -1,7 +1,6 @@
-import { Type } from "@sinclair/typebox";
+import { Type, type Static } from "@sinclair/typebox";
 import { Email, Password } from "../../schemas/primitives/user.schema.js";
 import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
-import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 // headers
 export const AuthHeader = Type.Object(
@@ -12,6 +11,7 @@ export const AuthHeader = Type.Object(
   },
   { additionalProperties: true },
 );
+export type AuthHeaderType = Static<typeof AuthHeader>;
 
 // bodies
 export const LoginBody = Type.Object(
@@ -21,6 +21,7 @@ export const LoginBody = Type.Object(
   },
   { additionalProperties: false },
 );
+export type LoginBodyType = Static<typeof LoginBody>;
 
 export const RefreshBody = Type.Object(
   {
@@ -28,13 +29,16 @@ export const RefreshBody = Type.Object(
   },
   { additionalProperties: false },
 );
+export type RefreshBodyType = Static<typeof RefreshBody>;
+
+// route generics
+export type LoginRoute = { Body: LoginBodyType };
+export type RefreshRoute = { Body: RefreshBodyType };
+export type LogoutRoute = { Headers: AuthHeaderType };
+export type LogoutAllRoute = { Headers: AuthHeaderType };
 
 // responses
 export const AuthResponse = Type.Object({
   accessToken: JwtSchema,
   refreshToken: JwtSchema,
 });
-
-export const EmptyResponse = Type.Null();
-
-export { ErrorResponse };

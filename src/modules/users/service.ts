@@ -1,37 +1,36 @@
 import type { MultipartFile } from "@fastify/multipart";
+import type { buildUploaderModule } from "../uploader/module.js";
 
 import { createUserRepository } from "./repository.js";
-import { generateId, type ULID } from "../../lib/id.js";
+import { generateId, type ULID } from "../../domain/shared/id.js";
 import { hashPassword } from "../../shared/security/hash/password.js";
-
-import type { buildUploaderModule } from "../uploader/module.js";
-import { AppError } from "../../shared/errors/index.js";
-
-import type { UpdateBodyType } from "./schema.js";
+import { isUniqueConstraint } from "../../infrastructure/database/errors/isUniqueConstraint.js";
+import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
-
   uploader: ReturnType<typeof buildUploaderModule>,
 ) => ({
   async register(name: string, email: string, password: string) {
     email = email.trim();
 
-    if (await repo.findByEmail(email))
-      throw new AppError("EMAIL_ALREADY_EXISTS");
+    const id = generateId();
 
-    const user = {
-      id: generateId(),
-      name,
-      email,
-      password: await hashPassword(password),
-    };
+    try {
+      await repo.create({
+        id,
+        name,
+        email,
+        password: await hashPassword(password),
+      });
+    } catch (error) {
+      if (isUniqueConstraint(error, "uq_users_email"))
+        throw new AppError("EMAIL_ALREADY_EXISTS");
+      throw error;
+    }
 
-    await repo.create(user);
-
-    return user;
+    return { id, name, email };
   },
-
   async uploadUserAvatar(id: ULID, file: MultipartFile) {
     const user = await repo.findById(id);
     if (!user) throw new AppError("USER_NOT_FOUND");
@@ -41,14 +40,14 @@ export const createUserService = (
     // temporário
     // depois vai virar
     // user_profile_images
+    //// É TRABALHO DO UPLOADER CUIDAR DA URL, OS MODULOS DEVEM APENAS CHAMAR E RECEBER DEVOLTA A URL OU MELHOR DIZENDO ID DA TABELA QUE CONTÉM O PATH
     const url = `${process.env.BASE_URL}/${uploaded.path}`;
     console.log("URL da imagem:", url);
     await repo.uploadAvatar(id, url);
 
     return { fileId: uploaded.id, avatarUrl: url };
   },
-
-  async update(id: ULID, user: Partial<UpdateBodyType>) {
+  async update(id: ULID, user: Partial<{ name: string; email: string }>) {
     if (user.email) {
       /// ALERTA
       user.email = user.email.trim();
@@ -58,14 +57,15 @@ export const createUserService = (
       if (existingUser && existingUser.id !== id)
         throw new AppError("EMAIL_ALREADY_EXISTS");
     }
+    if (user.name) user.name = user.name.trim();
 
     await repo.update(id, user);
 
     return { id, ...user };
   },
 
-  /// TESTES - MUITO CUIDADO 
-  async getAll() {
+  /// TESTES - MUITO CUIDADO
+  async list() {
     return repo.findAll();
   },
 

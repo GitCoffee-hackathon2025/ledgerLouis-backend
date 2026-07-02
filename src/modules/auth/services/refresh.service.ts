@@ -2,8 +2,8 @@ import { createRefreshRepository } from "../repositories/refresh.repository.js";
 import { hashToken, verifyToken } from "../../../shared/security/hash/token.js";
 import { computeRefreshTokenExpiration } from "../auth.policy.js";
 
-import { AppError } from "../../../shared/errors/index.js";
-import { type ULID } from "../../../lib/id.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
+import { type ULID } from "../../../domain/shared/id.js";
 
 export const createRefreshService = (
   repo: ReturnType<typeof createRefreshRepository>,

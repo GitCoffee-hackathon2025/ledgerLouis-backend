@@ -2,10 +2,10 @@ import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
 // Função que cria a instância que permite maior validação com o Ajv
-import { createValidator } from "./lib/validator/index.js";
+import { createValidator } from "./infrastructure/validation/ajv/createValidator.js";
 
 // Erros
-import { handleError } from "./shared/errors/handler.js";
+import { handleError } from "./shared/errors/http/handler.js";
 
 // Adaptador pro Fastify com TypeBox
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
@@ -43,7 +43,16 @@ async function buildApp() {
   const ajv = createValidator();
 
   // Criando instância fastify
-  const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
+  const app = fastify({
+    logger: {
+      transport: {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+        },
+      },
+    },
+  }).withTypeProvider<TypeBoxTypeProvider>();
 
   // Declarando AJV e tratamento de erro
   app.setValidatorCompiler(({ schema }) => {
@@ -59,7 +68,7 @@ async function buildApp() {
   await app.register(db);
   await app.register(auth);
 
-  // Instalando manualmente o multipart
+  // Instalando manualmente o multipart (modularizar como plugin futuramente)
   await app.register(import("@fastify/multipart"));
 
   await app.register(import("@fastify/static"), {
@@ -75,7 +84,7 @@ async function buildApp() {
   // Carregamento das rotas
   await app.register(Autoload, {
     dir: join(root, "modules"),
-    dirNameRoutePrefix: true,
+    dirNameRoutePrefix: false,
   });
 
   return app;

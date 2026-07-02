@@ -1,5 +1,5 @@
 {
-  "id": "8b5e5987-0cfb-4db2-81aa-e498f7e67fdd",
+  "id": "fdd65469-553d-4783-9b37-e09093fe6bbe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -136,7 +136,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(15, 2)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -238,7 +238,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(15, 2)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -334,7 +334,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(15, 2)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -885,18 +885,26 @@
           "notNull": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
+      "indexes": {
+        "uq_users_email": {
+          "name": "uq_users_email",
           "columns": [
-            "email"
-          ]
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -919,7 +927,7 @@
         },
         "cnpj": {
           "name": "cnpj",
-          "type": "varchar(20)",
+          "type": "varchar(14)",
           "primaryKey": false,
           "notNull": true
         },
@@ -943,18 +951,26 @@
           "notNull": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "companies_cnpj_unique": {
-          "name": "companies_cnpj_unique",
-          "nullsNotDistinct": false,
+      "indexes": {
+        "uq_companies_cnpj": {
+          "name": "uq_companies_cnpj",
           "columns": [
-            "cnpj"
-          ]
+            {
+              "expression": "cnpj",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

@@ -1,4 +1,4 @@
-import { type InferInsertModel, isNull, lt } from "drizzle-orm";
+import { type InferInsertModel, isNull } from "drizzle-orm";
 
 import type { DB } from "../../../types/db.js";
 import { jwtKeys } from "../../../database/schemas/index.js";
