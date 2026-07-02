@@ -36,16 +36,22 @@ export const createUserService = (
     const user = await repo.findById(id);
     if (!user) throw new AppError("USER_NOT_FOUND");
 
-    const uploaded = await uploader.uploadImage(file);
+  const uploaded = await uploader.uploadImage(file);
 
-    // temporário
-    // depois vai virar
-    // user_profile_images
-    const url = `${process.env.BASE_URL}/${uploaded.path}`;
-    console.log("URL da imagem:", url);
-    await repo.uploadAvatar(id, url);
+  let url: string;
+  if(uploaded.provider === "cloudinary") {
+    url = uploaded.path; 
+  } else {
+    url = `${process.env.BASE_URL}/${uploaded.path}`;
+  }
+  
+  
 
-    return { fileId: uploaded.id, avatarUrl: url };
+
+  console.log("URL da imagem:", url);
+  await repo.uploadAvatar(id, url);
+
+  return { fileId: uploaded.id, avatarUrl: url };
   },
 
   async update(id: ULID, user: Partial<UpdateBodyType>) {
