@@ -9,8 +9,18 @@ export default fp(
       openapi: {
         info: {
           title: "ledgerLouis API",
-          description: "Backend API", // Rascunho
+          description:
+            "Ledger é uma API REST para gerenciamento financeiro desenvolvida com Fastify e TypeScript, seguindo uma arquitetura modular orientada a domínio. A aplicação oferece autenticação baseada em JWT com rotação automática de chaves, controle de sessões, gerenciamento de empresas e membros com permissões, além de recursos para contas, transações, lançamentos contábeis, parcelamentos e demais operações financeiras. A documentação abaixo descreve todos os endpoints disponíveis, seus esquemas de entrada e saída, autenticação necessária e possíveis respostas de erro.",
           version: "1.0.0",
+        },
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+            },
+          },
         },
       },
     });

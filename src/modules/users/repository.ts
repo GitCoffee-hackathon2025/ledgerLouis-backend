@@ -11,7 +11,8 @@ export const createUserRepository = (db: DB) => ({
 
   async findByEmail(email: UserInsert["email"]) {
     return db.query.users.findFirst({
-      where: (table, { eq }) => and(eq(table.email, email), isNull(table.deletedAt)),
+      where: (table, { eq }) =>
+        and(eq(table.email, email), isNull(table.deletedAt)),
     });
   },
 
@@ -22,25 +23,25 @@ export const createUserRepository = (db: DB) => ({
   },
 
   async uploadAvatar(id: NonNullable<UserInsert["id"]>, avatar: string) {
-    return db.
-      update(users)
+    return db
+      .update(users)
       .set({ avatar })
       .where(and(eq(users.id, id), isNull(users.deletedAt)))
       .returning({ id: users.id });
   },
 
   async delete(id: NonNullable<UserInsert["id"]>) {
-    return db.
-      update(users)
+    return db
+      .update(users)
       .set({ deletedAt: new Date() })
       .where(and(eq(users.id, id), isNull(users.deletedAt)))
       .returning({ id: users.id });
   },
 
   async update(id: NonNullable<UserInsert["id"]>, data: Partial<UserInsert>) {
-    return db.
-      update(users)
-      .set({ ...data})
+    return db
+      .update(users)
+      .set(data)
       .where(and(eq(users.id, id), isNull(users.deletedAt)))
       .returning({ id: users.id });
   },

@@ -17,7 +17,7 @@ CREATE TABLE "accounts" (
 CREATE TABLE "installments" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"transaction_id" char(26) NOT NULL,
-	"amount" numeric(15, 2) NOT NULL,
+	"amount" integer NOT NULL,
 	"due_date" date NOT NULL,
 	"status" "installment_status",
 	"paid_at" date,
@@ -32,7 +32,7 @@ CREATE TABLE "ledger_entries" (
 	"transaction_id" char(26) NOT NULL,
 	"account_id" char(26) NOT NULL,
 	"entryType" "entry_type" NOT NULL,
-	"amount" numeric(15, 2) NOT NULL,
+	"amount" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp,
 	"deleted_at" timestamp
@@ -42,7 +42,7 @@ CREATE TABLE "recurring_transactions" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"company_id" char(26) NOT NULL,
 	"description" text,
-	"amount" numeric(15, 2) NOT NULL,
+	"amount" integer NOT NULL,
 	"source_account_id" char(26) NOT NULL,
 	"category_account_id" char(26) NOT NULL,
 	"frequency" "frequency" NOT NULL,
@@ -107,18 +107,16 @@ CREATE TABLE "users" (
 	"avatar" varchar(255),
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp,
-	"deleted_at" timestamp,
-	CONSTRAINT "users_email_unique" UNIQUE("email")
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "companies" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"name" varchar(150) NOT NULL,
-	"cnpj" varchar(20) NOT NULL,
+	"cnpj" varchar(14) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp,
-	"deleted_at" timestamp,
-	CONSTRAINT "companies_cnpj_unique" UNIQUE("cnpj")
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "company_users" (
@@ -203,6 +201,8 @@ CREATE UNIQUE INDEX "uq_accounts_company_name" ON "accounts" USING btree ("compa
 CREATE UNIQUE INDEX "uq_transactions_id_company" ON "transactions" USING btree ("id","company_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_jwt_keys_kid" ON "jwt_keys" USING btree ("kid");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_refresh_token_hash" ON "refresh_tokens" USING btree ("token_hash");--> statement-breakpoint
+CREATE UNIQUE INDEX "uq_users_email" ON "users" USING btree ("email");--> statement-breakpoint
+CREATE UNIQUE INDEX "uq_companies_cnpj" ON "companies" USING btree ("cnpj");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_company_users_membership" ON "company_users" USING btree ("company_id","user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_token_invites" ON "invites" USING btree ("token");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_projects_company_name" ON "projects" USING btree ("company_id","name");

@@ -1,9 +1,9 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { handleFastifyError } from "./fastify.js";
-import { transformAjvErrors } from "../../lib/validation/transformAjvErrors.js";
-import { isAjvError } from "../../lib/validation/isAjvError.js";
-import { AppError, ValidationError } from "./index.js";
+import { handleFastifyError } from "../adapters/fastify.adapter.js";
+import { isAjvError } from "../../../infrastructure/validation/ajv/errors/isAjvError.js";
+import { transformAjvErrors } from "../../../infrastructure/validation/ajv/errors/transformAjvErrors.js";
+import { AppError } from "../domain/errors.js";
 
 export function handleError(
   error: unknown,
@@ -11,9 +11,6 @@ export function handleError(
   res: FastifyReply,
 ) {
   const code = (error as { code: string })?.code;
-
-  if (typeof code === "string" && code.startsWith("FST_"))
-    return handleFastifyError(error, res);
 
   // AJV
   if (isAjvError(error))
@@ -23,13 +20,8 @@ export function handleError(
       fields: transformAjvErrors(error.validation),
     });
 
-  // ValidationError
-  if (error instanceof ValidationError)
-    return res.status(error.statusCode).send({
-      error: error.code,
-      message: error.message,
-      fields: error.fields,
-    });
+  if (typeof code === "string" && code.startsWith("FST_"))
+    return handleFastifyError(error, res);
 
   // AppError
   if (error instanceof AppError)

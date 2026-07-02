@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull, type InferInsertModel } from "drizzle-orm";
+import { and, eq, isNull, type InferInsertModel } from "drizzle-orm";
 
 import type { DB } from "../../../types/db.js";
 import { refreshTokens } from "../../../database/schemas/index.js";

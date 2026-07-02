@@ -1,7 +1,6 @@
 import { type Static, Type} from "@sinclair/typebox";
 import { IdSchema } from "../../schemas/primitives/id.schema.js";
 import { Name, Email, Password } from "../../schemas/primitives/user.schema.js";
-import { ErrorResponse } from "../../schemas/common/error.schema.js";
 
 export const TransactionBody = Type.Object(
     {
@@ -22,4 +21,3 @@ export const TransactionResponse = Type.Object({
 
 export type TransactionBodyType = Static<typeof TransactionBody>;
 export type TransactionResponse = Static<typeof TransactionResponse>;
-export { ErrorResponse };   
