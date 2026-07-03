@@ -3,8 +3,8 @@ import { createSessionService } from "./services/session.service.js";
 import { createRefreshService } from "./services/refresh.service.js";
 import type { createUserRepository } from "../users/repository.js";
 
-import { AppError } from "../../shared/errors/index.js";
-import { type ULID, generateId } from "../../lib/id.js";
+import { AppError } from "../../shared/errors/domain/errors.js";
+import { type ULID, generateId } from "../../domain/shared/id.js";
 import { verifyPassword } from "../../shared/security/hash/password.js";
 
 export const createAuthService = (
@@ -78,9 +78,10 @@ export const createAuthService = (
 
     const newRefreshId = generateId();
 
-    await refreshService.rotate(jti, newRefreshId);
-
-    const access = await tokenService.signAccessToken({ sub, sid });
+    const access = await tokenService.signAccessToken({
+      sub,
+      sid,
+    });
 
     const newRefresh = await tokenService.signRefreshToken({
       sub,
@@ -88,17 +89,23 @@ export const createAuthService = (
       jti: newRefreshId,
     });
 
-    // salva novo refresh
     await refreshService.create(
-      { id: newRefreshId, userId: sub, sessionId: sid },
+      {
+        id: newRefreshId,
+        userId: sub,
+        sessionId: sid,
+      },
       newRefresh.token,
     );
+
+    await refreshService.rotate(jti, newRefreshId);
 
     return {
       accessToken: access.token,
       refreshToken: newRefresh.token,
     };
   },
+
   /**
    * LOGOUT (sessão atual)
    */
@@ -118,8 +125,8 @@ export const createAuthService = (
   /**
    * VERIFY ACCESS TOKEN
    */
-  async verifyAccessToken(token: string) {
-    const payload = await tokenService.verifyAccessToken(token);
+  async verifyAccess(token: string) {
+    const payload = await tokenService.verifyAccess(token);
     await sessionService.touch(payload.sid);
 
     await sessionService.assertActive(payload.sid);

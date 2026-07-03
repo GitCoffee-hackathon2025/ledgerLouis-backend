@@ -1,5 +1,5 @@
 import type { MultipartFile } from "@fastify/multipart";
-import { generateId } from "../../lib/id.js";
+import { generateId } from "../../domain/shared/id.js";
 import type { StorageProvider } from "./storageProvider.js";
 import type { createFileRepository } from "./repository.js";
 

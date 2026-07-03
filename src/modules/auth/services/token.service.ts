@@ -1,9 +1,9 @@
 import type { createKeyService } from "./key.service.js";
-import { AppError } from "../../../shared/errors/index.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 import { authPolicy } from "../auth.policy.js";
 
 import { SignJWT, jwtVerify, decodeProtectedHeader } from "jose";
-import type { ULID } from "../../../lib/id.js";
+import type { ULID } from "../../../domain/shared/id.js";
 
 type AccessPayload = {
   sub: ULID;
@@ -47,7 +47,7 @@ export const createTokenService = (
           payload,
           privateKey,
           kid,
-          `${authPolicy.session / 1000}s`,
+          `${authPolicy.access / 1000}s`,
         ),
       };
     },
@@ -64,7 +64,7 @@ export const createTokenService = (
         ),
       };
     },
-    async verifyAccessToken(token: string) {
+    async verifyAccess(token: string) {
       let kid: ULID | undefined;
 
       try {
@@ -90,14 +90,12 @@ export const createTokenService = (
           typeof payload.sub !== "string" ||
           typeof payload.sid !== "string" ||
           "jti" in payload // access NÃO deve ter jti
-        ) {
+        )
           throw new AppError("INVALID_TOKEN");
-        }
 
         return payload;
       } catch (err: any) {
         if (err.code === "ERR_JWT_EXPIRED") throw new AppError("TOKEN_EXPIRED");
-
         throw new AppError("INVALID_TOKEN");
       }
     },
@@ -124,33 +122,5 @@ export const createTokenService = (
 
       return payload;
     },
-    // async verifySessionToken(token: string) {
-    //   let kid: ULID | undefined;
-
-    //   try {
-    //     const header = decodeProtectedHeader(token);
-    //     kid = header.kid as ULID;
-    //   } catch {
-    //     throw new AppError("INVALID_TOKEN");
-    //   }
-
-    //   if (!kid) throw new AppError("INVALID_TOKEN");
-
-    //   try {
-    //     const { payload } = await jwtVerify(
-    //       token,
-    //       await keyService.getPublicKeyByKid(kid),
-    //       {
-    //         algorithms: ["EdDSA"],
-    //       },
-    //     );
-
-    //     return payload;
-    //   } catch (err: any) {
-    //     if (err.code === "ERR_JWT_EXPIRED") throw new AppError("TOKEN_EXPIRED");
-
-    //     throw new AppError("INVALID_TOKEN");
-    //   }
-    // },
   };
 };

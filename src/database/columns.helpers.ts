@@ -1,6 +1,6 @@
 import { type AnyPgColumn, char, timestamp } from "drizzle-orm/pg-core";
 
-import { type ULID, generateId } from "../lib/id.js";
+import { type ULID, generateId } from "../domain/shared/id.js";
 
 export const id = char("id", { length: 26 })
   .$type<ULID>()
