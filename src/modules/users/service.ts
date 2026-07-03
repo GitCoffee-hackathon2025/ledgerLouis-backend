@@ -35,17 +35,23 @@ export const createUserService = (
     const user = await repo.findById(id);
     if (!user) throw new AppError("USER_NOT_FOUND");
 
-    const uploaded = await uploader.uploadImage(file);
+  const uploaded = await uploader.uploadImage(file);
 
-    // temporário
-    // depois vai virar
-    // user_profile_images
+  let url: string;
+  if(uploaded.provider === "cloudinary") {
     //// É TRABALHO DO UPLOADER CUIDAR DA URL, OS MODULOS DEVEM APENAS CHAMAR E RECEBER DEVOLTA A URL OU MELHOR DIZENDO ID DA TABELA QUE CONTÉM O PATH
-    const url = `${process.env.BASE_URL}/${uploaded.path}`;
-    console.log("URL da imagem:", url);
-    await repo.uploadAvatar(id, url);
+    url = uploaded.path; 
+  } else {
+    url = `${process.env.BASE_URL}/${uploaded.path}`;
+  }
+  
+  
 
-    return { fileId: uploaded.id, avatarUrl: url };
+
+  console.log("URL da imagem:", url);
+  await repo.uploadAvatar(id, url);
+
+  return { fileId: uploaded.id, avatarUrl: url };
   },
   async update(id: ULID, user: Partial<{ name: string; email: string }>) {
     if (user.email) {
