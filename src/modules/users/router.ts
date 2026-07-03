@@ -20,7 +20,7 @@ import {
   routeGroups,
 } from "../../shared/errors/schemas/responses.js";
 
-export const userRouter: FastifyPluginAsync = async (app) => {
+export const userRouter = (): FastifyPluginAsync => async (app) => {
   const module = buildUserModule(app);
 
   const controller = createUserController(app.auth.authService, module);

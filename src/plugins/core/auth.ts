@@ -28,6 +28,6 @@ export default fp(
   },
   {
     name: "auth",
-    dependencies: ["db"],
+    dependencies: ["env", "db"],
   },
 );

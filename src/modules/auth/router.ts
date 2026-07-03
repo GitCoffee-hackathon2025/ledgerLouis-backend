@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import { createAuthController } from "./controller.js";
 import { SchemaEnablesAuth } from "../../schemas/common/auth.schema.js";
 import {
@@ -16,7 +16,7 @@ import {
   routeGroups,
 } from "../../shared/errors/schemas/responses.js";
 
-export async function authRouter(app: FastifyInstance) {
+export const authRouter = (): FastifyPluginAsync => async (app) => {
   const controller = createAuthController();
 
   app.post<LoginRoute>(
@@ -104,4 +104,4 @@ export async function authRouter(app: FastifyInstance) {
     },
     controller.logoutAll,
   );
-}
+};
