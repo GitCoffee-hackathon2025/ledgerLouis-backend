@@ -7,7 +7,7 @@ import { buildUploaderModule } from "../uploader/module.js";
 
 export function buildUserModule(app: FastifyInstance) {
   const repo = createUserRepository(app.db);
-  const uploader = buildUploaderModule(app.db);
+  const uploader = buildUploaderModule(app.db, app.storage);
   const userService = createUserService(repo, uploader);
 
   return {

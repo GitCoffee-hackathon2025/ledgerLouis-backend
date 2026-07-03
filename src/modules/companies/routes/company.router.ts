@@ -51,11 +51,9 @@ export const companyRoutes =
     app.get(
       "/",
       {
-        preHandler: app.verifyAccess,
         schema: {
           tags: ["companies"],
           summary: "List all companies",
-          ...SchemaEnablesAuth,
           response: {
             200: CompaniesListResponse,
             ...createErrorResponses([
