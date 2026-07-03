@@ -19,6 +19,14 @@ export const EnvSchema = Type.Object({
 
   // Banco de dados
   DATABASE_URL: Type.String({ format: "uri" }),
+
+  // Cloudinary
+  STORAGE_DRIVER: Type.Literal("cloudinary"),
+
+  CLOUDINARY_CLOUD_NAME: Type.String(),
+  CLOUDINARY_API_KEY: Type.String(),
+  CLOUDINARY_API_SECRET: Type.String(),
+
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
 });
