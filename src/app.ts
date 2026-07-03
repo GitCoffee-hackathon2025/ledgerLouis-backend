@@ -10,12 +10,8 @@ import { handleError } from "./shared/errors/http/handler.js";
 // Adaptador pro Fastify com TypeBox
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
-// Core Plugins, só podem ser importados nesse arquivo e precisam ser carregados primeiro
-// Para maior organização importe-os na ordem correta de registro
+// Plugin de inicialização das variaveis de ambiente
 import env from "./plugins/core/env.js";
-import cors from "./plugins/core/cors.js";
-import db from "./plugins/core/db.js";
-import auth from "./plugins/core/auth.js";
 
 /* 
 Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
@@ -64,9 +60,11 @@ async function buildApp() {
 
   // Plugins fundamentais para o carregamento
   await app.register(env, { ajv });
-  await app.register(cors);
-  await app.register(db);
-  await app.register(auth);
+
+  await app.register(Autoload, {
+    dir: join(root, "plugins/core"),
+    ignorePattern: /env\./,
+  });
 
   // Instalando manualmente o multipart (modularizar como plugin futuramente)
   await app.register(import("@fastify/multipart"));
