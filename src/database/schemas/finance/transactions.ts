@@ -9,8 +9,8 @@ export const transactions = pgTable(
   "transactions",
   {
     id,
-    companyId: foreignId("company_id", () => companies.id).notNull(),
-    projectId: foreignId("project_id", () => projects.id),
+    companyId: foreignId("company_id", () => companies.id),
+    projectId: foreignId("project_id", () => projects.id),  
     description: text("description"),
     ...timestamps,
   },

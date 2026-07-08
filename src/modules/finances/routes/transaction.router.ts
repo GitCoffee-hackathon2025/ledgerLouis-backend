@@ -27,8 +27,6 @@ export const transactionRoutes =
   async (app) => {
     const controller = createTransactionController(module);
 
-    // ledger is handled by services only; no child routes registered here
-
     app.get<GetTransactionRoute>(
       "/:id",
       {
@@ -135,4 +133,9 @@ export const transactionRoutes =
       },
       controller.delete,
     );
+
+
+ 
+
+    
   };

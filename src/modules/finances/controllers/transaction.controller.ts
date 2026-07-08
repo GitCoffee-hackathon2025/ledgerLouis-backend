@@ -18,7 +18,7 @@ export const createTransactionController = (
   },
 
   async list(req: FastifyRequest, res: FastifyReply) {
-    return res.status(200).send(await transaction.list());
+    return res.status(200).send(await transaction.list(req.authUser.sub));
   },
 
   async create(req: FastifyRequest<CreateTransactionRoute>, res: FastifyReply) {

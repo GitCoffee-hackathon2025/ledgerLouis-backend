@@ -1,26 +1,88 @@
+import { generateId, type ULID } from "../../../domain/shared/id.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
+import type { createLedgerRepository } from "../repositories/ledger.repository.js";
+import type {
+  TransactionLedger,
+  TransactionLedgerCreate,
+  TransactionLedgerUpdate,
+  TransactionLedgerListOpts,
+} from "../schemas/ledger.schema.js";
+
 export const createLedgerService = (
-  repo: ReturnType<typeof import("../repositories/ledger.repository.js").createLedgerRepository>,
+  repo: ReturnType<typeof createLedgerRepository>,
 ) => ({
-  async list(transactionId: string) {
+  async find(id: ULID): Promise<TransactionLedger> {
+    const ledger = await repo.findById(id);
+
+    if (!ledger) {
+      throw new AppError("LEDGER_NOT_FOUND");
+    }
+
+    return ledger;
+  },
+
+  async list(
+    opts?: TransactionLedgerListOpts,
+  ): Promise<TransactionLedger[]> {
+    if (opts && Object.keys(opts).length > 0) {
+      return repo.listFiltered(opts);
+    }
+
+    return repo.list();
+  },
+
+  async listByTransaction(
+    transactionId: ULID,
+  ): Promise<TransactionLedger[]> {
     return repo.listByTransaction(transactionId);
   },
 
-  async find(transactionId: string, ledgerId: string) {
-    return repo.findById(ledgerId);
+  async create(
+    payload: TransactionLedgerCreate,
+  ): Promise<TransactionLedger> {
+    const ledger: TransactionLedger = {
+      id: generateId(),
+      ...payload,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    return repo.create(
+      ledger as Parameters<typeof repo.create>[0],
+    );
   },
 
-  async create(transactionId: string, payload: any) {
-    const row = { transactionId, ...payload };
-    await repo.create(row);
-    return row;
+  async update(
+    id: ULID,
+    payload: TransactionLedgerUpdate,
+  ): Promise<TransactionLedger> {
+    const existing = await repo.findById(id);
+
+    if (!existing) {
+      throw new AppError("LEDGER_NOT_FOUND");
+    }
+
+    const updated = {
+      ...payload,
+      updatedAt: new Date(),
+    };
+
+    const result = await repo.update(id, updated);
+
+    if (!result) {
+      throw new AppError("LEDGER_NOT_FOUND");
+    }
+
+    return result;
   },
 
-  async update(transactionId: string, ledgerId: string, payload: any) {
-    await repo.update(ledgerId, payload);
-    return repo.findById(ledgerId);
-  },
+  async delete(id: ULID): Promise<void> {
+    const existing = await repo.findById(id);
 
-  async delete(transactionId: string, ledgerId: string) {
-    await repo.delete(ledgerId);
+    if (!existing) {
+      throw new AppError("LEDGER_NOT_FOUND");
+    }
+
+    await repo.delete(id);
   },
 });

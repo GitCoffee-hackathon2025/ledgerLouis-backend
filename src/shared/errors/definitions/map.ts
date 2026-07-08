@@ -34,6 +34,10 @@ import {
   companyErrors,
   memberErrors,
 } from "../../../modules/companies/errors.js";
+import {
+  transactionErrors,
+  ledgerErrors,
+} from "../../../modules/finances/errors.js";
 
 // Centralizador de erros
 type ErrorDefinition = readonly [status: number, message: string];
@@ -61,5 +65,7 @@ export const errorMap = generateErrorMap(
   uploaderErrors,
   companyErrors,
   memberErrors,
+  transactionErrors,
+  ledgerErrors,
 );
 export type ErrorCode = keyof typeof errorMap;
