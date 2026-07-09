@@ -1,4 +1,4 @@
-import { integer, numeric, pgEnum, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { date, integer, numeric, pgEnum, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 import { projects } from "../projects/projects.js";
@@ -14,6 +14,7 @@ export const transactions = pgTable(
     companyId: foreignId("company_id", () => companies.id),
     projectId: foreignId("project_id", () => projects.id),  
     description: text("description"),
+    date: date("date", { mode: "string" }).notNull(),
     //temporario
       entryType: entryTypes().notNull(),
       amount: numeric("amount", { precision: 15, scale: 2 }).notNull(),

@@ -1,5 +1,6 @@
 import { type Static, Type } from "@sinclair/typebox";
 import { IdSchema } from "../../../schemas/primitives/id.schema.js";
+
 // import { Name, Email, Password } from "../../../schemas/primitives/user.schema.js";
 
 export const IdParam = Type.Object({ id: IdSchema });
@@ -12,6 +13,7 @@ export const TransactionLedgerBody = Type.Object({
   Type.Literal("debit"),
   Type.Literal("credit"),
 ]),
+  date: Type.String({ format: "date" }),
   companyId: IdSchema,
   projectId: Type.Optional(IdSchema),
 });
@@ -23,6 +25,7 @@ export const TransactionResponse = Type.Object({
   Type.Literal("debit"),
   Type.Literal("credit"),
 ]),
+  date: Type.String({ format: "date" }),
   companyId: IdSchema,
   projectId: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 });
@@ -33,7 +36,9 @@ export const createTransactionBody = Type.Object({
   entryType: Type.Union([
   Type.Literal("debit"),
   Type.Literal("credit"),
+
 ]),
+  date: Type.String({ format: "date" }),
   projectId: Type.Optional(IdSchema),
 });
 export const updateTransactionBody = Type.Object({
