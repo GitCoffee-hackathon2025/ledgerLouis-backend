@@ -11,11 +11,13 @@ export const accounts = pgTable(
     id,
     companyId: foreignId("company_id", () => companies.id).notNull(),
     name: varchar("name", { length: 100 }).notNull(),
+    value: varchar("value", { length: 100 }).notNull(),
     type: accountTypes().notNull(),
     ...timestamps,
   },
   (table) => [
     uniqueIndex("uq_accounts_id_company").on(table.id, table.companyId),
     uniqueIndex("uq_accounts_company_name").on(table.companyId, table.name),
+    uniqueIndex("uq_accounts_company_value").on(table.companyId, table.value),
   ],
 );

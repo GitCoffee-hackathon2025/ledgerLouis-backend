@@ -4,7 +4,7 @@ import { generateId, type ULID } from "../../../domain/shared/id.js";
 import { isUniqueConstraint } from "../../../infrastructure/database/errors/isUniqueConstraint.js";
 import type { createMemberRepository } from "../repositories/member.repository.js";
 import type { createMemberService } from "./member.service.js";
-
+import type {createAccountService} from "../../finances/services/account.service.js";
 /* 
 Quando for criado a base de companyUser deve ser adicionado a validação da permissão que o usuário possui
 */
@@ -13,6 +13,7 @@ export const createCompanyService = (
   companyRepo: ReturnType<typeof createCompanyRepository>,
   memberRepo: ReturnType<typeof createMemberRepository>,
   memberService: ReturnType<typeof createMemberService>,
+  accountService: ReturnType<typeof createAccountService>,
 ) => ({
   async find(companyId: ULID, userId: ULID) {
     await memberService.assertRole(companyId, userId);
@@ -42,6 +43,8 @@ export const createCompanyService = (
       userId: userId,
       role: "owner",
     });
+
+    await accountService.createDefault(id);
 
     return { id, name, cnpj };
   },
