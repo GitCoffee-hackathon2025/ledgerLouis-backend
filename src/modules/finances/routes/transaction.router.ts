@@ -89,7 +89,7 @@ export const transactionRoutes =
       },
       controller.create,
     );
-
+    /*
     app.patch<UpdateTransactionRoute>(
       "/:id",
       {
@@ -112,7 +112,7 @@ export const transactionRoutes =
       },
       controller.update,
     );
-
+    */
     app.delete<DeleteTransactionRoute>(
       "/:id",
       {

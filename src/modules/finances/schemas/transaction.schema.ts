@@ -4,32 +4,49 @@ import { IdSchema } from "../../../schemas/primitives/id.schema.js";
 
 export const IdParam = Type.Object({ id: IdSchema });
 export type IdParamType = Static<typeof IdParam>;
-export const TransactionBody = Type.Object({
+export const TransactionLedgerBody = Type.Object({
   id: IdSchema,
   amount: Type.Number(),
   description: Type.String(),
+  entryType: Type.Union([
+  Type.Literal("debit"),
+  Type.Literal("credit"),
+]),
   companyId: IdSchema,
   projectId: IdSchema,
 });
 
 export const TransactionResponse = Type.Object({
-  id: IdSchema,
+   id: IdSchema,
   amount: Type.Number(),
   description: Type.String(),
+  entryType: Type.Union([
+  Type.Literal("debit"),
+  Type.Literal("credit"),
+]),
   companyId: IdSchema,
   projectId: IdSchema,
 });
 
 export const createTransactionBody = Type.Object({
+  id: IdSchema,
   amount: Type.Number(),
   description: Type.String(),
+  entryType: Type.Union([
+  Type.Literal("debit"),
+  Type.Literal("credit"),
+]),
   companyId: IdSchema,
   projectId: IdSchema,
 });
 export const updateTransactionBody = Type.Object({
-  id: IdSchema,
+    id: IdSchema,
   amount: Type.Number(),
   description: Type.String(),
+  entryType: Type.Union([
+  Type.Literal("debit"),
+  Type.Literal("credit"),
+]),
   companyId: IdSchema,
   projectId: IdSchema,
 });
@@ -46,5 +63,5 @@ export type UpdateTransactionRoute = {
 };
 export type DeleteTransactionRoute = { Params: IdParamType };
 
-export type TransactionBodyType = Static<typeof TransactionBody>;
+export type TransactionLedgerBodyType = Static<typeof TransactionLedgerBody>;
 export type TransactionResponse = Static<typeof TransactionResponse>;

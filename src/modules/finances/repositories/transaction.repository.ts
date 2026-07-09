@@ -2,7 +2,7 @@ import { type DB } from "../../../types/db.js";
 import { and, eq, isNull, type InferInsertModel } from "drizzle-orm";
 import { transactions } from "../../../database/schemas/index.js";
 import type { ULID } from "../../../domain/shared/id.js";
-import type { TransactionBodyType } from "../schemas/transaction.schema.js";
+import type { TransactionLedgerBodyType } from "../schemas/transaction.schema.js";
 
 type TransactionInsert = InferInsertModel<typeof transactions>;
 export const createTransactionRepository = (db: DB) => ({

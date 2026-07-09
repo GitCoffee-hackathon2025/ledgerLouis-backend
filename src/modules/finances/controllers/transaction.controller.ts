@@ -25,11 +25,11 @@ export const createTransactionController = (
     const payload = req.body;
     return res.status(201).send(await transaction.create(req.authUser.sub, payload));
   },
-
+  /*
   async update(req: FastifyRequest<UpdateTransactionRoute>, res: FastifyReply) {
     return res.status(200).send(await transaction.update(toId(req.params.id), req.authUser.sub, req.body));
   },
-
+  */
   async delete(req: FastifyRequest<DeleteTransactionRoute>, res: FastifyReply) {
     await transaction.delete(toId(req.params.id), req.authUser.sub);
     return res.status(204).send();

@@ -1,5 +1,6 @@
-import { generateId, type ULID } from "../../../domain/shared/id.js";
+import { generateId, toId, type ULID } from "../../../domain/shared/id.js";
 import { AppError } from "../../../shared/errors/domain/errors.js";
+import type { TransactionLedgerBody, TransactionLedgerBodyType} from "../schemas/transaction.schema.js";
 import type { createTransactionRepository } from "../repositories/transaction.repository.js";
 import type { createLedgerService } from "./ledger.service.js";
 import type {
@@ -35,34 +36,26 @@ export const createTransactionService = (
     return repo.list();
   },
 
-  async create(userId: ULID, payload: any) {
-    const now = new Date().toISOString();
+  async create(userId: ULID, payload: TransactionLedgerBodyType) {
 
     const row = {
-      id: generateId(),
-      ...payload,
-      createdBy: userId,
-      updatedBy: userId,
-      createdAt: now,
-      updatedAt: now,
-    };
+  ...payload,
+  id: generateId(),
+    companyId: toId(payload.companyId),
+  projectId: toId(payload.projectId),
+  createdBy: userId,
+  updatedBy: userId,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
     await repo.create(row);
-
-    for (const ledger of payload.ledgers ?? []) {
-      await ledgerService.create({
-        ...ledger,
-        transactionId: row.id,
-      });
-    }
-
     return {
       ...row,
-      ledgers: await ledgerService.listByTransaction(row.id),
     };
   },
-
-  async update(id: ULID, userId: ULID, payload: any) {
+/*
+  async update(id: ULID, userId: ULID, payload: TransactionLedgerBodyType) {
     const existing = await repo.findById(id);
 
     if (!existing) {
@@ -72,29 +65,23 @@ export const createTransactionService = (
     const updated = {
       ...existing,
       ...payload,
-      updatedBy: userId,
-      updatedAt: new Date().toISOString(),
+      id: generateId(),
+    companyId: toId(payload.companyId),
+    projectId: toId(payload.projectId),
+    createdBy: userId,
+    updatedBy: userId,
+     updatedAt: new Date().toISOString(),
     };
 
     await repo.update(id, updated);
 
-    for (const ledger of payload.ledgers ?? []) {
-      if (ledger.id) {
-        await ledgerService.update(ledger.id, ledger);
-      } else {
-        await ledgerService.create({
-          ...ledger,
-          transactionId: id,
-        });
-      }
-    }
 
     return {
       ...(await repo.findById(id)),
       ledgers: await ledgerService.listByTransaction(id),
     };
   },
-
+*/
   async delete(id: ULID, userId: ULID) {
     const existing = await repo.findById(id);
 
