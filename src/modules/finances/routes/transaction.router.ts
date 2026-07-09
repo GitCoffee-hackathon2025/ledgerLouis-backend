@@ -2,17 +2,20 @@ import type { FastifyPluginAsync } from "fastify";
 import { createTransactionController } from "../controllers/transaction.controller.js";
 import { buildTransactionModule } from "../module.js";
 import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
+import { accountValueResponseSchema, CompanyParam } from "../schemas/account.schema.js";
+import type {GetAccountValueRoute} from "../schemas/account.schema.js";
+import {getAccountValueRoute} from "../schemas/account.schema.js";
 import {
   type GetTransactionRoute,
   type CreateTransactionRoute,
-  type UpdateTransactionRoute,
+  // type UpdateTransactionRoute, 
   type DeleteTransactionRoute,
 
-  IdParam,
+  IdParam, 
   TransactionResponse,
   ListTransactionResponse,
   createTransactionBody,
-  updateTransactionBody,
+  // updateTransactionBody,
 } from "../schemas/transaction.schema.js";
 
 import {
@@ -27,20 +30,22 @@ export const transactionRoutes =
   async (app) => {
     const controller = createTransactionController(module);
 
+    // Buscar transação por ID no escopo da empresa
     app.get<GetTransactionRoute>(
-      "/:id",
+      "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["transactions"],
-          summary: "Find transaction by id",
+          summary: "Find company transaction by id",
           ...SchemaEnablesAuth,
-          params: IdParam,
+          params: IdParam, 
           response: {
             200: TransactionResponse,
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.company, // Adicionado erro de contexto de empresa
             ]),
           },
         },
@@ -48,19 +53,21 @@ export const transactionRoutes =
       controller.get,
     );
 
+    // Listar transações de uma empresa específica
     app.get(
-      "/",
+        "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["transactions"],
-          summary: "List transactions",
+          summary: "List company transactions",
           ...SchemaEnablesAuth,
           response: {
             200: ListTransactionResponse,
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.company,
             ]),
           },
         },
@@ -68,13 +75,14 @@ export const transactionRoutes =
       controller.list,
     );
 
+    // Criar transação dentro do escopo de uma empresa
     app.post<CreateTransactionRoute>(
-      "/",
+      "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["transactions"],
-          summary: "Create transaction",
+          summary: "Create company transaction",
           ...SchemaEnablesAuth,
           body: createTransactionBody,
           response: {
@@ -83,43 +91,22 @@ export const transactionRoutes =
               ...routeGroups.common,
               ...routeGroups.form,
               ...routeGroups.auth,
+              ...routeGroups.company,
             ]),
           },
         },
       },
       controller.create,
     );
-    /*
-    app.patch<UpdateTransactionRoute>(
-      "/:id",
-      {
-        preHandler: app.verifyAccess,
-        schema: {
-          tags: ["transactions"],
-          summary: "Update transaction",
-          ...SchemaEnablesAuth,
-          params: IdParam,
-          body: updateTransactionBody,
-          response: {
-            200: TransactionResponse,
-            ...createErrorResponses([
-              ...routeGroups.common,
-              ...routeGroups.form,
-              ...routeGroups.auth,
-            ]),
-          },
-        },
-      },
-      controller.update,
-    );
-    */
+
+    // Deletar transação no escopo da empresa
     app.delete<DeleteTransactionRoute>(
-      "/:id",
+      "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["transactions"],
-          summary: "Delete transaction",
+          summary: "Delete company transaction",
           ...SchemaEnablesAuth,
           params: IdParam,
           response: {
@@ -127,15 +114,29 @@ export const transactionRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.company,
             ]),
           },
         },
       },
       controller.delete,
     );
-
-
- 
-
-    
+    app.get<GetAccountValueRoute>(
+      "/:companyId/accountValue",
+      {
+        preHandler: app.verifyAccess,
+        schema: {
+          tags: ["transactions"],
+          summary: "Get company account value",
+          ...SchemaEnablesAuth,
+          
+          params: CompanyParam, 
+          
+          response: {
+            200: accountValueResponseSchema
+          },
+        },
+      },
+      controller.getAccountValue,
+    );
   };

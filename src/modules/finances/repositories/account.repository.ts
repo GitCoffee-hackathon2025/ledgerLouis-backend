@@ -45,5 +45,13 @@ export const createAccountRepository = (db: DB) => ({
       .where(eq(accounts.id, id))
       .returning();
     return updated as account;
-  }
+  },
+  async getValue(companyId: ULID) {
+    const [row] = await db
+      .select({ value: accounts.value })
+      .from(accounts)
+      .where(eq(accounts.companyId, companyId))
+      .limit(1);
+    return row?.value as string | undefined;
+  },
 })

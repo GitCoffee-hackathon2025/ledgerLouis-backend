@@ -5,7 +5,7 @@ import { IdSchema } from "../../../schemas/primitives/id.schema.js";
 export const IdParam = Type.Object({ id: IdSchema });
 export type IdParamType = Static<typeof IdParam>;
 export const TransactionLedgerBody = Type.Object({
-  id: IdSchema,
+
   amount: Type.Number(),
   description: Type.String(),
   entryType: Type.Union([
@@ -13,9 +13,8 @@ export const TransactionLedgerBody = Type.Object({
   Type.Literal("credit"),
 ]),
   companyId: IdSchema,
-  projectId: IdSchema,
+  projectId: Type.Optional(IdSchema),
 });
-
 export const TransactionResponse = Type.Object({
    id: IdSchema,
   amount: Type.Number(),
@@ -25,19 +24,17 @@ export const TransactionResponse = Type.Object({
   Type.Literal("credit"),
 ]),
   companyId: IdSchema,
-  projectId: IdSchema,
+  projectId: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 });
 
 export const createTransactionBody = Type.Object({
-  id: IdSchema,
   amount: Type.Number(),
   description: Type.String(),
   entryType: Type.Union([
   Type.Literal("debit"),
   Type.Literal("credit"),
 ]),
-  companyId: IdSchema,
-  projectId: IdSchema,
+  projectId: Type.Optional(IdSchema),
 });
 export const updateTransactionBody = Type.Object({
     id: IdSchema,

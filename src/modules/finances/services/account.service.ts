@@ -1,6 +1,6 @@
 
 import type { createAccountRepository } from "../repositories/account.repository.js";
-import { generateId, type ULID } from "../../../domain/shared/id.js";
+import { generateId, toId, type ULID } from "../../../domain/shared/id.js";
 import type { accountCreate, accountUpdate } from "../schemas/account.schema.js";
 import { AppError } from "../../../shared/errors/domain/errors.js";
 export const createAccountService = (
@@ -16,8 +16,9 @@ export const createAccountService = (
     return account;
   },
 
-  async list(userId: ULID) {
-    return repo.list(userId);
+  async list(companyId: ULID) {
+    console.log("Listando contas para a empresa:", companyId);
+    return repo.list(companyId);
   },
   async createDefault(companyId: ULID) {
     const row = {
@@ -38,6 +39,7 @@ export const createAccountService = (
     const row = {
       ...payload,
       id: generateId(),
+      companyId: toId(payload.companyId),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -47,7 +49,15 @@ export const createAccountService = (
       ...row,
     };
   },
+  async getValue(id: ULID) {
+    const value = await repo.getValue(id);
 
+    if (value === undefined) {
+      throw new Error("ACCOUNT_NOT_FOUND");
+    }
+
+    return value;
+  },
   async update(id: ULID, userId: ULID, payload: accountUpdate) {
     const existing = await repo.findById(id);
 

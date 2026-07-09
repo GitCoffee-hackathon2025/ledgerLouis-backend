@@ -4,17 +4,27 @@ import { createTransactionRepository } from "./repositories/transaction.reposito
 import { createLedgerRepository } from "./repositories/ledger.repository.js";
 import { createTransactionService } from "./services/transaction.service.js";
 import { createLedgerService } from "./services/ledger.service.js";
-
+import { createAccountService } from "./services/account.service.js";
+import { createMemberService } from "../companies/services/member.service.js"; 
+import { createMemberRepository } from "../companies/repositories/member.repository.js";
+import {createUserRepository} from "../users/repository.js";
+import { createAccountRepository } from "./repositories/account.repository.js";
 export function buildTransactionModule(app: FastifyInstance) {
   const transactionRepo = createTransactionRepository(app.db);
   const ledgerRepo = createLedgerRepository(app.db);
-
+  const memberRepo = createMemberRepository(app.db); 
+  const accountRepo = createAccountRepository(app.db);
+  const userRepo = createUserRepository(app.db);
+  const memberService = createMemberService(memberRepo, userRepo); 
+  const accountService = createAccountService(accountRepo);
   const ledgerService = createLedgerService(ledgerRepo);
   const transactionService = createTransactionService(
     transactionRepo,
     ledgerService,
+    accountService,
+    memberService,
   );
 
-  return { transactionService, ledgerService };
+  return { transactionService, ledgerService, memberService, accountService };
 }
 

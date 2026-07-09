@@ -8,7 +8,7 @@ export default async function (app: FastifyInstance) {
   const transactionModule = buildTransactionModule(app);
 
   await app.register(transactionRoutes(transactionModule.transactionService), {
-    prefix: "/finances",
+    prefix: "/companies",
   });
 }
 
