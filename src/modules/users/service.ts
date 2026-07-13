@@ -4,7 +4,7 @@ import type { buildUploaderModule } from "../uploader/module.js";
 import { createUserRepository } from "./repository.js";
 import { generateId, type ULID } from "../../domain/shared/id.js";
 import { hashPassword } from "../../shared/security/hash/password.js";
-import { isUniqueConstraint } from "../../infrastructure/database/errors/isUniqueConstraint.js";
+import { getUniqueConstraint } from "../../infrastructure/database/errors/getUniqueConstraint.js";
 import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createUserService = (
@@ -24,7 +24,7 @@ export const createUserService = (
         password: await hashPassword(password),
       });
     } catch (error) {
-      if (isUniqueConstraint(error, "uq_users_email"))
+      if (getUniqueConstraint(error, ["uq_users_email"]))
         throw new AppError("EMAIL_ALREADY_EXISTS");
       throw error;
     }
