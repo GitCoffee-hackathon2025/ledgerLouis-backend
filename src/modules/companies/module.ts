@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { createCompanyRepository } from "./repositories/company.repository.js";
 import { createMemberRepository } from "./repositories/member.repository.js";
 import { createCompanyService } from "./services/company.service.js";
+import { createCompanyUpdateService } from "./services/company.update.service.js";
 import { createMemberService } from "./services/member.service.js";
 import { createUserRepository } from "../users/repository.js";
 
@@ -17,6 +18,13 @@ export function buildCompanyModule(app: FastifyInstance) {
     memberRepo,
     memberService,
   );
+  const companyUpdateService = createCompanyUpdateService(
+    companyRepo,
+    memberService,
+  );
 
-  return { companyService, memberService };
+  return {
+    company: { companyService, companyUpdateService },
+    memberService,
+  };
 }

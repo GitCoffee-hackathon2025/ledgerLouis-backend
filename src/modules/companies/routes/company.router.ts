@@ -6,11 +6,9 @@ import {
   CompaniesListResponse,
   CompanyResponse,
   CreateBody,
-  UpdateBody,
-  IdParam,
+  CompanyIdParam,
   type GetCompanyRoute,
   type CreateCompanyRoute,
-  type UpdateCompanyRoute,
   type DeleteCompanyRoute,
 } from "../schemas/company.schema.js";
 
@@ -21,20 +19,20 @@ import {
 
 export const companyRoutes =
   (
-    module: ReturnType<typeof buildCompanyModule>["companyService"],
+    module: ReturnType<typeof buildCompanyModule>["company"]["companyService"],
   ): FastifyPluginAsync =>
   async (app) => {
     const controller = createCompanyController(module);
 
     app.get<GetCompanyRoute>(
-      "/:id",
+      "/:companyId",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["companies"],
           summary: "Find company by id",
           ...SchemaEnablesAuth,
-          params: IdParam,
+          params: CompanyIdParam,
           response: {
             200: CompanyResponse,
             ...createErrorResponses([
@@ -90,39 +88,15 @@ export const companyRoutes =
       controller.create,
     );
 
-    app.patch<UpdateCompanyRoute>(
-      "/:id",
-      {
-        preHandler: app.verifyAccess,
-        schema: {
-          tags: ["companies"],
-          summary: "Update company",
-          ...SchemaEnablesAuth,
-          params: IdParam,
-          body: UpdateBody,
-          response: {
-            200: CompanyResponse,
-            ...createErrorResponses([
-              ...routeGroups.common,
-              ...routeGroups.form,
-              ...routeGroups.auth,
-              ...routeGroups.company,
-            ]),
-          },
-        },
-      },
-      controller.update,
-    );
-
     app.delete<DeleteCompanyRoute>(
-      "/:id",
+      "/:companyId",
       {
         preHandler: app.verifyAccess,
         schema: {
           tags: ["companies"],
           summary: "Delete company",
           ...SchemaEnablesAuth,
-          params: IdParam,
+          params: CompanyIdParam,
           response: {
             204: { type: "null" },
             ...createErrorResponses([

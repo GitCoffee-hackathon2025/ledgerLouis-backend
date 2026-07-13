@@ -113,7 +113,10 @@ CREATE TABLE "users" (
 CREATE TABLE "companies" (
 	"id" char(26) PRIMARY KEY NOT NULL,
 	"name" varchar(150) NOT NULL,
-	"cnpj" varchar(14) NOT NULL,
+	"cnpj" char(14) NOT NULL,
+	"email" varchar(150),
+	"cep" char(8),
+	"phone" varchar(11),
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp,
 	"deleted_at" timestamp
@@ -203,6 +206,8 @@ CREATE UNIQUE INDEX "uq_jwt_keys_kid" ON "jwt_keys" USING btree ("kid");--> stat
 CREATE UNIQUE INDEX "uq_refresh_token_hash" ON "refresh_tokens" USING btree ("token_hash");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_users_email" ON "users" USING btree ("email");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_companies_cnpj" ON "companies" USING btree ("cnpj");--> statement-breakpoint
+CREATE UNIQUE INDEX "uq_companies_email" ON "companies" USING btree ("email");--> statement-breakpoint
+CREATE UNIQUE INDEX "uq_companies_phone" ON "companies" USING btree ("phone");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_company_users_membership" ON "company_users" USING btree ("company_id","user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_token_invites" ON "invites" USING btree ("token");--> statement-breakpoint
 CREATE UNIQUE INDEX "uq_projects_company_name" ON "projects" USING btree ("company_id","name");

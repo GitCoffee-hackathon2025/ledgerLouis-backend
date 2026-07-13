@@ -1,13 +1,11 @@
 import { createCompanyRepository } from "../repositories/company.repository.js";
 import { AppError } from "../../../shared/errors/domain/errors.js";
 import { generateId, type ULID } from "../../../domain/shared/id.js";
-import { isUniqueConstraint } from "../../../infrastructure/database/errors/isUniqueConstraint.js";
+import { getUniqueConstraint } from "../../../infrastructure/database/errors/getUniqueConstraint.js";
 import type { createMemberRepository } from "../repositories/member.repository.js";
 import type { createMemberService } from "./member.service.js";
 
-/* 
-Quando for criado a base de companyUser deve ser adicionado a validação da permissão que o usuário possui
-*/
+type Optional = string | undefined;
 
 export const createCompanyService = (
   companyRepo: ReturnType<typeof createCompanyRepository>,
@@ -15,26 +13,47 @@ export const createCompanyService = (
   memberService: ReturnType<typeof createMemberService>,
 ) => ({
   async find(companyId: ULID, userId: ULID) {
-    await memberService.assertRole(companyId, userId);
-    return companyRepo.findById(companyId);
+    const found = await memberService.assertRole(companyId, userId);
+    if (!found) throw new AppError("COMPANY_NOT_FOUND");
+    
+    return found;
   },
 
   async list() {
     return companyRepo.list();
   },
 
-  async create(userId: ULID, name: string, cnpj: string) {
-    name = name.trim();
-    cnpj = cnpj.replace(/\D/g, "");
+  async create(
+    userId: ULID,
+    data: {
+      name: string;
+      cnpj: string;
+      email: Optional;
+      cep: Optional;
+      phone: Optional;
+    },
+  ) {
+    data.name = data.name.trim();
+    data.cnpj = data.cnpj.replace(/\D/g, "");
 
     const id = generateId();
 
     try {
-      await companyRepo.create({ id, name, cnpj });
+      await companyRepo.create({ id, ...data });
     } catch (error) {
-      if (isUniqueConstraint(error, "uq_companies_cnpj"))
-        throw new AppError("CNPJ_ALREADY_EXISTS");
-      throw error;
+      switch (getUniqueConstraint(error, ["uq_companies_cnpj"])) {
+        case "uq_companies_cnpj":
+          throw new AppError("CNPJ_ALREADY_EXISTS");
+
+        case "uq_companies_email":
+          throw new AppError("EMAIL_ALREADY_EXISTS");
+
+        case "uq_companies_phone":
+          throw new AppError("PHONE_ALREADY_EXISTS");
+
+        default:
+          throw error;
+      }
     }
 
     await memberRepo.create({
@@ -43,17 +62,27 @@ export const createCompanyService = (
       role: "owner",
     });
 
-    return { id, name, cnpj };
+    return { id, name, cnpj: data.cnpj };
   },
 
-  async update(companyId: ULID, userId: ULID, name: string) {
-    await memberService.assertRole(companyId, userId, ["owner"]);
+  // async update(
+  //   companyId: ULID,
+  //   userId: ULID,
+  //   data: Partial<{
+  //     name: string;
+  //     email: string;
+  //     cep: string;
+  //     phone: string;
+  //   }>,
+  // ) {
+  //   await memberService.assertRole(companyId, userId, ["owner"]);
 
-    name = name.trim();
-    await companyRepo.updateName(companyId, name);
+  //   data.name &&= data.name.trim();
 
-    return companyRepo.findById(companyId);
-  },
+  //   await companyRepo.update(companyId, data);
+
+  //   return companyRepo.findById(companyId);
+  // },
 
   async delete(companyId: ULID, userId: ULID) {
     await memberService.assertRole(companyId, userId, ["owner"]);
