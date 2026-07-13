@@ -21,12 +21,12 @@
   "license": "ISC",
   "author": "William Chormiak",
   "type": "module",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch server.ts",
     "build": "tsc",
-    "preview": "node dist/src/server.js",
-    "start": "node dist/src/server.js",
+    "preview": "node dist/server.js",
+    "start": "node dist/server.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"

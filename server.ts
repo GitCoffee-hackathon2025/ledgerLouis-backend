@@ -1,7 +1,7 @@
 import dns from "dns";
 dns.setDefaultResultOrder("ipv4first");
 
-import buildApp from "./app.js";
+import buildApp from "./src/app.js";
 
 async function start() {
   const app = await buildApp();
