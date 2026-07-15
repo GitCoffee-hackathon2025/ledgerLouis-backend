@@ -1,6 +1,9 @@
 import "fastify";
+
 import type { Env } from "../schemas/env.schema.js";
 import type { DB } from "./db.ts";
+
+import type { IRedisClient } from "bullmq";
 
 import type { buildAuthModule } from "../modules/auth/module.js";
 import { type ULID } from "../domain/shared/id.ts";
