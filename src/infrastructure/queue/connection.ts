@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import { createClient } from "redis";
 import { createNodeRedisClient } from "bullmq";
 
@@ -51,10 +48,7 @@ export async function createProducerConnection() {
 
   await client.connect();
 
-  return {
-    raw: client,
-    connection: createNodeRedisClient(client),
-  };
+  return { raw: client, connection: createNodeRedisClient(client) };
 }
 
 export async function createWorkerConnection() {
@@ -65,8 +59,5 @@ export async function createWorkerConnection() {
 
   await client.connect();
 
-  return {
-    raw: client,
-    connection: createNodeRedisClient(client),
-  };
+  return { raw: client, connection: createNodeRedisClient(client) };
 }
