@@ -22,6 +22,7 @@ export const authRouter = (): FastifyPluginAsync => async (app) => {
   app.post<LoginRoute>(
     "/login",
     {
+      config: { rateLimit: { max: 10, timeWindow: "1 minute" } },
       schema: {
         tags: ["auth"],
         summary: "Login user",
@@ -42,6 +43,7 @@ export const authRouter = (): FastifyPluginAsync => async (app) => {
   app.post<RefreshRoute>(
     "/refresh",
     {
+      config: { rateLimit: { max: 30, timeWindow: "1 minute" } },
       schema: {
         tags: ["auth"],
         summary: "Refresh token",
