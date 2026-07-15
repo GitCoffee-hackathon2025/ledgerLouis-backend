@@ -18,7 +18,7 @@ import { attachWorkerEvents } from "./worker.events.js";
 // Modules
 import { buildCompanyWorkers } from "../../modules/companies/queue/workers.js";
 
-type WorkerBuilder = (connection: IRedisClient) => Record<string, Worker>;
+type WorkerBuilder = (adapter: IRedisClient) => Record<string, Worker>;
 
 // Centralizador dos workers dos modulos
 const builds: Record<string, WorkerBuilder> = {
@@ -27,25 +27,25 @@ const builds: Record<string, WorkerBuilder> = {
 
 export interface WorkerContext {
   workers: Worker[];
-  connection: RedisClientType;
+  adapter: RedisClientType;
 }
 
 // Funções que gerenciam o ciclo de vida do service worker externo (pos-redis)
 export async function registerWorkers(): Promise<WorkerContext> {
-  const { raw, connection } = await createWorkerConnection();
+  const { raw, adapter } = await createWorkerConnection();
 
   const workers: Worker[] = [];
 
   for (const [moduleName, build] of Object.entries(builds))
-    for (const [workerName, worker] of Object.entries(build(connection))) {
+    for (const [workerName, worker] of Object.entries(build(adapter))) {
       attachWorkerEvents(moduleName + "." + workerName, worker);
       workers.push(worker);
     }
 
-  return { workers, connection: raw };
+  return { workers, adapter: raw };
 }
 
-export async function closeWorkers({ workers, connection }: WorkerContext) {
+export async function closeWorkers({ workers, adapter }: WorkerContext) {
   await Promise.all(workers.map((worker) => worker.close()));
-  await connection.quit();
+  await adapter.quit();
 }

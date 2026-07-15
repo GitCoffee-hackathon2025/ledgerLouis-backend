@@ -48,7 +48,7 @@ export async function createProducerConnection() {
 
   await client.connect();
 
-  return { raw: client, connection: createNodeRedisClient(client) };
+  return { raw: client, adapter: createNodeRedisClient(client) };
 }
 
 export async function createWorkerConnection() {
@@ -59,5 +59,5 @@ export async function createWorkerConnection() {
 
   await client.connect();
 
-  return { raw: client, connection: createNodeRedisClient(client) };
+  return { raw: client, adapter: createNodeRedisClient(client) };
 }
