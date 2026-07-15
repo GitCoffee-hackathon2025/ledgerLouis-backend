@@ -5,9 +5,9 @@ import { createProducerConnection } from "../../infrastructure/queue/connection.
 
 export default fp(
   async function (app: FastifyInstance) {
-    const { raw, connection } = await createProducerConnection();
+    const { raw, adapter } = await createProducerConnection();
 
-    app.decorate("redis", connection);
+    app.decorate("redis", {raw, adapter});
 
     app.addHook("onClose", async () => {
       await raw.quit();
