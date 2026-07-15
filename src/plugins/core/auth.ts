@@ -23,11 +23,18 @@ export default fp(
 
       const payload = await auth.authService.verifyAccess(token);
 
+      await app.limiter.assert({
+        scope: "user",
+        id: payload.sub,
+        max: 250,
+        window: 60,
+      });
+
       request.authUser = payload;
     });
   },
   {
     name: "auth",
-    dependencies: ["env", "db"],
+    dependencies: ["env", "db", "rateLimit"],
   },
 );
