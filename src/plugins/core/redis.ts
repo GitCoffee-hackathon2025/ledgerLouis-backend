@@ -15,6 +15,6 @@ export default fp(
   },
   {
     name: "redis",
-    dependencies: ["env", "db", "auth"],
+    dependencies: ["env", "db"],
   },
 );
