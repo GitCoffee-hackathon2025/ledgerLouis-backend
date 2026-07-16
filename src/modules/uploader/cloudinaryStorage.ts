@@ -1,4 +1,4 @@
-import { cloudinary } from "../../plugins/core/cloudinary.js";
+import { v2 as Cloudinary, type UploadApiResponse } from "cloudinary";
 
 import type {
   StorageProvider,
@@ -6,18 +6,14 @@ import type {
   SavedFile,
 } from "./storageProvider.js";
 
-export class CloudinaryStorageProvider
-  implements StorageProvider
-{
+export class CloudinaryStorageProvider implements StorageProvider {
+  constructor(private readonly cloudinary: typeof Cloudinary) {}
+
   readonly provider = "cloudinary" as const;
 
-  async save({
-    filename,
-    folder,
-    file,
-  }: SaveFileParams): Promise<SavedFile> {
-    const result = await new Promise<any>((resolve, reject) => {
-      const upload = cloudinary.uploader.upload_stream(
+  async save({ filename, folder, file }: SaveFileParams): Promise<SavedFile> {
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      const upload = this.cloudinary.uploader.upload_stream(
         {
           folder,
           public_id: filename,
@@ -28,9 +24,13 @@ export class CloudinaryStorageProvider
             reject(error);
             return;
           }
+          if (!result) {
+            reject(new Error("Cloudinary did not return an upload result."));
+            return;
+          }
 
           resolve(result);
-        }
+        },
       );
 
       file.pipe(upload);
@@ -38,11 +38,11 @@ export class CloudinaryStorageProvider
 
     return {
       storageName: result.public_id,
-      path: result.secure_url,
+      location: result.secure_url,
     };
   }
 
   async delete(storageName: string): Promise<void> {
-    await cloudinary.uploader.destroy(storageName);
+    await this.cloudinary.uploader.destroy(storageName);
   }
 }

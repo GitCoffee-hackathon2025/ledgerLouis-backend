@@ -1,6 +1,7 @@
 export const companyErrors = {
   COMPANY_NOT_FOUND: [404, "Company not found"],
   CNPJ_ALREADY_EXISTS: [409, "CNPJ already in use"],
+  PHONE_ALREADY_EXISTS: [409, "Phone already in use"],
 } as const;
 
 export const memberErrors = {

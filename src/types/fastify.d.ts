@@ -6,6 +6,10 @@ import type { DB } from "./db.ts";
 import type { RedisClientType } from "redis";
 import type { IRedisClient } from "bullmq";
 
+import type { StorageProvider } from "../modules/uploader/storageProvider.ts";
+import { v2 as Cloudinary } from "cloudinary";
+
+import type { buildAuthModule } from "../modules/auth/module.js";
 import { type ULID } from "../domain/shared/id.ts";
 
 import type { RateLimitOptions } from "../infrastructure/rate-limit/service.ts";
@@ -20,6 +24,10 @@ declare module "fastify" {
       raw: RedisClientType; // Cliente redis simples, usado em outros serviços
       adapter: IRedisClient; // Cliente redis bullmq, usado nos producers queue
     };
+    
+    // Arquivos
+    storage: StorageProvider;
+    cloudinary: typeof Cloudinary;
 
     // Função para declarar uma rota antenticada e configura automatimente
     verifyAccess: (

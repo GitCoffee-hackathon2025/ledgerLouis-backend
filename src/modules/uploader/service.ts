@@ -2,6 +2,7 @@ import type { MultipartFile } from "@fastify/multipart";
 import { generateId } from "../../domain/shared/id.js";
 import type { StorageProvider } from "./storageProvider.js";
 import type { createFileRepository } from "./repository.js";
+import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createUploadService = (
   storage: StorageProvider,
@@ -14,11 +15,15 @@ export const createUploadService = (
     const safeFilename = file.filename.replace(/[^a-zA-Z0-9.-]/g, "_");
     const filename = `${generateId()}-${safeFilename}`;
 
-    const saved = await storage.save({
-      filename,
-      folder: "images",
-      file: file.file,
-    });
+    const saved = await storage
+      .save({
+        filename,
+        folder: "images",
+        file: file.file,
+      })
+      .catch(() => {
+        throw new AppError("UPLOAD_FAILED");
+      });
 
     return fileRepository.create({
       id: generateId(),
@@ -26,7 +31,7 @@ export const createUploadService = (
       storageName: saved.storageName,
       mimeType: file.mimetype,
       provider: storage.provider,
-      path: saved.path,
+      path: saved.location,
       size: file.file.bytesRead,
     });
   },

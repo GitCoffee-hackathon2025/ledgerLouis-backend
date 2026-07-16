@@ -1,6 +1,6 @@
 {
-  "id": "677c2bcd-6c97-4df1-b14e-0e6c04afea6a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "ed44845d-9d65-4dcb-91d2-9e1c5cc8b483",
+  "prevId": "ad968c24-393f-4a39-8ca9-8af9237e4fd4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -25,6 +25,12 @@
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "numeric(15, 2)",
+          "primaryKey": false,
+          "notNull": false
         },
         "type": {
           "name": "type",
@@ -86,6 +92,27 @@
             },
             {
               "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_accounts_company_value": {
+          "name": "uq_accounts_company_value",
+          "columns": [
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "value",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -227,7 +254,7 @@
           "name": "account_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "entryType": {
           "name": "entryType",
@@ -444,7 +471,7 @@
           "name": "company_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "project_id": {
           "name": "project_id",
@@ -457,6 +484,19 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "entryType": {
+          "name": "entryType",
+          "type": "entry_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -927,27 +967,9 @@
         },
         "cnpj": {
           "name": "cnpj",
-          "type": "char(14)",
+          "type": "varchar(14)",
           "primaryKey": false,
           "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(150)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "cep": {
-          "name": "cep",
-          "type": "char(8)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "phone": {
-          "name": "phone",
-          "type": "varchar(11)",
-          "primaryKey": false,
-          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -975,36 +997,6 @@
           "columns": [
             {
               "expression": "cnpj",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uq_companies_email": {
-          "name": "uq_companies_email",
-          "columns": [
-            {
-              "expression": "email",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uq_companies_phone": {
-          "name": "uq_companies_phone",
-          "columns": [
-            {
-              "expression": "phone",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

@@ -10,7 +10,7 @@ export function buildUserModule(app: FastifyInstance) {
   const repo = createUserRepository(app.db);
 
   const auth = buildAuthModule(app);
-  const uploader = buildUploaderModule(app.db);
+  const uploader = buildUploaderModule(app.db, app.storage);
 
   const userService = createUserService(repo, auth.authService, uploader);
 

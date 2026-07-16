@@ -9,14 +9,24 @@ export const createCompanyRepository = (db: DB) => ({
     return db.insert(companies).values(data);
   },
 
-  async updateName(
+  async update(
     id: NonNullable<CompanyInsert["id"]>,
-    name: CompanyInsert["name"],
+    data: Partial<Pick<CompanyInsert, "name" | "email" | "cep" | "phone">>,
   ) {
     return db
       .update(companies)
-      .set({ name, updatedAt: new Date() })
-      .where(and(eq(companies.id, id), isNull(companies.deletedAt)));
+      .set({ ...data, updatedAt: new Date() })
+      .where(and(eq(companies.id, id), isNull(companies.deletedAt)))
+      .returning({
+        id: companies.id,
+        name: companies.name,
+        email: companies.email,
+        cep: companies.cep,
+        phone: companies.phone,
+        createAt: companies.createdAt,
+        updatedAt: companies.updatedAt,
+      })
+      .then(([row]) => row);
   },
 
   async findById(id: NonNullable<CompanyInsert["id"]>) {
