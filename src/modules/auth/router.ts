@@ -11,10 +11,8 @@ import {
   type LogoutRoute,
   type LogoutAllRoute,
 } from "./schema.js";
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../shared/errors/domain/groups.js";
 
 export const authRouter = (): FastifyPluginAsync => async (app) => {
   const controller = createAuthController();

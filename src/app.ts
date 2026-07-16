@@ -13,17 +13,6 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 // Plugin de inicialização das variaveis de ambiente
 import env from "./plugins/core/env.js";
 
-/* 
-Para serviços pesados como emails e criação de pdf's será necessário instalar o BullMQ junto com o Redis e configura-los.
-Fluxo:
-Fastify API → AuthService → AuthService → EmailQueue.add() → Redis → BullMQ Worker → SMTP provider
-
-Aproveitaremos a instalação do Redis para criar o "rate-limit" com o @fastify/rate-limit
-Funcionamento dessa arquitetura:
-request → verifica IP limit → se autenticado → verifica user limit
-O limite por IP não é para limitar usuários, é para limitar origens de tráfego.
-*/
-
 // Cria o path global para utilização do Autoload
 import { fileURLToPath } from "url";
 import path, { dirname, join } from "path";

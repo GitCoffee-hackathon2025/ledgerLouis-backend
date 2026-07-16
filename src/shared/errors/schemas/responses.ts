@@ -1,23 +1,20 @@
-import { Type, type TSchema } from "@sinclair/typebox";
+import { Type, type TObject, type TSchema } from "@sinclair/typebox";
+
 import { errorMap, type ErrorCode } from "../definitions/map.js";
+import { errorPayloadSchemas } from "../definitions/payloads.js";
 
-type ErrorMessage<E extends ErrorCode> = (typeof errorMap)[E][1];
+function createErrorSchema<E extends ErrorCode>(code: E) {
+  const [, message] = errorMap[code];
 
-const specialErrors: Partial<Record<ErrorCode, TSchema>> = {
-  VALIDATION_ERROR: Type.Object({
-    error: Type.Literal("VALIDATION_ERROR"),
-    message: Type.Literal(errorMap.VALIDATION_ERROR[1]),
-    fields: Type.Record(Type.String(), Type.Array(Type.String())),
-  }),
-};
+  const payload = errorPayloadSchemas[
+    code as keyof typeof errorPayloadSchemas
+  ] as TObject | undefined;
 
-function createErrorSchema<E extends ErrorCode>(
-  code: E,
-  message: ErrorMessage<E>,
-) {
   return Type.Object({
     error: Type.Literal(code),
-    message: Type.String(),
+    message: Type.Literal(message),
+
+    ...(payload?.properties ?? {}),
   });
 }
 
@@ -25,11 +22,11 @@ export function createErrorResponses<T extends ErrorCode[]>(errors: [...T]) {
   const grouped = new Map<number, TSchema[]>();
 
   for (const code of errors) {
-    const [status, message] = errorMap[code];
-
-    const schema = specialErrors[code] ?? createErrorSchema(code, message);
+    const [status] = errorMap[code];
+    const schema = createErrorSchema(code);
 
     if (!grouped.has(status)) grouped.set(status, []);
+
     grouped.get(status)!.push(schema);
   }
 
@@ -40,13 +37,3 @@ export function createErrorResponses<T extends ErrorCode[]>(errors: [...T]) {
     ]),
   );
 }
-
-export const routeGroups = {
-  common: ["BAD_REQUEST", "INTERNAL_ERROR", "UNSUPPORTED_MEDIA_TYPE"],
-  form: ["INVALID_JSON", "VALIDATION_ERROR"],
-  auth: ["INVALID_TOKEN", "TOKEN_EXPIRED", "UNAUTHORIZED"],
-  user: ["USER_NOT_FOUND", "EMAIL_ALREADY_EXISTS"],
-  permission: ["FORBIDDEN"],
-  company: ["COMPANY_NOT_FOUND"],
-  member: ["MEMBER_NOT_FOUND"],
-} as const;

@@ -19,8 +19,9 @@ export function createRateLimitService(redis: RedisClientType) {
       if (requests === 1) await redis.multi().expire(key, window).exec();
 
       if (requests > max)
-        // const retryAfter = await redis.ttl(key);
-        throw new AppError("RATE_LIMIT_EXCEEDED");
+        throw new AppError("RATE_LIMIT_EXCEEDED", {
+          retryAfter: await redis.ttl(key),
+        });
     },
   };
 }
