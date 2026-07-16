@@ -15,15 +15,11 @@ import {
   type UpdateRoute,
 } from "./schema.js";
 
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../shared/errors/domain/groups.js";
 
 export const userRouter = (): FastifyPluginAsync => async (app) => {
-  const module = buildUserModule(app);
-
-  const controller = createUserController(app.auth.authService, module);
+  const controller = createUserController(buildUserModule(app));
 
   app.post<RegisterRoute>(
     "/register",
