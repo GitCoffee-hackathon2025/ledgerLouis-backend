@@ -12,10 +12,10 @@ export default fp(
     const scheduler = startKeyRotation(auth.keyService);
     await scheduler.start();
 
-    app.decorate("auth", auth);
+    // app.decorate("auth", auth);
 
-    app.decorate("verifyAccess", async function (request, reply) {
-      const header = request.headers.authorization;
+    app.decorate("verifyAccess", async function (req, res) {
+      const header = req.headers.authorization;
 
       if (!header?.startsWith("Bearer ")) throw new AppError("UNAUTHORIZED");
 
@@ -23,11 +23,18 @@ export default fp(
 
       const payload = await auth.authService.verifyAccess(token);
 
-      request.authUser = payload;
+      await app.limiter.assert(res, {
+        by: "user",
+        id: payload.sub,
+        max: 250,
+        window: 60,
+      });
+
+      req.authUser = payload;
     });
   },
   {
     name: "auth",
-    dependencies: ["env", "db"],
+    dependencies: ["env", "db", "rateLimit"],
   },
 );

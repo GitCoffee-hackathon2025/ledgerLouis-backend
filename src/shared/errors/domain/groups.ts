@@ -1,0 +1,14 @@
+export const routeGroups = {
+  common: [
+    "BAD_REQUEST",
+    "INTERNAL_ERROR",
+    "RATE_LIMIT_EXCEEDED",
+    "UNSUPPORTED_MEDIA_TYPE",
+  ],
+  form: ["INVALID_JSON", "VALIDATION_ERROR"],
+  auth: ["INVALID_TOKEN", "TOKEN_EXPIRED", "UNAUTHORIZED"],
+  user: ["USER_NOT_FOUND", "EMAIL_ALREADY_EXISTS"],
+  permission: ["FORBIDDEN"],
+  company: ["COMPANY_NOT_FOUND"],
+  member: ["MEMBER_NOT_FOUND"],
+} as const;

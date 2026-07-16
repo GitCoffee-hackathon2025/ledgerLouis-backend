@@ -20,6 +20,9 @@ export const EnvSchema = Type.Object({
   // Banco de dados
   DATABASE_URL: Type.String({ format: "uri" }),
 
+  // Redis
+  REDIS_URL: Type.String({ format: "uri" }),
+  
   // Local de armazenamento dos arquivos
   STORAGE_DRIVER: Type.Union(
     [Type.Literal("local"), Type.Literal("cloudinary")],

@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { buildAuthModule } from "./module.js";
 import { createAuthController } from "./controller.js";
 import { SchemaEnablesAuth } from "../../schemas/common/auth.schema.js";
 import {
@@ -11,17 +12,16 @@ import {
   type LogoutRoute,
   type LogoutAllRoute,
 } from "./schema.js";
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../shared/errors/domain/groups.js";
 
 export const authRouter = (): FastifyPluginAsync => async (app) => {
-  const controller = createAuthController();
+  const controller = createAuthController(buildAuthModule(app));
 
   app.post<LoginRoute>(
     "/login",
     {
+      config: { rateLimit: { max: 10, window: 60 } },
       schema: {
         tags: ["auth"],
         summary: "Login user",
@@ -42,6 +42,7 @@ export const authRouter = (): FastifyPluginAsync => async (app) => {
   app.post<RefreshRoute>(
     "/refresh",
     {
+      config: { rateLimit: { max: 30, window: 60 } },
       schema: {
         tags: ["auth"],
         summary: "Refresh token",

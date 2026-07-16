@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-import { handleFastifyError } from "../adapters/fastify.adapter.js";
+import { handleFastifyError } from "../adapters/fastify.mapper.js";
 import { isAjvError } from "../../../infrastructure/validation/ajv/errors/isAjvError.js";
 import { transformAjvErrors } from "../../../infrastructure/validation/ajv/errors/transformAjvErrors.js";
 import { AppError } from "../domain/errors.js";
@@ -21,14 +21,14 @@ export function handleError(
     });
 
   if (typeof code === "string" && code.startsWith("FST_"))
-    return handleFastifyError(error, res);
+    error = handleFastifyError(error);
 
   // AppError
-  if (error instanceof AppError)
-    return res.status(error.statusCode).send({
-      error: error.code,
-      message: error.message,
-    });
+  if (error instanceof AppError) {
+    const { statusCode, code, message, ...payload } = error;
+
+    return res.status(statusCode).send({ error: code, message, ...payload });
+  }
 
   // fallback
   req.log.error(error);

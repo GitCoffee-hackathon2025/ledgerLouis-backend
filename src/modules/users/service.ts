@@ -1,5 +1,6 @@
 import type { MultipartFile } from "@fastify/multipart";
 import type { buildUploaderModule } from "../uploader/module.js";
+import type { buildAuthModule } from "../auth/module.js";
 
 import { createUserRepository } from "./repository.js";
 import { generateId, type ULID } from "../../domain/shared/id.js";
@@ -9,6 +10,7 @@ import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
+  authService: ReturnType<typeof buildAuthModule>["authService"],
   uploader: ReturnType<typeof buildUploaderModule>,
 ) => ({
   async register(name: string, email: string, password: string) {
@@ -76,6 +78,7 @@ export const createUserService = (
   },
 
   async delete(id: ULID) {
+    await authService.logoutAll(id);
     await repo.delete(id);
   },
 

@@ -20,10 +20,8 @@ import {
   type RemoveMemberRoute,
 } from "../schemas/member.schema.js";
 
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../../shared/errors/domain/groups.js";
 
 export const memberRoutes =
   (

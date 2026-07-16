@@ -1,6 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import type { buildUserModule } from "./module.js";
-import type { buildAuthModule } from "../auth/module.js";
 import type {
   RegisterRoute,
   UpdateRoute,
@@ -12,7 +11,6 @@ import type {
 import { AppError } from "../../shared/errors/domain/errors.js";
 
 export const createUserController = (
-  authService: ReturnType<typeof buildAuthModule>["authService"],
   user: ReturnType<typeof buildUserModule>,
 ) => ({
   async register(req: FastifyRequest<RegisterRoute>, res: FastifyReply) {
@@ -54,7 +52,6 @@ export const createUserController = (
   },
 
   async delete(req: FastifyRequest<DeleteRoute>, reply: FastifyReply) {
-    await authService.logoutAll(req.authUser.sub);
     await user.userService.delete(req.authUser.sub);
     return reply.status(204).send();
   },
