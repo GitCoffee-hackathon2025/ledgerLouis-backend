@@ -1,4 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
+import type { buildAuthModule } from "./module.js";
 import { AppError } from "../../shared/errors/domain/errors.js";
 import type {
   LoginRoute,
@@ -7,9 +8,10 @@ import type {
   LogoutAllRoute,
 } from "./schema.js";
 
-export const createAuthController = () => ({
+export const createAuthController = (
+  auth: ReturnType<typeof buildAuthModule>,
+) => ({
   async login(req: FastifyRequest<LoginRoute>, res: FastifyReply) {
-    const { auth } = req.server;
     const { email, password } = req.body;
 
     const tokens = await auth.authService.login(email, password, {
@@ -22,7 +24,6 @@ export const createAuthController = () => ({
   },
 
   async refresh(req: FastifyRequest<RefreshRoute>, res: FastifyReply) {
-    const { auth } = req.server;
     const { refreshToken } = req.body;
 
     const tokens = await auth.authService.refresh(refreshToken);
@@ -30,7 +31,6 @@ export const createAuthController = () => ({
   },
 
   async logout(req: FastifyRequest<LogoutRoute>, res: FastifyReply) {
-    const { auth } = req.server;
     if (!req.authUser) throw new AppError("UNAUTHORIZED");
 
     await auth.authService.logout(req.authUser.sid);
@@ -38,7 +38,6 @@ export const createAuthController = () => ({
   },
 
   async logoutAll(req: FastifyRequest<LogoutAllRoute>, res: FastifyReply) {
-    const { auth } = req.server;
     if (!req.authUser) throw new AppError("UNAUTHORIZED");
 
     await auth.authService.logoutAll(req.authUser.sub);

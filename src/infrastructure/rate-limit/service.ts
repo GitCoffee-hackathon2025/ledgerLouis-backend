@@ -1,27 +1,39 @@
 import type { RedisClientType } from "redis";
 
-import { AppError } from "../../shared/errors/domain/errors.js";
-
 export interface RateLimitOptions {
-  scope: string;
+  by: string;
   id: string;
   max: number;
   window: number;
 }
 
+interface RateLimitResult {
+  allowed: boolean;
+  limit: number;
+  remaining: number;
+  retryAfter: number;
+}
+
 export function createRateLimitService(redis: RedisClientType) {
   return {
-    async assert({ scope, id, max, window }: RateLimitOptions) {
-      const key = `rate-limit:${scope}:${id}`;
+    async consume({
+      by,
+      id,
+      max,
+      window,
+    }: RateLimitOptions): Promise<RateLimitResult> {
+      const key = `rate-limit:${by}:${id}`;
 
       const requests = await redis.incr(key);
 
       if (requests === 1) await redis.multi().expire(key, window).exec();
 
-      if (requests > max)
-        throw new AppError("RATE_LIMIT_EXCEEDED", {
-          retryAfter: await redis.ttl(key),
-        });
+      return {
+        allowed: requests > max,
+        limit: max,
+        remaining: Math.max(0, max - requests),
+        retryAfter: await redis.ttl(key),
+      };
     },
   };
 }

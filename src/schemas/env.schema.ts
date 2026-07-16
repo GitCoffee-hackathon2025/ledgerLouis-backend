@@ -15,10 +15,14 @@ export const EnvSchema = Type.Object({
     { default: "development" },
   ),
   // formato (sem "/" no final): "http://localhost, https:vercel.app"
-  ALLOWED_ORIGINS: Type.String({ default: "" }), 
+  ALLOWED_ORIGINS: Type.String({ default: "" }),
 
   // Banco de dados
   DATABASE_URL: Type.String({ format: "uri" }),
+
+  // Redis
+  REDIS_URL: Type.String({ format: "uri" }),
+
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
 });

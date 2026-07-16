@@ -1,48 +1,54 @@
 import fp from "fastify-plugin";
-import type { FastifyInstance } from "fastify";
-import fastifyRateLimit from "@fastify/rate-limit";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { AppError } from "../../shared/errors/domain/errors.js";
-import { createRateLimitService } from "../../infrastructure/rate-limit/service.js";
+import {
+  createRateLimitService,
+  type RateLimitOptions,
+} from "../../infrastructure/rate-limit/service.js";
 
 export default fp(
   async function (app: FastifyInstance) {
-    // await app.register(fastifyRateLimit, {
-    //   global: true,
+    const rateLimit = createRateLimitService(app.redis.raw);
 
-    //   max: 100,
-    //   timeWindow: "1 minute",
+    async function assert(res: FastifyReply, options: RateLimitOptions) {
+      const result = await rateLimit.consume(options);
 
-    //   redis: app.redis.raw,
+      res
+        .header("X-RateLimit-Limit", result.limit)
+        .header("X-RateLimit-Remaining", result.remaining)
+        .header("X-RateLimit-Reset", result.retryAfter);
 
-    //   addHeaders: {
-    //     "x-ratelimit-limit": true,
-    //     "x-ratelimit-remaining": true,
-    //     "x-ratelimit-reset": true,
-    //     "retry-after": true,
-    //   },
+      if (!result.allowed) {
+        res.header("Retry-After", result.retryAfter);
 
-    //   errorResponseBuilder(request, context) {
-    //     const { statusCode, code, message, ...payload } = new AppError(
-    //       "RATE_LIMIT_EXCEEDED",
-    //       {
-    //         retryAfter: Number(context.after),
-    //       },
-    //     );
+        throw new AppError("RATE_LIMIT_EXCEEDED", {
+          retryAfter: result.retryAfter,
+        });
+      }
+    }
 
-    //     return { error: code, message, ...payload };
-    //   },
-    // });
+    app.addHook("onRequest", async (req: FastifyRequest, res: FastifyReply) => {
+      const config = req.routeOptions.config?.rateLimit;
 
-    app.addHook("onRequest", async (req) => {
-      await app.limiter.assert({
-        scope: "ip",
+      // Rota com rateLimit customizado
+      if (config)
+        await assert(res, {
+          by: config.by ?? "ip",
+          id: req.ip,
+          max: config.max,
+          window: config.window,
+        });
+
+      // RateLimit padrão
+      await assert(res, {
+        by: "ip",
         id: req.ip,
         max: 100,
         window: 60,
       });
     });
 
-    app.decorate("limiter", createRateLimitService(app.redis.raw));
+    app.decorate("limiter", { assert });
   },
   {
     name: "rateLimit",
