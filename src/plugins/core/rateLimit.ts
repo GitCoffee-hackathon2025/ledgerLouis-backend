@@ -27,7 +27,17 @@ export default fp(
       }
     }
 
+    app.addHook("onRoute", (route) => {
+      if (route.url.startsWith("/docs"))
+        route.config = {
+          ...route.config,
+          disableRateLimit: true,
+        };
+    });
+
     app.addHook("onRequest", async (req: FastifyRequest, res: FastifyReply) => {
+      if (req.routeOptions.config.disableRateLimit) return;
+
       const config = req.routeOptions.config?.rateLimit;
 
       // Rota com rateLimit customizado

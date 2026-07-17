@@ -43,6 +43,8 @@ declare module "fastify" {
 
   // Possibilita configurar o rateLimit de uma rota especifica (atraves do config)
   interface FastifyContextConfig {
+    disableRateLimit?: true;
+    
     rateLimit?: {
       by?: Lowercase<string>;
       max: number;
