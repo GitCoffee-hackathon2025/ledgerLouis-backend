@@ -17,7 +17,7 @@ export const createAccountService = (
   },
 
   async list(companyId: ULID) {
-    console.log("Listando contas para a empresa:", companyId);
+    // console.log("Listando contas para a empresa:", companyId);
     return repo.list(companyId);
   },
   async createDefault(companyId: ULID) {

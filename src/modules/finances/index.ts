@@ -5,11 +5,9 @@ import { buildTransactionModule } from "./module.js";
 import { transactionRoutes } from "./routes/transaction.router.js";
 
 export default async function (app: FastifyInstance) {
-  const transactionModule = buildTransactionModule(app);
+  const module = buildTransactionModule(app.db);
 
-  await app.register(transactionRoutes(transactionModule.transactionService), {
+  await app.register(transactionRoutes(module.transactionService), {
     prefix: "/companies",
   });
 }
-
-

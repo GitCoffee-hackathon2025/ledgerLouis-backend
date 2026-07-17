@@ -50,7 +50,7 @@ export const createUserService = (
   
 
 
-  console.log("URL da imagem:", url);
+  // console.log("URL da imagem:", url);
   await repo.uploadAvatar(id, url);
 
   return { fileId: uploaded.id, avatarUrl: url };

@@ -1,4 +1,4 @@
-import { type FastifyInstance } from "fastify";
+import type { DB } from "../../types/db.js";
 
 import { createKeyRepository } from "./repositories/key.repository.js";
 import { createSessionRepository } from "./repositories/session.repository.js";
@@ -11,9 +11,7 @@ import { createRefreshService } from "./services/refresh.service.js";
 import { createTokenService } from "./services/token.service.js";
 import { createAuthService } from "./service.js";
 
-export function buildAuthModule(app: FastifyInstance) {
-  const db = app.db;
-
+export function buildAuthModule(db: DB) {
   const keyRepo = createKeyRepository(db);
   const sessionRepo = createSessionRepository(db);
   const refreshRepo = createRefreshRepository(db);

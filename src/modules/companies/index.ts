@@ -7,7 +7,7 @@ import { companyUpdateRoutes } from "./routes/company.update.router.js";
 import { memberRoutes } from "./routes/member.router.js";
 
 export default async function (app: FastifyInstance) {
-  const { company, memberService } = buildCompanyModule(app);
+  const { company, memberService } = buildCompanyModule(app.db);
 
   await app.register(companyRoutes(company.companyService), {
     prefix: "/companies",
