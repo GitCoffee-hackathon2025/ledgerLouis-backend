@@ -17,7 +17,7 @@ import type { RateLimitOptions } from "../infrastructure/rate-limit/service.ts";
 declare module "fastify" {
   interface FastifyInstance {
     config: Env;
-    db: NodePgDatabase<typeof schema>;
+    db: DB;
 
     // Cliente Redis, o "adapter" usa o "raw" como cerebro
     redis: {
