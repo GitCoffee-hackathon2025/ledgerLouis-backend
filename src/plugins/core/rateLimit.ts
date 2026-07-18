@@ -28,7 +28,10 @@ export default fp(
     }
 
     app.addHook("onRoute", (route) => {
-      if (route.url.startsWith("/docs"))
+      if (
+        app.config.NODE_ENV === "development" &&
+        ["/docs", "/queues"].find((patch) => route.url.startsWith(patch))
+      )
         route.config = {
           ...route.config,
           disableRateLimit: true,
@@ -55,6 +58,7 @@ export default fp(
         id: req.ip,
         max: 100,
         window: 60,
+        penalty: { initial: 60, max: 3600, remember: 86400 },
       });
     });
 

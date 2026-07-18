@@ -12,8 +12,6 @@ export default fp(
     const scheduler = startKeyRotation(auth.keyService);
     await scheduler.start();
 
-    // app.decorate("auth", auth);
-
     app.decorate("verifyAccess", async function (req, res) {
       const header = req.headers.authorization;
 
