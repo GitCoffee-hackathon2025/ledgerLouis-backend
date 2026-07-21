@@ -3,7 +3,7 @@ import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 import { transactions } from "./transactions.js";
 import { accounts } from "./accounts.js";
-import { entryTypesEnum } from "../../../shared/enums/index.js";
+import { entryTypesEnum } from "../../../domain/finance/enums.js";
 
 export const entryTypes = pgEnum("entry_type", entryTypesEnum);
 

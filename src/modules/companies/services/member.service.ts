@@ -1,7 +1,7 @@
 import type { createMemberRepository } from "../repositories/member.repository.js";
 import { AppError } from "../../../shared/errors/domain/errors.js";
 import { type ULID } from "../../../domain/shared/id.js";
-import { permissionsEnum } from "../../../shared/enums/index.js";
+import { permissionsEnum } from "../../../domain/organization/enums.js";
 import type { createUserRepository } from "../../users/repository.js";
 
 export const createMemberService = (
