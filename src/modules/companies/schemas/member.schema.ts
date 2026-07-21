@@ -1,6 +1,6 @@
 import { Type, type Static } from "@sinclair/typebox";
 
-import { IdSchema } from "../../../schemas/primitives/id.schema.js";
+import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
 
 // params

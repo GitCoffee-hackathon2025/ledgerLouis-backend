@@ -1,6 +1,6 @@
 import { Type, type Static } from "@sinclair/typebox";
-import { Email, Password } from "../../schemas/primitives/user.schema.js";
-import { JwtSchema, JwtPattern } from "../../schemas/primitives/jwt.schema.js";
+import { Email, Password } from "../../api/schemas/primitives/user.schema.js";
+import { JwtSchema, JwtPattern } from "../../api/schemas/primitives/jwt.schema.js";
 
 // headers
 export const AuthHeader = Type.Object(

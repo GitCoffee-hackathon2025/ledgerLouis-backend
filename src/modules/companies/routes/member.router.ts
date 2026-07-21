@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { createMemberController } from "../controllers/member.controller.js";
 import { buildCompanyModule } from "../module.js";
 
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
+import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 
 import {
   CompanyIdParam,

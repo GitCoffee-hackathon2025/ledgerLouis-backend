@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { createCompanyUpdateController } from "../controllers/company.update.controller.js";
 import { buildCompanyModule } from "../module.js";
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
+import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 import {
   CompanyResponse,
   CompanyIdParam,

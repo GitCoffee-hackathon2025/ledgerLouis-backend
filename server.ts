@@ -4,7 +4,7 @@ dns.setDefaultResultOrder("ipv4first");
 import dotenv from "dotenv";
 dotenv.config();
 
-import buildApp from "./src/app.js";
+import buildApp from "./src/api/app.js";
 
 async function start() {
   const app = await buildApp();

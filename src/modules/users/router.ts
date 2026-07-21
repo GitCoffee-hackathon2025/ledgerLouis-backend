@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from "fastify";
 import type { buildUserModule } from "./module.js";
 import { createUserController } from "./controller.js";
 
-import { SchemaEnablesAuth } from "../../schemas/common/auth.schema.js";
+import { SchemaEnablesAuth } from "../../api/schemas/common/auth.schema.js";
 
 import {
   RegisterBody,

@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { buildTransactionModule } from "../module.js";
 import { createTransactionController } from "../controllers/transaction.controller.js";
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
+import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 import {
   accountValueResponseSchema,
   CompanyParam,

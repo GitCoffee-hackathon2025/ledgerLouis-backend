@@ -1,16 +1,16 @@
 import "fastify";
 
-import type { Env } from "../schemas/env.schema.js";
-import type { DB } from "./db.ts";
-import type { Cloudinary, Storage } from "./storage.ts";
+import type { Env } from "../schemas/env.schema.ts";
+import type { DB } from "../../types/db.ts";
+import type { Cloudinary, Storage } from "../../types/storage.ts";
 
 import type { RedisClientType } from "redis";
 import type { IRedisClient } from "bullmq";
 
-import type { buildAuthModule } from "../modules/auth/module.js";
-import { type ULID } from "../domain/shared/id.ts";
+import type { buildAuthModule } from "../../modules/auth/module.ts";
+import { type ULID } from "../../domain/shared/id.ts";
 
-import type { RateLimitOptions } from "../infrastructure/rate-limit/service.ts";
+import type { RateLimitOptions } from "../../infrastructure/rate-limit/service.ts";
 
 declare module "fastify" {
   interface FastifyInstance {

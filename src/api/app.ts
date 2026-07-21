@@ -2,10 +2,10 @@ import fastify from "fastify";
 import Autoload from "@fastify/autoload";
 
 // Função que cria a instância que permite maior validação com o Ajv
-import { createValidator } from "./infrastructure/validation/ajv/createValidator.js";
+import { createValidator } from "../infrastructure/validation/ajv/createValidator.js";
 
 // Erros
-import { handleError } from "./shared/errors/http/handler.js";
+import { handleError } from "../shared/errors/http/handler.js";
 
 // Adaptador pro Fastify com TypeBox
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";

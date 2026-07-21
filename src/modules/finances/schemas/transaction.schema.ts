@@ -1,5 +1,5 @@
 import { type Static, Type } from "@sinclair/typebox";
-import { IdSchema } from "../../../schemas/primitives/id.schema.js";
+import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 
 // import { Name, Email, Password } from "../../../schemas/primitives/user.schema.js";
 

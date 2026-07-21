@@ -1,8 +1,8 @@
 // src/plugins/core/storage.ts
 import fp from "fastify-plugin";
 
-import { CloudinaryStorageProvider } from "../../modules/uploader/cloudinaryStorage.js";
-import { LocalStorageProvider } from "../../modules/uploader/localStorage.js";
+import { CloudinaryStorageProvider } from "../../../modules/uploader/cloudinaryStorage.js";
+import { LocalStorageProvider } from "../../../modules/uploader/localStorage.js";
 
 export default fp(
   async function (app) {

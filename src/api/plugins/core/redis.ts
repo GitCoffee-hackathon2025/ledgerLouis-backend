@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import type { FastifyInstance } from "fastify";
 
-import { createProducerConnection } from "../../infrastructure/queue/connection.js";
+import { createProducerConnection } from "../../../infrastructure/queue/connection.js";
 
 export default fp(
   async function (app: FastifyInstance) {

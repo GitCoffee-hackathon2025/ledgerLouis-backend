@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { buildAuthModule } from "./module.js";
 import { createAuthController } from "./controller.js";
-import { SchemaEnablesAuth } from "../../schemas/common/auth.schema.js";
+import { SchemaEnablesAuth } from "../../api/schemas/common/auth.schema.js";
 import {
   LoginBody,
   RefreshBody,
