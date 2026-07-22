@@ -1,4 +1,4 @@
-import { createTransporter } from "./provider.js";
+import { createTransporter } from "./factory.js";
 import { createRenderer } from "./renderer.js";
 
 import type { EmailDefaults, EmailMessage } from "./types/contracts.js";
