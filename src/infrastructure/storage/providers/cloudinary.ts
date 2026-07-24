@@ -7,9 +7,18 @@ import type {
   StorageProvider,
 } from "../types/contracts.js";
 
+export interface CloudinaryConfig {
+  cloud_name: string;
+  api_key: string;
+  api_secret: string;
+}
+
 export function createCloudinaryStorage(
-  cloudinary: typeof Cloudinary,
+  config: CloudinaryConfig,
 ): StorageProvider {
+  const cloudinary = Cloudinary;
+  cloudinary.config(config);
+
   return {
     provider: "cloudinary",
 
