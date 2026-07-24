@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import type { FastifyInstance } from "fastify";
 
-import { createDatabase } from "../../../database/index.js";
+import { createDatabase } from "../../../infrastructure/database/factory.js";
 
 export default fp(
   async function (app: FastifyInstance) {

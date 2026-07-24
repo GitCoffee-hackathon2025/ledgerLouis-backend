@@ -1,4 +1,5 @@
-export { createStorage } from "./factory.js";
+import { createStorage } from "./factory.js";
+export const createStorageService = createStorage;
 
 export type {
   StorageProvider,
