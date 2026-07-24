@@ -3,7 +3,7 @@ export * from "./finance/accounts.js";
 export * from "./finance/installments.js";
 export * from "./finance/ledgerEntries.js";
 export * from "./finance/recurringTransactions.js";
-export * from "./finance/transactionDocuments.js";
+export * from "./files/transactionDocuments.js";
 export * from "./finance/transactions.js";
 
 // identity
