@@ -22,16 +22,16 @@ export const EnvSchema = Type.Object({
 
   // Redis
   REDIS_URL: Type.String({ format: "uri" }),
-  
+
   // Local de armazenamento dos arquivos
   STORAGE_DRIVER: Type.Union(
     [Type.Literal("local"), Type.Literal("cloudinary")],
     { default: "local" },
   ),
 
-  CLOUDINARY_CLOUD_NAME: Type.String(),
-  CLOUDINARY_API_KEY: Type.String(),
-  CLOUDINARY_API_SECRET: Type.String(),
+  CLOUDINARY_CLOUD_NAME: Type.Optional(Type.String()),
+  CLOUDINARY_API_KEY: Type.Optional(Type.String()),
+  CLOUDINARY_API_SECRET: Type.Optional(Type.String()),
 
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
