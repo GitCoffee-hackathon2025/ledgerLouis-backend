@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import Autoload from "@fastify/autoload";
+import fastifyMultipart from "@fastify/multipart";
 
 // Função que cria a instância que permite maior validação com o Ajv
 import { createValidator } from "../infrastructure/validation/ajv/createValidator.js";
@@ -20,16 +21,12 @@ import { fromHere, fromSource } from "../config/paths.js";
 async function buildApp() {
   // Criando ajv próprio
   const ajv = createValidator();
+  fastifyMultipart.ajvFilePlugin(ajv);
 
   // Criando instância fastify
   const app = fastify({
     logger: {
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-        },
-      },
+      transport: { target: "pino-pretty", options: { colorize: true } },
     },
   }).withTypeProvider<TypeBoxTypeProvider>();
 
@@ -48,14 +45,6 @@ async function buildApp() {
     dir: fromHere(import.meta.url, "plugins", "core"),
     ignorePattern: /env\./,
   });
-
-  // Instalando manualmente o multipart (modularizar como plugin futuramente)
-  // await app.register(import("@fastify/multipart"));
-
-  // await app.register(import("@fastify/static"), {
-  //   root: path.join(process.cwd(), "uploads"),
-  //   prefix: "/uploads/",
-  // });
 
   // Plugins mais isolados
   await app.register(Autoload, {
