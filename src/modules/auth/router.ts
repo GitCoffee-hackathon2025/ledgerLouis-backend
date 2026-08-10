@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { buildAuthModule } from "./module.js";
 import { createAuthController } from "./controller.js";
-import { SchemaEnablesAuth } from "../../api/schemas/common/auth.schema.js";
 import {
   LoginBody,
   RefreshBody,
@@ -68,10 +67,10 @@ export const authRouter =
       "/logout",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["auth"],
           summary: "Logout current session",
-          ...SchemaEnablesAuth,
           headers: AuthHeader,
           response: {
             204: { type: "null" },
@@ -90,10 +89,10 @@ export const authRouter =
       "/logout-all",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["auth"],
           summary: "Logout all sessions",
-          ...SchemaEnablesAuth,
           headers: AuthHeader,
           response: {
             204: { type: "null" },

@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import type { buildTransactionModule } from "../module.js";
 import { createTransactionController } from "../controllers/transaction.controller.js";
-import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 import {
   accountValueResponseSchema,
   CompanyParam,
@@ -35,10 +34,10 @@ export const transactionRoutes =
       "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Find company transaction by id",
-          ...SchemaEnablesAuth,
           params: IdParam,
           response: {
             200: TransactionResponse,
@@ -58,10 +57,10 @@ export const transactionRoutes =
       "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "List company transactions",
-          ...SchemaEnablesAuth,
           response: {
             200: ListTransactionResponse,
             ...createErrorResponses([
@@ -80,10 +79,10 @@ export const transactionRoutes =
       "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Create company transaction",
-          ...SchemaEnablesAuth,
           body: createTransactionBody,
           response: {
             201: TransactionResponse,
@@ -104,10 +103,10 @@ export const transactionRoutes =
       "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Delete company transaction",
-          ...SchemaEnablesAuth,
           params: IdParam,
           response: {
             204: { type: "null" },
@@ -121,17 +120,16 @@ export const transactionRoutes =
       },
       controller.delete,
     );
+    
     app.get<GetAccountValueRoute>(
       "/:companyId/accountValue",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Get company account value",
-          ...SchemaEnablesAuth,
-
           params: CompanyParam,
-
           response: {
             200: accountValueResponseSchema,
           },

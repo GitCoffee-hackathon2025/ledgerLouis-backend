@@ -1,7 +1,7 @@
 import { createTokenService } from "./services/token.service.js";
 import { createSessionService } from "./services/session.service.js";
 import { createRefreshService } from "./services/refresh.service.js";
-import type { createUserRepository } from "../users/repository.js";
+import type { createUserRepository } from "../users/repositories/user.repository.js";
 
 import { AppError } from "../../shared/errors/domain/errors.js";
 import { type ULID, generateId } from "../../domain/shared/id.js";

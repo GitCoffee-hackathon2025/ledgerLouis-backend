@@ -5,7 +5,7 @@ import { createMemberRepository } from "./repositories/member.repository.js";
 import { createCompanyService } from "./services/company.service.js";
 import { createCompanyUpdateService } from "./services/company.update.service.js";
 import { createMemberService } from "./services/member.service.js";
-import { createUserRepository } from "../users/repository.js";
+import { createUserRepository } from "../users/repositories/user.repository.js";
 import { createAccountService } from "../finances/services/account.service.js";
 import { createAccountRepository } from "../finances/repositories/account.repository.js";
 

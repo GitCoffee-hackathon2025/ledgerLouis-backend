@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { createCompanyController } from "../controllers/company.controller.js";
 import { buildCompanyModule } from "../module.js";
-import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 import {
   CompaniesListResponse,
   CompanyResponse,
@@ -26,10 +25,10 @@ export const companyRoutes =
       "/:companyId",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["companies"],
           summary: "Find company by id",
-          ...SchemaEnablesAuth,
           params: CompanyIdParam,
           response: {
             200: CompanyResponse,
@@ -66,10 +65,10 @@ export const companyRoutes =
       "/",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["companies"],
           summary: "Create company",
-          ...SchemaEnablesAuth,
           body: CreateBody,
           response: {
             201: CompanyResponse,
@@ -90,10 +89,10 @@ export const companyRoutes =
       "/:companyId",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["companies"],
           summary: "Delete company",
-          ...SchemaEnablesAuth,
           params: CompanyIdParam,
           response: {
             204: { type: "null" },

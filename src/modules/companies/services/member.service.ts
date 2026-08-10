@@ -2,7 +2,7 @@ import type { createMemberRepository } from "../repositories/member.repository.j
 import { AppError } from "../../../shared/errors/domain/errors.js";
 import { type ULID } from "../../../domain/shared/id.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
-import type { createUserRepository } from "../../users/repository.js";
+import type { createUserRepository } from "../../users/repositories/user.repository.js";
 
 export const createMemberService = (
   memberRepo: ReturnType<typeof createMemberRepository>,

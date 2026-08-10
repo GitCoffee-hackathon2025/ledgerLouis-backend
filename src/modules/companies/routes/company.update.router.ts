@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { createCompanyUpdateController } from "../controllers/company.update.controller.js";
 import { buildCompanyModule } from "../module.js";
-import { SchemaEnablesAuth } from "../../../api/schemas/common/auth.schema.js";
 import {
   CompanyResponse,
   CompanyIdParam,
@@ -35,10 +34,10 @@ export const companyUpdateRoutes =
         routes[k].url,
         {
           preHandler: app.verifyAccess,
+          config: { auth: true },
           schema: {
             tags: ["companies"],
             summary: `Change company ${k}`,
-            ...SchemaEnablesAuth,
             params: CompanyIdParam,
             body: createUpdateBody(k),
             response: {
