@@ -2,7 +2,7 @@ import "fastify";
 
 import type { Env } from "../schemas/env.schema.ts";
 import type { DB } from "../../types/db.ts";
-import type { Cloudinary, Storage } from "../../types/storage.ts";
+import type { StorageProvider } from "../../types/storage.ts";
 
 import type { RedisClientType } from "redis";
 import type { IRedisClient } from "bullmq";
@@ -23,9 +23,8 @@ declare module "fastify" {
       adapter: IRedisClient; // Cliente redis bullmq, usado nos producers queue
     };
 
-    // Arquivos
-    storage: Storage;
-    cloudinary: Cloudinary;
+    // Gerenciador de arquivos
+    storage: StorageProvider;
 
     // Função para declarar uma rota antenticada e configura automatimente
     verifyAccess: (
@@ -39,10 +38,17 @@ declare module "fastify" {
     };
   }
 
-  // Possibilita configurar o rateLimit de uma rota especifica (atraves do config)
+  // Possibilita configurar rotas personalidas (atraves do config)
   interface FastifyContextConfig {
+    // Swagger
+    /// Autenticação
+    auth?: true;
+
+    // Rate Limit
+    /// Desativa rate limit
     disableRateLimit?: true;
 
+    /// Personaliza rate limit
     rateLimit?: {
       by?: Lowercase<string>;
       max: number;
@@ -51,6 +57,7 @@ declare module "fastify" {
   }
 
   interface FastifyRequest {
+    // Declara que existe um token na requisição e possibilita uso
     authUser: {
       sub: ULID;
       sid: ULID;
