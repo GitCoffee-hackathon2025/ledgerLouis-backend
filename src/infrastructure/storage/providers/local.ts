@@ -2,12 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 
-import type {
-  SaveFileParams,
-  SavedFile,
-  StorageResource,
-  StorageProvider,
-} from "../types/contracts.js";
+import type { SaveFileParams, StorageProvider } from "../types/contracts.js";
 
 interface LocalStorageConfig {
   root: string;
@@ -19,22 +14,26 @@ export function createLocalStorage(
   return {
     provider: "local",
 
-    async save({ filename, folder, file }: SaveFileParams): Promise<SavedFile> {
-      const uploadFolder = path.join(config.root, folder);
+    async save({ filename, folder, file }: SaveFileParams) {
+      // Identificador interno do arquivo
+      const storageName = path.join(folder, filename);
 
-      await fs.promises.mkdir(uploadFolder, { recursive: true });
+      // Caminho absoluto no disco
+      const location = path.join(config.root, storageName);
 
-      const filepath = path.join(uploadFolder, filename);
+      await fs.promises.mkdir(path.dirname(location), {
+        recursive: true,
+      });
 
-      await pipeline(file, fs.createWriteStream(filepath));
+      await pipeline(file, fs.createWriteStream(location));
 
       return {
-        storageName: filename,
-        location: filepath,
+        storageName,
+        location,
       };
     },
 
-    async open(storageName: string): Promise<StorageResource> {
+    async open(storageName: string) {
       return {
         type: "stream",
         stream: fs.createReadStream(path.join(config.root, storageName)),
@@ -42,7 +41,7 @@ export function createLocalStorage(
     },
 
     async delete(storageName: string) {
-      await fs.promises.rm(storageName, {
+      await fs.promises.rm(path.join(config.root, storageName), {
         force: true,
       });
     },
