@@ -4,7 +4,7 @@ dotenv.config();
 import {
   registerWorkers,
   closeWorkers,
-} from "./src/infrastructure/queue/runtime.js";
+} from "./infrastructure/queue/runtime.js";
 
 async function bootstrap() {
   const context = await registerWorkers();
