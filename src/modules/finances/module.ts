@@ -7,7 +7,7 @@ import { createLedgerService } from "./services/ledger.service.js";
 import { createAccountService } from "./services/account.service.js";
 import { createMemberService } from "../companies/services/member.service.js";
 import { createMemberRepository } from "../companies/repositories/member.repository.js";
-import { createUserRepository } from "../users/repository.js";
+import { createUserRepository } from "../users/repositories/user.repository.js";
 import { createAccountRepository } from "./repositories/account.repository.js";
 
 export function buildTransactionModule(db: DB) {
