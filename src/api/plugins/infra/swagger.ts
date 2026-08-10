@@ -23,12 +23,28 @@ export default fp(
           },
         },
       },
+      transform: ({ schema, route, url }) => {
+        return {
+          url,
+          schema: {
+            ...schema,
+            ...(route.config?.auth === true
+              ? { security: [{ bearerAuth: [] }] }
+              : {}),
+          },
+        };
+      },
     });
 
-    if (app.config.NODE_ENV !== "production")
+    if (app.config.NODE_ENV !== "production") {
       await app.register(swaggerUI, {
         routePrefix: "/docs",
       });
+
+      app.get("/", async (req, res) => {
+        return res.redirect("/docs/");
+      });
+    }
   },
   {
     name: "swagger",
