@@ -40,5 +40,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-  }
+  },
+  "exclude": [
+    "scripts"
+  ]
 }

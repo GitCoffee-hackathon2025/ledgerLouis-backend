@@ -3,8 +3,6 @@ import type { FastifyPluginAsync } from "fastify";
 import { createMemberController } from "../controllers/member.controller.js";
 import { buildCompanyModule } from "../module.js";
 
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
-
 import {
   CompanyIdParam,
   MemberParam,
@@ -34,10 +32,10 @@ export const memberRoutes =
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["members"],
           summary: "List company members",
-          ...SchemaEnablesAuth,
           params: CompanyIdParam,
           querystring: ListMembersQuery,
           response: {
@@ -59,10 +57,10 @@ export const memberRoutes =
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["members"],
           summary: "Add company member",
-          ...SchemaEnablesAuth,
           params: CompanyIdParam,
           body: AddMemberBody,
           response: {
@@ -86,10 +84,10 @@ export const memberRoutes =
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["members"],
           summary: "Change member role",
-          ...SchemaEnablesAuth,
           params: MemberParam,
           body: ChangeRoleBody,
           response: {
@@ -112,10 +110,10 @@ export const memberRoutes =
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["members"],
           summary: "Remove company member",
-          ...SchemaEnablesAuth,
           params: MemberParam,
           response: {
             204: { type: "null" },
@@ -136,10 +134,10 @@ export const memberRoutes =
       "/me/companies",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["members"],
           summary: "List companies of authenticated user",
-          ...SchemaEnablesAuth,
           response: {
             200: UserCompaniesResponse,
             ...createErrorResponses([

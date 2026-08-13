@@ -54,9 +54,9 @@ export const createTransactionService = (
   const companyId = toId(payload.companyId);
   
   // 1. Valida se o usuário tem permissão na empresa.
-  console.log("Verificando permissão do usuário na empresa...");
+  // console.log("Verificando permissão do usuário na empresa...");
   await memberService.assertRole(companyId, userId);
-  console.log("Permissão verificada com sucesso.");
+  // console.log("Permissão verificada com sucesso.");
 
   // 2. Busca as contas para achar a conta da empresa
   const accounts = await accountService.list(companyId);
@@ -132,7 +132,7 @@ export const createTransactionService = (
   },
 
   async getAccountValue(companyId: ULID, userId: ULID) {
-    console.log("Obtendo valor da conta para a empresa:", companyId, "e usuário:", userId);
+    // console.log("Obtendo valor da conta para a empresa:", companyId, "e usuário:", userId);
       await memberService.assertRole(companyId, userId);
       const value = await accountService.getValue(companyId);
       return value;

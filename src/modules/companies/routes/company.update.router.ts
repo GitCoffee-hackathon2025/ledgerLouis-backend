@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { createCompanyUpdateController } from "../controllers/company.update.controller.js";
 import { buildCompanyModule } from "../module.js";
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
 import {
   CompanyResponse,
   CompanyIdParam,
@@ -9,10 +8,8 @@ import {
   createUpdateBody,
 } from "../schemas/company.schema.js";
 
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../../shared/errors/domain/groups.js";
 
 export const companyUpdateRoutes =
   (
@@ -37,10 +34,10 @@ export const companyUpdateRoutes =
         routes[k].url,
         {
           preHandler: app.verifyAccess,
+          config: { auth: true },
           schema: {
             tags: ["companies"],
             summary: `Change company ${k}`,
-            ...SchemaEnablesAuth,
             params: CompanyIdParam,
             body: createUpdateBody(k),
             response: {

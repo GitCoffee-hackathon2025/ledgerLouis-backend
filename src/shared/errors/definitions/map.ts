@@ -22,13 +22,14 @@
 // } as const;
 
 // Toda bagaça que for importada aqui deve ser declarada dentro de "generateErrorMap"
-// // Erros do próprio sistema
-import { commonErrors } from "./common/common.errors.js";
-import { httpErrors } from "./common/http.errors.js";
-import { userErrors } from "./common/user.errors.js";
+// // Erros do próprio sistema - Domain
+import { commonErrors } from "./domain/common.errors.js";
+import { httpErrors } from "./domain/http.errors.js";
+// // Erros do próprio sistema - Infra
+import { uploaderErrors } from "./infra/uploader.errors.js";
 // // Erros dos modulos do sistema
+import { userErrors } from "../../../modules/users/errors.js";
 import { authErrors } from "../../../modules/auth/errors.js";
-import { uploaderErrors } from "../../../modules/uploader/errors.js";
 // // Erros dos modulos do negócio
 import {
   companyErrors,

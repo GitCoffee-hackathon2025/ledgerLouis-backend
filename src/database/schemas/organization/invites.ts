@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "./companies.js";
-import { guestsEnum } from "../../../shared/enums/index.js";
+import { guestsEnum } from "../../../domain/organization/enums.js";
 
 export const role = pgEnum("guest_role", guestsEnum);
 

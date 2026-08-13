@@ -2,7 +2,7 @@ import { pgEnum, pgTable, uniqueIndex } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "./companies.js";
 import { users } from "../identity/users.js";
-import { permissionsEnum } from "../../../shared/enums/index.js";
+import { permissionsEnum } from "../../../domain/organization/enums.js";
 
 export const roles = pgEnum("role", permissionsEnum);
 

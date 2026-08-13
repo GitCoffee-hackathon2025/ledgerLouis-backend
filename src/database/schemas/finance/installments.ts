@@ -1,7 +1,7 @@
 import { date, integer, pgEnum, pgTable } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { transactions } from "./transactions.js";
-import { installmentStatusEnum } from "../../../shared/enums/index.js";
+import { installmentStatusEnum } from "../../../domain/finance/enums.js";
 
 export const installmentStatus = pgEnum(
   "installment_status",

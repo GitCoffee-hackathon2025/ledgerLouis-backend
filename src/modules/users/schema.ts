@@ -1,36 +1,33 @@
 import { Type, type Static } from "@sinclair/typebox";
 
-import { IdSchema } from "../../schemas/primitives/id.schema.js";
-import { Email, Name, Password } from "../../schemas/primitives/user.schema.js";
+import { IdSchema } from "../../api/schemas/primitives/id.schema.js";
+import {
+  Email,
+  Name,
+  Password,
+} from "../../api/schemas/primitives/user.schema.js";
 
 // bodies
 
 export const RegisterBody = Type.Object(
-  {
-    name: Name,
-    email: Email,
-    password: Password,
-  },
+  { name: Name, email: Email, password: Password },
   { additionalProperties: false },
 );
 
 export type RegisterBodyType = Static<typeof RegisterBody>;
 
 export const UpdateBody = Type.Object(
-  {
-    name: Name,
-    email: Email,
-  },
+  { name: Name, email: Email },
   { additionalProperties: false },
 );
 
 export type UpdateBodyType = Static<typeof UpdateBody>;
 
-export const UploadAvatarBody = Type.Object({
-  file: Type.String({ format: "binary" }),
-});
+// export const UploadProfileImageBody = Type.Object({
+//   file: Type.String({ format: "binary" }),
+// });
 
-export type UploadAvatarBodyType = Static<typeof UploadAvatarBody>;
+// export type UploadProfileImageBodyType = Static<typeof UploadProfileImageBody>;
 
 // responses
 
@@ -38,18 +35,16 @@ export const UserResponse = Type.Object({
   id: IdSchema,
   name: Name,
   email: Email,
-  avatar: Type.Optional(Type.String({ format: "uri" })),
 });
-
 export type UserResponseType = Static<typeof UserResponse>;
 
 export const UserListResponse = Type.Array(UserResponse);
 
-export const UploadAvatarResponse = Type.Object({
+export const ProfileImageResponse = Type.Object({
+  userId: IdSchema,
   fileId: IdSchema,
-  avatarUrl: Type.String({ format: "uri" }),
-  path: Type.Optional(Type.String()),
 });
+export type ProfileImageResponseType = Static<typeof ProfileImageResponse>;
 
 // route generics
 
@@ -57,14 +52,16 @@ export type RegisterRoute = {
   Body: RegisterBodyType;
 };
 
+export type GetMeRoute = {};
+
 export type UpdateRoute = {
   Body: UpdateBodyType;
 };
 
-export type UploadAvatarRoute = {};
-
-export type ListRoute = {};
-
 export type DeleteRoute = {};
 
-export type GetMeRoute = {};
+export type UploadProfileImageRoute = {};
+
+export type OpenProfileImageRoute = {};
+
+export type DeleteProfileImageRoute = {};

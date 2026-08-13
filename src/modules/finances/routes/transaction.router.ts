@@ -1,27 +1,26 @@
 import type { FastifyPluginAsync } from "fastify";
+import type { buildTransactionModule } from "../module.js";
 import { createTransactionController } from "../controllers/transaction.controller.js";
-import { buildTransactionModule } from "../module.js";
-import { SchemaEnablesAuth } from "../../../schemas/common/auth.schema.js";
-import { accountValueResponseSchema, CompanyParam } from "../schemas/account.schema.js";
-import type {GetAccountValueRoute} from "../schemas/account.schema.js";
-import {getAccountValueRoute} from "../schemas/account.schema.js";
+import {
+  accountValueResponseSchema,
+  CompanyParam,
+} from "../schemas/account.schema.js";
+import type { GetAccountValueRoute } from "../schemas/account.schema.js";
+import { getAccountValueRoute } from "../schemas/account.schema.js";
 import {
   type GetTransactionRoute,
   type CreateTransactionRoute,
-  // type UpdateTransactionRoute, 
+  // type UpdateTransactionRoute,
   type DeleteTransactionRoute,
-
-  IdParam, 
+  IdParam,
   TransactionResponse,
   ListTransactionResponse,
   createTransactionBody,
   // updateTransactionBody,
 } from "../schemas/transaction.schema.js";
 
-import {
-  createErrorResponses,
-  routeGroups,
-} from "../../../shared/errors/schemas/responses.js";
+import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../../shared/errors/domain/groups.js";
 
 export const transactionRoutes =
   (
@@ -35,11 +34,11 @@ export const transactionRoutes =
       "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Find company transaction by id",
-          ...SchemaEnablesAuth,
-          params: IdParam, 
+          params: IdParam,
           response: {
             200: TransactionResponse,
             ...createErrorResponses([
@@ -55,13 +54,13 @@ export const transactionRoutes =
 
     // Listar transações de uma empresa específica
     app.get(
-        "/:companyId/transactions",
+      "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "List company transactions",
-          ...SchemaEnablesAuth,
           response: {
             200: ListTransactionResponse,
             ...createErrorResponses([
@@ -80,10 +79,10 @@ export const transactionRoutes =
       "/:companyId/transactions",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Create company transaction",
-          ...SchemaEnablesAuth,
           body: createTransactionBody,
           response: {
             201: TransactionResponse,
@@ -104,10 +103,10 @@ export const transactionRoutes =
       "/:companyId/transactions/:id",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Delete company transaction",
-          ...SchemaEnablesAuth,
           params: IdParam,
           response: {
             204: { type: "null" },
@@ -121,19 +120,18 @@ export const transactionRoutes =
       },
       controller.delete,
     );
+    
     app.get<GetAccountValueRoute>(
       "/:companyId/accountValue",
       {
         preHandler: app.verifyAccess,
+        config: { auth: true },
         schema: {
           tags: ["transactions"],
           summary: "Get company account value",
-          ...SchemaEnablesAuth,
-          
-          params: CompanyParam, 
-          
+          params: CompanyParam,
           response: {
-            200: accountValueResponseSchema
+            200: accountValueResponseSchema,
           },
         },
       },

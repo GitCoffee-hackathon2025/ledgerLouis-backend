@@ -2,7 +2,7 @@ import { date, integer, numeric, pgEnum, pgTable, text, uniqueIndex } from "driz
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
 import { projects } from "../projects/projects.js";
-import { entryTypesEnum } from "../../../shared/enums/index.js";
+import { entryTypesEnum } from "../../../domain/finance/enums.js";
 
 // Adicionar futuramente o campo de documento (imagem, pdf)
 

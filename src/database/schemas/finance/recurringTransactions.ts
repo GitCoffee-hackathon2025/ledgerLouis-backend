@@ -2,7 +2,7 @@ import { date, integer, pgEnum, pgTable, text } from "drizzle-orm/pg-core";
 import { foreignId, id } from "../../columns.helpers.js";
 import { accounts } from "./accounts.js";
 import { companies } from "../organization/companies.js";
-import { frequencyEnum } from "../../../shared/enums/index.js";
+import { frequencyEnum } from "../../../domain/finance/enums.js";
 
 export const frequency = pgEnum("frequency", frequencyEnum);
 

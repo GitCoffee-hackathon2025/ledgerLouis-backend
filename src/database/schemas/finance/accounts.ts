@@ -1,7 +1,7 @@
 import { numeric, pgEnum, pgTable, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { foreignId, id, timestamps } from "../../columns.helpers.js";
 import { companies } from "../organization/companies.js";
-import { accountTypesEnum } from "../../../shared/enums/index.js";
+import { accountTypesEnum } from "../../../domain/finance/enums.js";
 
 export const accountTypes = pgEnum("account_type", accountTypesEnum);
 
