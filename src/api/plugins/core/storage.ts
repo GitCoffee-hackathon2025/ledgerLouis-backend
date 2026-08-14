@@ -39,6 +39,6 @@ export default fp(
   },
   {
     name: "storage",
-    dependencies: ["env", "multipart"],
+    dependencies: ["env"],
   },
 );
