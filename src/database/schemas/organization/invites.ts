@@ -20,6 +20,7 @@ export const invites = pgTable(
     role: role().notNull(),
     tokenHash: varchar("token_hash", { length: 255 }).notNull(),
     expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+    revokedAt: timestamp("revoked_at"),
     acceptedAt: timestamp("accepted_at", { mode: "date" }),
     ...timestamps,
   },

@@ -43,6 +43,13 @@
       "when": 1786991750548,
       "tag": "0005_puzzling_the_executioner",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786992130567,
+      "tag": "0006_curvy_starjammers",
+      "breakpoints": true
     }
   ]
 }
