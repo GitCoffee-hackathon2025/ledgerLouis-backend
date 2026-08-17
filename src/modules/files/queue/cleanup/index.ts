@@ -7,15 +7,19 @@ export const FILE_CLEANUP_QUEUE_NAME = "file-cleanup";
 export const FILE_CLEANUP_JOB_NAME = "cleanup-files";
 export const FILE_CLEANUP_SCHEDULER_ID = "files:cleanup";
 
-export function buildFileCleanupProducer(connection: IRedisClient) {
+export async function buildFileCleanupScheduler(connection: IRedisClient) {
   const queue = new Queue(FILE_CLEANUP_QUEUE_NAME, {
     connection,
   });
 
-  return registerFileCleanupScheduler(
-    { idName: FILE_CLEANUP_SCHEDULER_ID, jobName: FILE_CLEANUP_JOB_NAME },
-    queue,
-  );
+  try {
+    registerFileCleanupScheduler(
+      { idName: FILE_CLEANUP_SCHEDULER_ID, jobName: FILE_CLEANUP_JOB_NAME },
+      queue,
+    );
+  } finally {
+    await queue.close();
+  }
 }
 
 export function buildFileCleanupWorker(
