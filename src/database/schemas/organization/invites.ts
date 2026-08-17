@@ -18,10 +18,10 @@ export const invites = pgTable(
     companyId: foreignId("company_id", () => companies.id).notNull(),
     email: varchar("email", { length: 150 }).notNull(),
     role: role().notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
+    tokenHash: varchar("token_hash", { length: 255 }).notNull(),
     expires_at: timestamp("expires_at", { mode: "date" }).notNull(),
     accepted_at: timestamp("accepted_at", { mode: "date" }),
     ...timestamps,
   },
-  (table) => [uniqueIndex("uq_token_invites").on(table.token)],
+  (table) => [uniqueIndex("uq_token_invites").on(table.tokenHash)],
 );
