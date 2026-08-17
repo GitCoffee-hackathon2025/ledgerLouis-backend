@@ -4,7 +4,7 @@ dotenv.config();
 import readline from "node:readline";
 
 import { buildServiceWorker } from "./worker/app.js";
-import { closeWorkers } from "./infrastructure/queue/runtime.js";
+import { closeWorkers } from "./infrastructure/queue/worker.runtime.js";
 
 async function bootstrap() {
   const { context, closeDatabase } = await buildServiceWorker();
