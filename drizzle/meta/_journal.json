@@ -50,6 +50,13 @@
       "when": 1786992130567,
       "tag": "0006_curvy_starjammers",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786993910071,
+      "tag": "0007_clammy_cable",
+      "breakpoints": true
     }
   ]
 }
