@@ -5,6 +5,8 @@ export * from "./finance/ledgerEntries.js";
 export * from "./finance/recurringTransactions.js";
 export * from "./files/transactionDocuments.js";
 export * from "./finance/transactions.js";
+export * from "./finance/tags.js";
+export * from "./finance/transactionTags.js";
 
 // identity
 export * from "./identity/jwtKeys.js";
