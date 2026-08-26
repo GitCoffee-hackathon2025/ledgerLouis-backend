@@ -12,7 +12,7 @@ export const ledgerEntries = pgTable("ledger_entries", {
   companyId: foreignId("company_id", () => companies.id).notNull(),
   transactionId: foreignId("transaction_id", () => transactions.id).notNull(),
   accountId: foreignId("account_id", () => accounts.id),
-  entryType: entryTypes().notNull(),
+  entryType: entryTypes("entry_type").notNull(),
   amount: integer("amount").notNull(),
   ...timestamps,
 });

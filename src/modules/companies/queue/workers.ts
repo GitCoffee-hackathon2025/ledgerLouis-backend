@@ -1,8 +1,8 @@
-import type { IRedisClient } from "bullmq";
+import type { WorkerDeps } from "../../../infrastructure/queue/runtime.js";
 import { buildInviteWorker } from "./invite/index.js";
 
-export function buildCompanyWorkers(connection: IRedisClient) {
+export function buildCompanyWorkers({ adapter }: WorkerDeps) {
   return {
-    invite: buildInviteWorker(connection),
+    invite: buildInviteWorker(adapter),
   };
 }

@@ -38,6 +38,8 @@ import {
 import {
   transactionErrors,
   ledgerErrors,
+  accountErrors,
+  recurringTransactionErrors,
 } from "../../../modules/finances/errors.js";
 import { tagErrors } from "../../../modules/tags/errors.js";
 
@@ -69,6 +71,8 @@ export const errorMap = generateErrorMap(
   memberErrors,
   transactionErrors,
   ledgerErrors,
+  accountErrors,
+  recurringTransactionErrors,
   tagErrors,
 );
 export type ErrorCode = keyof typeof errorMap;

@@ -12,5 +12,7 @@ export const routeGroups = {
   company: ["COMPANY_NOT_FOUND"],
   member: ["MEMBER_NOT_FOUND"],
   transaction: ["TRANSACTION_NOT_FOUND"],
+  account: ["ACCOUNT_NOT_FOUND"],
+  recurringTransaction: ["RECURRING_TRANSACTION_NOT_FOUND"],
   tag: ["TAG_NOT_FOUND"],
 } as const;
