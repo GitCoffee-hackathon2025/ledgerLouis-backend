@@ -1,11 +1,14 @@
-import { compile, type TemplateDelegate } from "handlebars";
+import Handlebars, { type TemplateDelegate } from "handlebars";
 import { createTemplateLoader } from "./template.loader.js";
 
-interface RenderOptions {
+export interface RenderOptions {
   module: string;
   template: string;
   layout?: string;
-  data: Record<string, any>;
+  data: {
+    title: string;
+    body: Record<string, any>;
+  };
 }
 
 const loader = createTemplateLoader();
@@ -30,19 +33,21 @@ export function createRenderer() {
 
       // Caso não exista, é compilado e armazenado no cache
       if (!layoutCompiled) {
-        layoutCompiled = compile(await loader.loadLayout(layout));
+        layoutCompiled = Handlebars.compile(await loader.loadLayout(layout));
         layoutCache.set(layout, layoutCompiled);
       }
       if (!templateCompiled) {
-        templateCompiled = compile(await loader.loadTemplate(module, template));
+        templateCompiled = Handlebars.compile(
+          await loader.loadTemplate(module, template),
+        );
         templateCache.set(templateKey, templateCompiled);
       }
 
       // Finalizando a compilação passando os dados
       return {
         html: layoutCompiled({
-          title: "TESTE",
-          body: templateCompiled(data),
+          title: data.title,
+          body: templateCompiled(data.body),
         }),
       };
     },
