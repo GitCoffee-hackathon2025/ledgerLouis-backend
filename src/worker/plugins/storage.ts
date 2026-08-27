@@ -7,7 +7,7 @@ import {
 
 import { fromRoot } from "../../config/paths.js";
 
-export function createStorage() {
+export default async function () {
   const storages: Partial<Record<StorageDriver, StorageProvider>> = {};
 
   // Local
