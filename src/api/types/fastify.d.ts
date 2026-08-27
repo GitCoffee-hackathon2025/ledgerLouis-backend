@@ -2,10 +2,8 @@ import "fastify";
 
 import type { Env } from "../schemas/env.schema.ts";
 import type { DB } from "../../types/db.ts";
+import type { Redis } from "../../types/redis.ts";
 import type { StorageProvider } from "../../types/storage.ts";
-
-import type { RedisClientType } from "redis";
-import type { IRedisClient } from "bullmq";
 
 import type { buildAuthModule } from "../../modules/auth/module.ts";
 import { type ULID } from "../../domain/shared/id.ts";
@@ -16,12 +14,7 @@ declare module "fastify" {
   interface FastifyInstance {
     config: Env;
     db: DB;
-
-    // Cliente Redis, o "adapter" usa o "raw" como cerebro
-    redis: {
-      raw: RedisClientType; // Cliente redis simples, usado em outros serviços
-      adapter: IRedisClient; // Cliente redis bullmq, usado nos producers queue
-    };
+    redis: Redis;
 
     // Gerenciador de arquivos
     storage: StorageProvider;

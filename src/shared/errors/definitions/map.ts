@@ -34,6 +34,7 @@ import { authErrors } from "../../../modules/auth/errors.js";
 import {
   companyErrors,
   memberErrors,
+  invitionErros
 } from "../../../modules/companies/errors.js";
 
 // Centralizador de erros
@@ -62,5 +63,6 @@ export const errorMap = generateErrorMap(
   uploaderErrors,
   companyErrors,
   memberErrors,
+  invitionErros,
 );
 export type ErrorCode = keyof typeof errorMap;

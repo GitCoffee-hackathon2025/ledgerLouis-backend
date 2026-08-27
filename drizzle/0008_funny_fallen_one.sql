@@ -1,0 +1,2 @@
+ALTER TABLE "invites" ADD COLUMN "invited_by" char(26) NOT NULL;--> statement-breakpoint
+ALTER TABLE "invites" ADD CONSTRAINT "invites_invited_by_users_id_fk" FOREIGN KEY ("invited_by") REFERENCES "public"."users"("id") ON DELETE restrict ON UPDATE no action;

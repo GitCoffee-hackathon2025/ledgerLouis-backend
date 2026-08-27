@@ -11,9 +11,6 @@ export function handleFastifyError(error: any) {
     case "FST_ERR_CTP_INVALID_JSON_BODY":
       return new AppError("INVALID_JSON");
 
-    case "FST_ERR_VALIDATION":
-      return new AppError("INVALID_JSON");
-
     default:
       return new AppError("BAD_REQUEST");
   }

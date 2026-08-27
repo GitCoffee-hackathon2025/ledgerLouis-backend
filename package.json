@@ -21,10 +21,10 @@
   "license": "ISC",
   "author": "William Chormiak",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "dev:worker": "tsx watch src/worker.ts",
+    "dev:worker": "tsx src/worker.ts",
     "build": "tsc",
     "preview": "node dist/src/server.js",
     "start": "node dist/src/server.js",

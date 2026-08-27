@@ -70,7 +70,7 @@ export const createCompanyService = (
 
     await accountService.createDefault(id);
 
-    return { id, name, cnpj: data.cnpj };
+    return { id, name: data.name, cnpj: data.cnpj };
   },
 
   // async update(
