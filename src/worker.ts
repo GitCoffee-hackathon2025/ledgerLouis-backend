@@ -7,7 +7,7 @@ import { buildServiceWorker } from "./worker/app.js";
 import { closeWorkers } from "./infrastructure/queue/worker.runtime.js";
 
 async function bootstrap() {
-  const { context, closeDatabase } = await buildServiceWorker();
+  const { context, closeInfrastructure } = await buildServiceWorker();
 
   let shuttingDown = false;
 
@@ -22,7 +22,7 @@ async function bootstrap() {
       if (process.stdin.isTTY) process.stdin.setRawMode(false);
 
       await closeWorkers(context);
-      await closeDatabase();
+      await closeInfrastructure();
 
       console.log("Worker shutdown complete.");
       process.exit(0);

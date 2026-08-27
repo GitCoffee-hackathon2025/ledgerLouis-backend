@@ -3,18 +3,10 @@ import { registerWorkers } from "../infrastructure/queue/worker.runtime.js";
 import { registerSchedulers } from "../infrastructure/queue/scheduler.runtime.js";
 
 import { builds, schedulers } from "./loader.js";
-import { createDatabase } from "./plugins/db.js";
-import { createStorage } from "./plugins/storage.js";
+import { buildWorkerInfrastructure } from "./plugins/index.js";
 
 export async function buildServiceWorker() {
-  // Conexão com o banco
-  const { db, close: closeDatabase } = await createDatabase();
-
-  // Tecnologias usadas pelos workers
-  const config = {
-    db,
-    storages: createStorage(),
-  };
+  const { config, close: closeInfrastructure } = await buildWorkerInfrastructure();
 
   const redis = await createWorkerConnection();
   const context = await registerWorkers(redis, builds, config);
@@ -23,6 +15,6 @@ export async function buildServiceWorker() {
 
   return {
     context,
-    closeDatabase,
+    closeInfrastructure,
   };
 }
