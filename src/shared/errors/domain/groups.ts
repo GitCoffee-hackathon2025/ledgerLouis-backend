@@ -11,4 +11,11 @@ export const routeGroups = {
   permission: ["FORBIDDEN"],
   company: ["COMPANY_NOT_FOUND"],
   member: ["MEMBER_NOT_FOUND"],
+  invitation: [
+    "INVITATION_EXPIRED",
+    "INVITATION_NOT_FOUND",
+    "INVITATION_ALREADY_ACCEPTED",
+    "INVITATION_REVOKED",
+    "INVITATION_EMAIL_MISMATCH",
+  ],
 } as const;

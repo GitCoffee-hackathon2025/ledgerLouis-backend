@@ -5,12 +5,12 @@ services:
     restart: unless-stopped
 
     environment:
-      POSTGRES_USER: erick
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: ledger_louis
+      POSTGRES_USER: mineiro
+      POSTGRES_PASSWORD: queijomineiro
+      POSTGRES_DB: ledger
 
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
     volumes:
       - postgres_data:/var/lib/postgresql/data

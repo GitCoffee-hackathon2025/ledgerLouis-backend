@@ -80,9 +80,6 @@ export function createFileService(
 
       if (deleted.provider != storage.provider)
         throw new AppError("INTERNAL_ERROR");
-
-      // aplicar um service worker na hora de deletar (permite recuperação)
-      await storage.delete(deleted.storageName);
     },
   };
 }

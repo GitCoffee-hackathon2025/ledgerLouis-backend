@@ -1,4 +1,4 @@
-export type Email = `${string}@${string}.${string}`;
+export type Email = string;
 
 // Configurações padrão aplicadas a todos os e-mails enviados.
 export interface EmailDefaults {

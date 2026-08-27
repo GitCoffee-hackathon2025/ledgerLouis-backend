@@ -17,6 +17,9 @@ export const EnvSchema = Type.Object({
   // formato (sem "/" no final): "http://localhost, https:vercel.app"
   ALLOWED_ORIGINS: Type.String({ default: "" }),
 
+  // URL do servidor web
+  WEB_URL: Type.String({ format: "uri" }),
+
   // Banco de dados
   DATABASE_URL: Type.String({ format: "uri" }),
 

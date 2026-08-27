@@ -29,6 +29,10 @@ export const createMemberRepository = (db: DB) => ({
       .select({
         companyName: companies.name,
         companyId: companies.id,
+        cnpj: companies.cnpj,
+        email: companies.email,
+        cep: companies.cep,
+        phone: companies.phone,
         role: companyUsers.role,
         createdAt: companyUsers.createdAt,
       })
