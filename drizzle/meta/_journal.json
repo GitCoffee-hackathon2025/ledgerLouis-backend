@@ -64,6 +64,13 @@
       "when": 1787234890835,
       "tag": "0008_funny_fallen_one",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1787865000000,
+      "tag": "0009_fix_transaction_entry_type",
+      "breakpoints": true
     }
   ]
 }

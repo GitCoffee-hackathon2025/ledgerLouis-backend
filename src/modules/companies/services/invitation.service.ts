@@ -119,6 +119,13 @@ export const createInvitationService = (
       };
     },
 
+    async listForUser(userId: ULID) {
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+
+      return { items: await inviteRepo.findAllPendingByEmail(user.email.toLowerCase()) };
+    },
+
     async list(actorId: ULID, companyId: ULID, limit = 20, offset = 0) {
       await assertRole(companyId, actorId, ["owner"]);
 
@@ -164,6 +171,27 @@ export const createInvitationService = (
         userId,
         role: invite.role,
       };
+    },
+
+    async acceptById(userId: ULID, invitationId: ULID) {
+      const invite = await inviteRepo.findById(invitationId);
+      if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+      if (user.email.toLowerCase() !== invite.email)
+        throw new AppError("INVITATION_EMAIL_MISMATCH");
+      if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+      if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+      if (invite.expiresAt <= new Date()) throw new AppError("INVITATION_EXPIRED");
+      if (await memberRepo.findMembership(invite.companyId, userId))
+        throw new AppError("MEMBER_ALREADY_EXISTS");
+
+      await memberRepo.create({ companyId: invite.companyId, userId, role: invite.role });
+      if (!(await inviteRepo.markAsAccepted(invite.id)))
+        throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+      return { companyId: invite.companyId, userId, role: invite.role };
     },
 
     async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {

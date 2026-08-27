@@ -24,6 +24,26 @@ export const createInviteRepository = (db: DB) => ({
     });
   },
 
+  async findAllPendingByEmail(email: string) {
+    return db.query.invites.findMany({
+      where: (invites, { and, eq, isNull, gt }) =>
+        and(
+          eq(invites.email, email),
+          isNull(invites.acceptedAt),
+          isNull(invites.revokedAt),
+          gt(invites.expiresAt, new Date()),
+        ),
+      columns: {
+        id: true,
+        companyId: true,
+        email: true,
+        role: true,
+        expiresAt: true,
+      },
+      orderBy: (invites, { desc }) => desc(invites.createdAt),
+    });
+  },
+
   async findPendingByCompanyAndEmail(
     companyId: InviteInsert["companyId"],
     email: string,

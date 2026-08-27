@@ -30,7 +30,7 @@ export function createMemberInvitationProcessor({
       template: "member-invitation",
       message: {
         to: [invite.email],
-        subject: "EXEMPLO",
+        subject: "Você recebeu um convite para uma empresa no Ledger Louis",
       },
       data: {
         title: "Convite",

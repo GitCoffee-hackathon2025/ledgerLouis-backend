@@ -38,6 +38,11 @@ export const InvitationTokenParams = Type.Object(
   { additionalProperties: false },
 );
 
+export const UserInvitationIdParams = Type.Object(
+  { invitationId: IdSchema },
+  { additionalProperties: false },
+);
+
 // query
 
 export const ListInvitationsQuery = Type.Object({
@@ -70,6 +75,13 @@ export const InvitationAcceptanceResponse = Type.Object({
   companyId: IdSchema,
   userId: IdSchema,
   role: InvitationRole,
+});
+
+export const UserInvitationsListResponse = Type.Object({
+  items: Type.Array(Type.Object({
+    ...Invitation,
+    companyId: IdSchema,
+  })),
 });
 
 export const InvitationsListResponse = Type.Object({

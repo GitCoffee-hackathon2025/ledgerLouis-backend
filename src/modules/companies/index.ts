@@ -6,7 +6,7 @@ import { companyRoutes } from "./routes/company.router.js";
 import { companyUpdateRoutes } from "./routes/company.update.router.js";
 import { memberRoutes } from "./routes/member.router.js";
 import { companyInvitationRoutes } from "./routes/company.invitation.router.js";
-import { invitationRoutes } from "./routes/invitation.router.js";
+import { invitationRoutes, userInvitationRoutes } from "./routes/invitation.router.js";
 
 export default async function (app: FastifyInstance) {
   const { company, memberService, invitationService } = buildCompanyModule(
@@ -39,5 +39,9 @@ export default async function (app: FastifyInstance) {
 
   await app.register(invitationRoutes(invitationService), {
     prefix: invitationUrl + "/:token",
+  });
+
+  await app.register(userInvitationRoutes(invitationService), {
+    prefix: invitationUrl,
   });
 }

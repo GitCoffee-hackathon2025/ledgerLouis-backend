@@ -78,6 +78,10 @@ export const MemberMutationResponse = Type.Object({
 export const UserCompanyResponse = Type.Object({
   companyId: IdSchema,
   companyName: Type.String(),
+  cnpj: Type.String(),
+  email: Type.Union([Type.String({ format: "email" }), Type.Null()]),
+  cep: Type.Union([Type.String(), Type.Null()]),
+  phone: Type.Union([Type.String(), Type.Null()]),
   role: RoleSchema,
   createdAt: Type.String({ format: "date-time" }),
 });
