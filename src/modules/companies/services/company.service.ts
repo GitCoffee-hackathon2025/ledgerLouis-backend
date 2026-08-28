@@ -55,7 +55,13 @@ export const createCompanyService = (
     try {
       await companyRepo.create({ id, ...data });
     } catch (error) {
-      switch (getUniqueConstraint(error, ["uq_companies_cnpj"])) {
+      switch (
+        getUniqueConstraint(error, [
+          "uq_companies_cnpj",
+          "uq_companies_email",
+          "uq_companies_phone",
+        ])
+      ) {
         case "uq_companies_cnpj":
           throw new AppError("CNPJ_ALREADY_EXISTS");
 

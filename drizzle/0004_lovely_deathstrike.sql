@@ -4,6 +4,7 @@ CREATE TABLE "transaction_documents" (
 );
 --> statement-breakpoint
 ALTER TABLE "user_profile_images" DROP CONSTRAINT "user_profile_images_file_id_unique";--> statement-breakpoint
+ALTER TABLE "companies" ALTER COLUMN "cnpj" SET DATA TYPE char(14);--> statement-breakpoint
 ALTER TABLE "user_profile_images" DROP CONSTRAINT "user_profile_images_pkey";--> statement-breakpoint
 ALTER TABLE "user_profile_images" ADD PRIMARY KEY ("file_id");--> statement-breakpoint
 ALTER TABLE "user_profile_images" ALTER COLUMN "user_id" SET DATA TYPE char(26);--> statement-breakpoint

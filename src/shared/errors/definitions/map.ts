@@ -36,6 +36,13 @@ import {
   memberErrors,
   invitionErros
 } from "../../../modules/companies/errors.js";
+import {
+  transactionErrors,
+  ledgerErrors,
+  accountErrors,
+  recurringTransactionErrors,
+} from "../../../modules/finances/errors.js";
+import { tagErrors } from "../../../modules/tags/errors.js";
 
 // Centralizador de erros
 type ErrorDefinition = readonly [status: number, message: string];
@@ -64,5 +71,10 @@ export const errorMap = generateErrorMap(
   companyErrors,
   memberErrors,
   invitionErros,
+  transactionErrors,
+  ledgerErrors,
+  accountErrors,
+  recurringTransactionErrors,
+  tagErrors,
 );
 export type ErrorCode = keyof typeof errorMap;
