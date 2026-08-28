@@ -43,6 +43,7 @@ export const companyInvitationRoutes =
               ...routeGroups.member,
               ...routeGroups.user,
               ...routeGroups.invitation,
+              "MEMBER_ALREADY_EXISTS",
             ]),
           },
         },

@@ -8,6 +8,13 @@ export interface AmountRecord {
   date: string;
 }
 
+// Somar numeric(15,2) como float acumula erro de ponto flutuante
+// (ex: 4020.4700000000003). Arredondar pra centavos em cada etapa evita
+// esse ruído se propagar pro mean/variância/previsão e vazar pra UI.
+function round2(value: number): number {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
 export function groupByMonth(records: AmountRecord[]): MonthlyPoint[] {
   const totals = new Map<string, number>();
 
@@ -18,12 +25,12 @@ export function groupByMonth(records: AmountRecord[]): MonthlyPoint[] {
 
   return [...totals.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([period, total]) => ({ period, total }));
+    .map(([period, total]) => ({ period, total: round2(total) }));
 }
 
 export function mean(values: number[]): number {
   if (values.length === 0) return 0;
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
+  return round2(values.reduce((sum, value) => sum + value, 0) / values.length);
 }
 
 export function variance(values: number[]): number {
@@ -32,11 +39,11 @@ export function variance(values: number[]): number {
   const avg = mean(values);
   const squaredDiffs = values.reduce((sum, value) => sum + (value - avg) ** 2, 0);
 
-  return squaredDiffs / (values.length - 1);
+  return round2(squaredDiffs / (values.length - 1));
 }
 
 export function standardDeviation(values: number[]): number {
-  return Math.sqrt(variance(values));
+  return round2(Math.sqrt(variance(values)));
 }
 
 /**
@@ -61,7 +68,7 @@ export function linearForecast(values: number[]): number | null {
   const slope = (n * sumXY - sumX * sumY) / denominator;
   const intercept = (sumY - slope * sumX) / n;
 
-  return intercept + slope * n;
+  return round2(intercept + slope * n);
 }
 
 export interface ExpenseStats {
