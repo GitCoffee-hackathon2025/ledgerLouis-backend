@@ -1,20 +1,30 @@
-import { buildTransactionModule } from "../../module.js";
-import type { WorkerDeps } from "../../../../infrastructure/queue/runtime.js";
+import { Queue, Worker, type IRedisClient } from "bullmq";
 
-import { createRecurringQueue, RECURRING_QUEUE_NAME } from "./queue.js";
-import { createRecurringProducer } from "./producer.js";
-import { createRecurringWorker } from "./worker.js";
+import { registerRecurringScheduler } from "./scheduler.js";
 import { createRecurringProcessor } from "./processor.js";
 
-export async function buildRecurringWorker({ adapter, db }: WorkerDeps) {
-  const { recurringTransactionService } = buildTransactionModule(db);
+export const RECURRING_QUEUE_NAME = "recurring-transactions";
+export const RECURRING_JOB_NAME = "materialize-due";
+export const RECURRING_SCHEDULER_ID = "finances:recurring";
 
-  const queue = createRecurringQueue(RECURRING_QUEUE_NAME, adapter);
-  await createRecurringProducer(queue).scheduleDaily();
+export async function buildRecurringScheduler(connection: IRedisClient) {
+  const queue = new Queue(RECURRING_QUEUE_NAME, { connection });
 
-  return createRecurringWorker(
-    RECURRING_QUEUE_NAME,
-    adapter,
-    createRecurringProcessor(recurringTransactionService),
-  );
+  try {
+    await registerRecurringScheduler(
+      { idName: RECURRING_SCHEDULER_ID, jobName: RECURRING_JOB_NAME },
+      queue,
+    );
+  } finally {
+    await queue.close();
+  }
+}
+
+export function buildRecurringWorker(
+  connection: IRedisClient,
+  config: Parameters<typeof createRecurringProcessor>[0],
+) {
+  return new Worker(RECURRING_QUEUE_NAME, createRecurringProcessor(config), {
+    connection,
+  });
 }

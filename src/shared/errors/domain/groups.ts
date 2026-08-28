@@ -15,4 +15,11 @@ export const routeGroups = {
   account: ["ACCOUNT_NOT_FOUND"],
   recurringTransaction: ["RECURRING_TRANSACTION_NOT_FOUND"],
   tag: ["TAG_NOT_FOUND"],
+  invitation: [
+    "INVITATION_EXPIRED",
+    "INVITATION_NOT_FOUND",
+    "INVITATION_ALREADY_ACCEPTED",
+    "INVITATION_REVOKED",
+    "INVITATION_EMAIL_MISMATCH",
+  ],
 } as const;

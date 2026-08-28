@@ -19,10 +19,18 @@ export const createCompanyService = (
   accountService: ReturnType<typeof createAccountService>,
 ) => ({
   async find(companyId: ULID, userId: ULID) {
-    const found = await memberService.assertRole(companyId, userId);
+    await memberService.assertRole(companyId, userId);
+    const found = await companyRepo.findById(companyId);
     if (!found) throw new AppError("COMPANY_NOT_FOUND");
-    
-    return found;
+
+    return {
+      id: found.id,
+      name: found.name,
+      cnpj: found.cnpj,
+      email: found.email,
+      cep: found.cep,
+      phone: found.phone,
+    };
   },
 
   async list() {

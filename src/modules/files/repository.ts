@@ -16,6 +16,13 @@ export const createFileRepository = (db: DB) => ({
     });
   },
 
+  async findAllDeletedBefore(date: Date) {
+    return db.query.files.findMany({
+      where: (table, { and, isNotNull, gt }) =>
+        and(isNotNull(table.deletedAt), gt(table.deletedAt, date)),
+    });
+  },
+
   async findDeletedById(id: NonNullable<FileInsert["id"]>) {
     return db.query.files.findFirst({
       where: (table, { and, eq, isNotNull }) =>
@@ -29,5 +36,9 @@ export const createFileRepository = (db: DB) => ({
       .set({ deletedAt: new Date() })
       .where(and(eq(files.id, id), isNull(files.deletedAt)))
       .returning();
+  },
+
+  async hardDelete(id: NonNullable<FileInsert["id"]>) {
+    return db.delete(files).where(eq(files.id, id)).returning();
   },
 });

@@ -1,8 +1,9 @@
 import type { createMemberRepository } from "../repositories/member.repository.js";
+import type { createUserRepository } from "../../users/repositories/user.repository.js";
+
 import { AppError } from "../../../shared/errors/domain/errors.js";
 import { type ULID } from "../../../domain/shared/id.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
-import type { createUserRepository } from "../../users/repositories/user.repository.js";
 
 export const createMemberService = (
   memberRepo: ReturnType<typeof createMemberRepository>,
@@ -69,6 +70,9 @@ export const createMemberService = (
       if (await memberRepo.findMembership(companyId, user.id))
         throw new AppError("MEMBER_ALREADY_EXISTS");
 
+      /* 
+      deve lançar um JOB para o servidor worker
+      */
       // cria vinculação
       await memberRepo.create({
         companyId,

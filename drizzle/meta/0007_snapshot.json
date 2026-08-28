@@ -1,6 +1,6 @@
 {
-  "id": "9ac6b83c-6ae3-4432-9f8b-c8ff212e36d9",
-  "prevId": "325c6d20-ea40-49d7-90a5-b322ac8c0178",
+  "id": "61d711b4-bd21-45fa-9ed1-f2a0d4dc0341",
+  "prevId": "7c5db00d-884f-4c11-a934-8a7fa88b84ba",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -256,8 +256,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "entry_type": {
-          "name": "entry_type",
+        "entryType": {
+          "name": "entryType",
           "type": "entry_type",
           "typeSchema": "public",
           "primaryKey": false,
@@ -361,14 +361,7 @@
         },
         "amount": {
           "name": "amount",
-          "type": "numeric(15, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "entry_type": {
-          "name": "entry_type",
-          "type": "entry_type",
-          "typeSchema": "public",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -376,13 +369,13 @@
           "name": "source_account_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "category_account_id": {
           "name": "category_account_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "frequency": {
           "name": "frequency",
@@ -414,44 +407,6 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true
-        },
-        "last_run_date": {
-          "name": "last_run_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "recurring_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -488,19 +443,6 @@
           "tableTo": "accounts",
           "columnsFrom": [
             "category_account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
-        },
-        "recurring_transactions_created_by_users_id_fk": {
-          "name": "recurring_transactions_created_by_users_id_fk",
-          "tableFrom": "recurring_transactions",
-          "tableTo": "users",
-          "columnsFrom": [
-            "created_by"
           ],
           "columnsTo": [
             "id"
@@ -601,8 +543,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "entry_type": {
-          "name": "entry_type",
+        "entryType": {
+          "name": "entryType",
           "type": "entry_type",
           "typeSchema": "public",
           "primaryKey": false,
@@ -613,12 +555,6 @@
           "type": "numeric(15, 2)",
           "primaryKey": false,
           "notNull": true
-        },
-        "recurring_transaction_id": {
-          "name": "recurring_transaction_id",
-          "type": "char(26)",
-          "primaryKey": false,
-          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -661,28 +597,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "uq_transactions_recurring_date": {
-          "name": "uq_transactions_recurring_date",
-          "columns": [
-            {
-              "expression": "recurring_transaction_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "date",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "where": "\"transactions\".\"recurring_transaction_id\" IS NOT NULL",
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -705,204 +619,6 @@
           "tableTo": "projects",
           "columnsFrom": [
             "project_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
-        },
-        "transactions_recurring_transaction_id_recurring_transactions_id_fk": {
-          "name": "transactions_recurring_transaction_id_recurring_transactions_id_fk",
-          "tableFrom": "transactions",
-          "tableTo": "recurring_transactions",
-          "columnsFrom": [
-            "recurring_transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.tags": {
-      "name": "tags",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "char(26)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "company_id": {
-          "name": "company_id",
-          "type": "char(26)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "uq_tags_company_name": {
-          "name": "uq_tags_company_name",
-          "columns": [
-            {
-              "expression": "company_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "name",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "tags_company_id_companies_id_fk": {
-          "name": "tags_company_id_companies_id_fk",
-          "tableFrom": "tags",
-          "tableTo": "companies",
-          "columnsFrom": [
-            "company_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.transaction_tags": {
-      "name": "transaction_tags",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "char(26)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "transaction_id": {
-          "name": "transaction_id",
-          "type": "char(26)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "tag_id": {
-          "name": "tag_id",
-          "type": "char(26)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "uq_transaction_tags_link": {
-          "name": "uq_transaction_tags_link",
-          "columns": [
-            {
-              "expression": "transaction_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "tag_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "transaction_tags_transaction_id_transactions_id_fk": {
-          "name": "transaction_tags_transaction_id_transactions_id_fk",
-          "tableFrom": "transaction_tags",
-          "tableTo": "transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
-        },
-        "transaction_tags_tag_id_tags_id_fk": {
-          "name": "transaction_tags_tag_id_tags_id_fk",
-          "tableFrom": "transaction_tags",
-          "tableTo": "tags",
-          "columnsFrom": [
-            "tag_id"
           ],
           "columnsTo": [
             "id"
@@ -1529,13 +1245,13 @@
         },
         "role": {
           "name": "role",
-          "type": "guest_role",
+          "type": "permission_role",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "token": {
-          "name": "token",
+        "token_hash": {
+          "name": "token_hash",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -1545,6 +1261,12 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "accepted_at": {
           "name": "accepted_at",
@@ -1577,7 +1299,7 @@
           "name": "uq_token_invites",
           "columns": [
             {
-              "expression": "token",
+              "expression": "token_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1885,15 +1607,6 @@
         "yearly"
       ]
     },
-    "public.recurring_status": {
-      "name": "recurring_status",
-      "schema": "public",
-      "values": [
-        "active",
-        "paused",
-        "finished"
-      ]
-    },
     "public.role": {
       "name": "role",
       "schema": "public",
@@ -1903,10 +1616,11 @@
         "viewer"
       ]
     },
-    "public.guest_role": {
-      "name": "guest_role",
+    "public.permission_role": {
+      "name": "permission_role",
       "schema": "public",
       "values": [
+        "owner",
         "admin",
         "viewer"
       ]

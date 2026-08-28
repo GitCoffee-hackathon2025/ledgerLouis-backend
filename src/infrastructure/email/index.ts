@@ -1,5 +1,5 @@
 import { createTransporter } from "./factory.js";
-import { createRenderer } from "./renderer.js";
+import { createRenderer, type RenderOptions } from "./renderer.js";
 
 import type { EmailDefaults, EmailMessage } from "./types/contracts.js";
 import type { EmailProvider, providers } from "./providers/index.js";
@@ -29,17 +29,12 @@ export async function createEmailService<T extends EmailProvider>(
       layout,
       data,
       message,
-    }: {
-      module: string;
-      template: string;
-      layout?: string;
-      data: Record<string, any>;
-      message: Omit<EmailMessage, "html">;
-    }) {
+    }: RenderOptions & { message: Omit<EmailMessage, "html"> }) {
       const { html } = await renderer.render({
         module,
         template,
         ...(layout && { layout }),
+
         data,
       });
 

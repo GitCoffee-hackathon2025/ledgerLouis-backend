@@ -34,6 +34,7 @@ import { authErrors } from "../../../modules/auth/errors.js";
 import {
   companyErrors,
   memberErrors,
+  invitionErros
 } from "../../../modules/companies/errors.js";
 import {
   transactionErrors,
@@ -69,6 +70,7 @@ export const errorMap = generateErrorMap(
   uploaderErrors,
   companyErrors,
   memberErrors,
+  invitionErros,
   transactionErrors,
   ledgerErrors,
   accountErrors,
