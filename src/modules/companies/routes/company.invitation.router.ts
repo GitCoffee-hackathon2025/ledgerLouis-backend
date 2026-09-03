@@ -18,7 +18,6 @@ import { toId } from "../../../domain/shared/id.js";
 export const companyInvitationRoutes =
   (
     invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
-    invitationUrl: string,
   ): FastifyPluginAsyncTypebox =>
   async (app) => {
     app.post(
@@ -59,7 +58,7 @@ export const companyInvitationRoutes =
               toId(companyId),
               email,
               role,
-              invitationUrl,
+              req.server.config.WEB_URL,
             ),
           );
       },
@@ -77,7 +76,6 @@ export const companyInvitationRoutes =
           querystring: ListInvitationsQuery,
           response: {
             200: InvitationsListResponse,
-
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
@@ -92,7 +90,7 @@ export const companyInvitationRoutes =
         return reply
           .status(200)
           .send(
-            await invitation.list(
+            await invitation.listByCompany(
               req.authUser.sub,
               toId(req.params.companyId),
               req.query.limit,

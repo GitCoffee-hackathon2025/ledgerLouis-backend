@@ -25,21 +25,29 @@ export function createMemberInvitationProcessor({
 
     if (!invite) throw new Error("FALHA ao encontrar convite!!!"); /// TEMP
 
+    const company = await companyRepo.findById(invite.companyId);
+
+    const recipient = await userRepo.findByEmail(invite.email);
+    const actor = await userRepo.findById(invite.invitedBy);
+
+    const text = {
+      belonging: `d${company ? "a " + company.name : "e uma empresa"}`,
+    };
+
     await email.sendTemplate({
       module: "companies",
       template: "member-invitation",
       message: {
         to: [invite.email],
-        subject: "Você recebeu um convite para uma empresa no Ledger Louis",
+        subject: `Você recebeu um convite ${text.belonging} da aplicação Ledger Louis`,
       },
       data: {
-        title: "Convite",
+        title: `Convite para se tornar um ${invite.role} ${text.belonging}`,
         body: {
-          companyName:
-            (await companyRepo.findById(invite.companyId))?.name ?? "",
-          recipientName: (await userRepo.findByEmail(invite.email))?.name ?? "",
-          inviterName: (await userRepo.findById(invite.invitedBy))?.name ?? "",
-          invitationUrl: job.data.invitationUrl,
+          companyName: company?.name ?? "",
+          recipientName: recipient?.name ?? "",
+          inviterName: actor?.name ?? "",
+          invitaionUrl: job.data.invitationUrl,
         },
       },
     });
