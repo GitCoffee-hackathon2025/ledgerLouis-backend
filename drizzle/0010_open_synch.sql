@@ -1,1 +1,0 @@
-ALTER TABLE "users" RENAME COLUMN "is_verified" TO "verified_at";

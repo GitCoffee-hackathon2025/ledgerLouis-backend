@@ -1,5 +1,5 @@
 {
-  "id": "677c2bcd-6c97-4df1-b14e-0e6c04afea6a",
+  "id": "5e46dc52-d339-4bca-b563-5b4af05e9084",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -25,6 +25,12 @@
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "numeric(15, 2)",
+          "primaryKey": false,
+          "notNull": false
         },
         "type": {
           "name": "type",
@@ -86,6 +92,27 @@
             },
             {
               "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uq_accounts_company_value": {
+          "name": "uq_accounts_company_value",
+          "columns": [
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "value",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -227,7 +254,7 @@
           "name": "account_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "entryType": {
           "name": "entryType",
@@ -430,6 +457,58 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.transaction_documents": {
+      "name": "transaction_documents",
+      "schema": "",
+      "columns": {
+        "file_id": {
+          "name": "file_id",
+          "type": "char(26)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "char(26)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transaction_documents_file_id_files_id_fk": {
+          "name": "transaction_documents_file_id_files_id_fk",
+          "tableFrom": "transaction_documents",
+          "tableTo": "files",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "transaction_documents_transaction_id_transactions_id_fk": {
+          "name": "transaction_documents_transaction_id_transactions_id_fk",
+          "tableFrom": "transaction_documents",
+          "tableTo": "transactions",
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.transactions": {
       "name": "transactions",
       "schema": "",
@@ -444,7 +523,7 @@
           "name": "company_id",
           "type": "char(26)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "project_id": {
           "name": "project_id",
@@ -457,6 +536,25 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entryType": {
+          "name": "entryType",
+          "type": "entry_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(15, 2)",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -853,15 +951,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "is_verified": {
-          "name": "is_verified",
+        "verified_at": {
+          "name": "verified_at",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "avatar": {
-          "name": "avatar",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
@@ -903,6 +995,86 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verification_email": {
+      "name": "verification_email",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "char(26)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "char(26)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "uq_token_verification_email": {
+          "name": "uq_token_verification_email",
+          "columns": [
+            {
+              "expression": "token_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "verification_email_user_id_users_id_fk": {
+          "name": "verification_email_user_id_users_id_fk",
+          "tableFrom": "verification_email",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -1145,6 +1317,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "invited_by": {
+          "name": "invited_by",
+          "type": "char(26)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "email": {
           "name": "email",
           "type": "varchar(150)",
@@ -1153,13 +1331,13 @@
         },
         "role": {
           "name": "role",
-          "type": "guest_role",
+          "type": "permission_role",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "token": {
-          "name": "token",
+        "token_hash": {
+          "name": "token_hash",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -1169,6 +1347,12 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "accepted_at": {
           "name": "accepted_at",
@@ -1201,7 +1385,7 @@
           "name": "uq_token_invites",
           "columns": [
             {
-              "expression": "token",
+              "expression": "token_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1220,6 +1404,19 @@
           "tableTo": "companies",
           "columnsFrom": [
             "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "invites_invited_by_users_id_fk": {
+          "name": "invites_invited_by_users_id_fk",
+          "tableFrom": "invites",
+          "tableTo": "users",
+          "columnsFrom": [
+            "invited_by"
           ],
           "columnsTo": [
             "id"
@@ -1416,46 +1613,48 @@
       "name": "user_profile_images",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "file_id": {
+          "name": "file_id",
           "type": "char(26)",
           "primaryKey": true,
           "notNull": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(26)",
+          "type": "char(26)",
           "primaryKey": false,
           "notNull": true
-        },
-        "file_id": {
-          "name": "file_id",
-          "type": "varchar(26)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "user_profile_images_file_id_files_id_fk": {
+          "name": "user_profile_images_file_id_files_id_fk",
+          "tableFrom": "user_profile_images",
+          "tableTo": "files",
+          "columnsFrom": [
+            "file_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "user_profile_images_user_id_users_id_fk": {
+          "name": "user_profile_images_user_id_users_id_fk",
+          "tableFrom": "user_profile_images",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "user_profile_images_user_id_unique": {
@@ -1463,13 +1662,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
-        },
-        "user_profile_images_file_id_unique": {
-          "name": "user_profile_images_file_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "file_id"
           ]
         }
       },
@@ -1523,10 +1715,11 @@
         "viewer"
       ]
     },
-    "public.guest_role": {
-      "name": "guest_role",
+    "public.permission_role": {
+      "name": "permission_role",
       "schema": "public",
       "values": [
+        "owner",
         "admin",
         "viewer"
       ]

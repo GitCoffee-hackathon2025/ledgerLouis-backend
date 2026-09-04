@@ -1,1 +1,0 @@
-ALTER TABLE "transactions" RENAME COLUMN "entryType" TO "entry_type";
