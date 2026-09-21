@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
-import type { buildAuthModule } from "./module.js";
-import { createAuthController } from "./controller.js";
+import type { buildAuthModule } from "../module.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
+
 import {
   LoginBody,
   RefreshBody,
@@ -10,15 +11,16 @@ import {
   type RefreshRoute,
   type LogoutRoute,
   type LogoutAllRoute,
-} from "./schema.js";
-import { createErrorResponses } from "../../shared/errors/schemas/responses.js";
-import { routeGroups } from "../../shared/errors/domain/groups.js";
+} from "../schema.js";
+
+import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
+import { routeGroups } from "../../../shared/errors/domain/groups.js";
 
 export const authRouter =
-  (module: ReturnType<typeof buildAuthModule>): FastifyPluginAsync =>
+  (
+    auth: ReturnType<typeof buildAuthModule>["authService"],
+  ): FastifyPluginAsync =>
   async (app) => {
-    const controller = createAuthController(module);
-
     app.post<LoginRoute>(
       "/login",
       {
@@ -37,7 +39,18 @@ export const authRouter =
           },
         },
       },
-      controller.login,
+      async (req, res) => {
+        const { email, password } = req.body;
+
+        const tokens = await auth.login(email, password, {
+          ipAddress: req.ip,
+          ...(req.headers["user-agent"] && {
+            userAgent: req.headers["user-agent"],
+          }),
+        }, req.query.token);
+
+        return res.send(tokens);
+      },
     );
 
     app.post<RefreshRoute>(
@@ -60,7 +73,13 @@ export const authRouter =
           },
         },
       },
-      controller.refresh,
+      async (req, res) => {
+        const { refreshToken } = req.body;
+
+        const tokens = await auth.refresh(refreshToken);
+
+        return res.send(tokens);
+      },
     );
 
     app.delete<LogoutRoute>(
@@ -82,7 +101,13 @@ export const authRouter =
           },
         },
       },
-      controller.logout,
+      async (req, res) => {
+        if (!req.authUser) throw new AppError("UNAUTHORIZED");
+
+        await auth.logout(req.authUser.sid);
+
+        return res.status(204).send();
+      },
     );
 
     app.delete<LogoutAllRoute>(
@@ -104,6 +129,12 @@ export const authRouter =
           },
         },
       },
-      controller.logoutAll,
+      async (req, res) => {
+        if (!req.authUser) throw new AppError("UNAUTHORIZED");
+
+        await auth.logoutAll(req.authUser.sub);
+
+        return res.status(204).send();
+      },
     );
   };
