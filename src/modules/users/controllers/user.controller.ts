@@ -16,7 +16,10 @@ export const createUserController = (
   async register(req: FastifyRequest<RegisterRoute>, reply: FastifyReply) {
     const { name, email, password } = req.body;
 
-    const created = await userService.register(name, email, password);
+    const created = await userService.register(
+      { name, email, password },
+      req.server.config.WEB_URL,
+    );
 
     return reply.status(201).send(created);
   },

@@ -1,19 +1,32 @@
+import type { createUserRepository } from "../repositories/user.repository.js";
+import type { buildAuthModule } from "../../auth/module.js";
+
 import { AppError } from "../../../shared/errors/domain/errors.js";
-import { generateId, type ULID } from "../../../domain/shared/id.js";
 import { getUniqueConstraint } from "../../../infrastructure/database/errors/getUniqueConstraint.js";
+
+import { generateId, type ULID } from "../../../domain/shared/id.js";
 import {
   hashPassword,
   verifyPassword,
 } from "../../../shared/security/hash/password.js";
 
-import type { createUserRepository } from "../repositories/user.repository.js";
-import type { buildAuthModule } from "../../auth/module.js";
-
 export const createUserService = (
   repo: ReturnType<typeof createUserRepository>,
   authService: ReturnType<typeof buildAuthModule>["authService"],
+  emailService: ReturnType<typeof buildAuthModule>["emailService"],
 ) => ({
-  async register(name: string, email: string, password: string) {
+  async register(
+    {
+      name,
+      email,
+      password,
+    }: {
+      name: string;
+      email: string;
+      password: string;
+    },
+    webUrl: string,
+  ) {
     name = name.trim();
     email = email.trim();
 
@@ -32,6 +45,8 @@ export const createUserService = (
       throw error;
     }
 
+    await emailService.create(id, webUrl);
+
     return { id, name, email };
   },
 
@@ -39,9 +54,9 @@ export const createUserService = (
     return repo.findById(id);
   },
 
-  async verifyEmail(id: ULID) {
-    await repo.update(id, { isVerified: new Date() });
-  },
+  // async verifyEmail(id: ULID) {
+  //   await repo.update(id, { isVerified: new Date() });
+  // },
 
   async changePassword(
     id: ULID,
