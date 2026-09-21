@@ -29,12 +29,15 @@ import { httpErrors } from "./domain/http.errors.js";
 import { uploaderErrors } from "./infra/uploader.errors.js";
 // // Erros dos modulos do sistema
 import { userErrors } from "../../../modules/users/errors.js";
-import { authErrors } from "../../../modules/auth/errors.js";
+import {
+  authErrors,
+  verificationEmailErrors,
+} from "../../../modules/auth/errors.js";
 // // Erros dos modulos do negócio
 import {
   companyErrors,
   memberErrors,
-  invitionErros
+  invitionErros,
 } from "../../../modules/companies/errors.js";
 
 // Centralizador de erros
@@ -60,6 +63,7 @@ export const errorMap = generateErrorMap(
   httpErrors,
   userErrors,
   authErrors,
+  verificationEmailErrors,
   uploaderErrors,
   companyErrors,
   memberErrors,

@@ -8,7 +8,7 @@ import { startKeyRotation } from "../../../modules/auth/services/scheduler.servi
 
 export default fp(
   async function (app: FastifyInstance) {
-    const auth = buildAuthModule(app.db);
+    const auth = buildAuthModule(app.db, app.redis.adapter);
     const scheduler = startKeyRotation(auth.keyService);
     await scheduler.start();
 
@@ -33,6 +33,6 @@ export default fp(
   },
   {
     name: "auth",
-    dependencies: ["env", "db", "rateLimit"],
+    dependencies: ["env", "db", "redis", "rateLimit"],
   },
 );

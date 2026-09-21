@@ -18,4 +18,11 @@ export const routeGroups = {
     "INVITATION_REVOKED",
     "INVITATION_EMAIL_MISMATCH",
   ],
+  verification: [
+    "EMAIL_ALREADY_VERIFIED",
+    "VERIFICATION_EMAIL_NOT_FOUND",
+    "VERIFICATION_NOT_FOUND",
+    "VERIFICATION_EXPIRED",
+    "EMAIL_VERIFICATION_COOLDOWN",
+  ],
 } as const;
