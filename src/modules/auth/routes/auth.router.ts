@@ -34,6 +34,7 @@ export const authRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
+              ...routeGroups.user,
               "INVALID_CREDENTIALS",
             ]),
           },

@@ -46,6 +46,8 @@ export const companyUpdateRoutes =
                 ...routeGroups.common,
                 ...routeGroups.form,
                 ...routeGroups.auth,
+                ...routeGroups.permission,
+                ...routeGroups.member,
                 ...routeGroups.company,
               ]),
             },

@@ -6,11 +6,30 @@ export const routeGroups = {
     "UNSUPPORTED_MEDIA_TYPE",
   ],
   form: ["INVALID_JSON", "VALIDATION_ERROR"],
-  auth: ["INVALID_TOKEN", "TOKEN_EXPIRED", "UNAUTHORIZED"],
-  user: ["USER_NOT_FOUND", "EMAIL_ALREADY_EXISTS"],
+  auth: [
+    "INVALID_TOKEN",
+    "TOKEN_EXPIRED",
+    "UNAUTHORIZED",
+    "TOKEN_REUSE_DETECTED",
+  ],
+  user: [
+    "USER_NOT_FOUND",
+    "EMAIL_ALREADY_EXISTS",
+    "EMAIL_NOT_VERIFIED",
+  ],
   permission: ["FORBIDDEN"],
-  company: ["COMPANY_NOT_FOUND"],
-  member: ["MEMBER_NOT_FOUND"],
+  company: [
+    "COMPANY_NOT_FOUND",
+    "CNPJ_ALREADY_EXISTS",
+    "EMAIL_ALREADY_EXISTS",
+    "PHONE_ALREADY_EXISTS",
+  ],
+  member: [
+    "MEMBER_NOT_FOUND",
+    "MEMBER_ALREADY_EXISTS",
+    "CANNOT_REMOVE_LAST_OWNER",
+    "CANNOT_CHANGE_OWN_ROLE",
+  ],
   invitation: [
     "INVITATION_EXPIRED",
     "INVITATION_NOT_FOUND",
@@ -24,5 +43,13 @@ export const routeGroups = {
     "VERIFICATION_NOT_FOUND",
     "VERIFICATION_EXPIRED",
     "EMAIL_VERIFICATION_COOLDOWN",
+  ],
+  file: [
+    "FILE_REQUIRED",
+    "INVALID_FILE_TYPE",
+    "FILE_TOO_LARGE",
+    "FILE_NOT_FOUND",
+    "UPLOAD_FAILED",
+    "PROFILE_IMAGE_NOT_FOUND",
   ],
 } as const;

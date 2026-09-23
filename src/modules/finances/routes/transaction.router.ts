@@ -44,7 +44,8 @@ export const transactionRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
-              ...routeGroups.company, // Adicionado erro de contexto de empresa
+              ...routeGroups.company,
+              ...routeGroups.member,
             ]),
           },
         },
@@ -67,6 +68,7 @@ export const transactionRoutes =
               ...routeGroups.common,
               ...routeGroups.auth,
               ...routeGroups.company,
+              ...routeGroups.member,
             ]),
           },
         },
@@ -91,6 +93,7 @@ export const transactionRoutes =
               ...routeGroups.form,
               ...routeGroups.auth,
               ...routeGroups.company,
+              ...routeGroups.member,
             ]),
           },
         },
@@ -113,7 +116,9 @@ export const transactionRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.permission,
               ...routeGroups.company,
+              ...routeGroups.member,
             ]),
           },
         },
@@ -132,6 +137,12 @@ export const transactionRoutes =
           params: CompanyParam,
           response: {
             200: accountValueResponseSchema,
+            ...createErrorResponses([
+              ...routeGroups.common,
+              ...routeGroups.auth,
+              ...routeGroups.company,
+              ...routeGroups.member,
+            ]),
           },
         },
       },

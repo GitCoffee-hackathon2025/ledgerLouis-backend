@@ -35,6 +35,7 @@ export const companyRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.member,
               ...routeGroups.company,
             ]),
           },
@@ -77,7 +78,6 @@ export const companyRoutes =
               ...routeGroups.form,
               ...routeGroups.auth,
               ...routeGroups.company,
-              "CNPJ_ALREADY_EXISTS",
             ]),
           },
         },
@@ -99,6 +99,8 @@ export const companyRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.permission,
+              ...routeGroups.member,
               ...routeGroups.company,
             ]),
           },

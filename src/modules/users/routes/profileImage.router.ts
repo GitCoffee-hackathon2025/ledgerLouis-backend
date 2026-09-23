@@ -42,7 +42,7 @@ export const profileImageRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
-              ...routeGroups.user,
+              ...routeGroups.file,
             ]),
           },
         },
@@ -64,7 +64,7 @@ export const profileImageRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
-              ...routeGroups.user,
+              ...routeGroups.file,
             ]),
           },
         },
@@ -85,7 +85,7 @@ export const profileImageRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
-              ...routeGroups.user,
+              ...routeGroups.file,
             ]),
           },
         },
