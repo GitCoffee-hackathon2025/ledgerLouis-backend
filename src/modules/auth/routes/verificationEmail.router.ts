@@ -17,6 +17,7 @@ export const verificationEmailRouter =
     app.post(
       "/resend",
       {
+        config: { rateLimit: { max: 5, window: 180 } },
         schema: {
           tags: ["email-verification"],
           summary: "Resend email verification",
