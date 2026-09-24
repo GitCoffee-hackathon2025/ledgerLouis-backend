@@ -1,14 +1,11 @@
-import type { FastifyPluginAsync } from "fastify";
-import { createCompanyController } from "../controllers/company.controller.js";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
+import { toId } from "../../../domain/shared/id.js";
 import {
   CompaniesListResponse,
   CompanyResponse,
   CreateBody,
   CompanyIdParam,
-  type GetCompanyRoute,
-  type CreateCompanyRoute,
-  type DeleteCompanyRoute,
 } from "../schemas/company.schema.js";
 
 import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
@@ -17,11 +14,9 @@ import { routeGroups } from "../../../shared/errors/domain/groups.js";
 export const companyRoutes =
   (
     module: ReturnType<typeof buildCompanyModule>["company"]["companyService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    const controller = createCompanyController(module);
-
-    app.get<GetCompanyRoute>(
+    app.get(
       "/:companyId",
       {
         preHandler: app.verifyAccess,
@@ -41,7 +36,10 @@ export const companyRoutes =
           },
         },
       },
-      controller.get,
+      async (req, reply) =>
+        reply
+          .status(200)
+          .send(await module.find(toId(req.params.companyId), req.authUser.sub)),
     );
 
     app.get(
@@ -59,10 +57,10 @@ export const companyRoutes =
           },
         },
       },
-      controller.list,
+      async (_req, reply) => reply.status(200).send(await module.list()),
     );
 
-    app.post<CreateCompanyRoute>(
+    app.post(
       "/",
       {
         preHandler: app.verifyAccess,
@@ -82,10 +80,21 @@ export const companyRoutes =
           },
         },
       },
-      controller.create,
+      async (req, reply) => {
+        const { name, cnpj, email, cep, phone } = req.body;
+        return reply.status(201).send(
+          await module.create(req.authUser.sub, {
+            name,
+            cnpj,
+            email,
+            cep,
+            phone,
+          }),
+        );
+      },
     );
 
-    app.delete<DeleteCompanyRoute>(
+    app.delete(
       "/:companyId",
       {
         preHandler: app.verifyAccess,
@@ -95,7 +104,7 @@ export const companyRoutes =
           summary: "Delete company",
           params: CompanyIdParam,
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
@@ -106,6 +115,9 @@ export const companyRoutes =
           },
         },
       },
-      controller.delete,
+      async (req, reply) => {
+        await module.delete(toId(req.params.companyId), req.authUser.sub);
+        return reply.status(204).send();
+      },
     );
   };

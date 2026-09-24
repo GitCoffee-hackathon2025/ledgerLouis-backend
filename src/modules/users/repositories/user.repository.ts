@@ -40,7 +40,7 @@ export const createUserRepository = (db: DB) => ({
       .update(users)
       .set(data)
       .where(and(eq(users.id, id), isNull(users.deletedAt)))
-      .returning({ id: users.id });
+      .returning({ id: users.id, name: users.name, email: users.email });
   },
 
   async delete(id: NonNullable<UserInsert["id"]>) {

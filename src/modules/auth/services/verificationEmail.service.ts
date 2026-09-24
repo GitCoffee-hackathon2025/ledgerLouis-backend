@@ -40,10 +40,8 @@ export const createVerificationService = (
     });
 
     return {
-      expiresAt: verification.expiresAt.toISOString(),
-      cooldown: new Date(
-        Date.now() + EMAIL_VERIFICATION_RESEND_COOLDOWN_MS,
-      ).toISOString(),
+      expiresAt: verification.expiresAt,
+      cooldown: new Date(Date.now() + EMAIL_VERIFICATION_RESEND_COOLDOWN_MS),
     };
   }
 

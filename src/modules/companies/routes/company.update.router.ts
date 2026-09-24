@@ -1,10 +1,9 @@
-import type { FastifyPluginAsync } from "fastify";
-import { createCompanyUpdateController } from "../controllers/company.update.controller.js";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
+import { toId } from "../../../domain/shared/id.js";
 import {
   CompanyResponse,
   CompanyIdParam,
-  type UpdateCompanyRoute,
   createUpdateBody,
 } from "../schemas/company.schema.js";
 
@@ -16,30 +15,19 @@ export const companyUpdateRoutes =
     module: ReturnType<
       typeof buildCompanyModule
     >["company"]["companyUpdateService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    const controller = createCompanyUpdateController(module);
-
-    // Declarando rotas e seus handlers
-    const routes = {
-      name: { url: "/name", handler: controller.updateName },
-      email: { url: "/email", handler: controller.updateEmail },
-      cep: { url: "/cep", handler: controller.updateCep },
-      phone: { url: "/phone", handler: controller.updatePhone },
-    } as const;
-
-    // Passando por cada rota e a regitrando-a
-    for (const k of Object.keys(routes) as (keyof typeof routes)[])
-      app.patch<UpdateCompanyRoute<typeof k>>(
-        routes[k].url,
+    for (const key of ["name", "email", "cep", "phone"] as const) {
+      app.patch(
+        `/${key}`,
         {
           preHandler: app.verifyAccess,
           config: { auth: true },
           schema: {
             tags: ["companies"],
-            summary: `Change company ${k}`,
+            summary: `Change company ${key}`,
             params: CompanyIdParam,
-            body: createUpdateBody(k),
+            body: createUpdateBody(key),
             response: {
               200: CompanyResponse,
               ...createErrorResponses([
@@ -53,6 +41,20 @@ export const companyUpdateRoutes =
             },
           },
         },
-        routes[k].handler,
+        async (req, reply) => {
+          const companyId = toId(req.params.companyId);
+          const userId = req.authUser.sub;
+          const value = req.body[key];
+          const updated =
+            key === "name"
+              ? await module.updateName(companyId, userId, value)
+              : key === "email"
+                ? await module.updateEmail(companyId, userId, value)
+                : key === "cep"
+                  ? await module.updateCep(companyId, userId, value)
+                  : await module.updatePhone(companyId, userId, value);
+          return reply.status(200).send(updated as never);
+        },
       );
+    }
   };

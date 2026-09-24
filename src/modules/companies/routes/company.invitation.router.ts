@@ -32,7 +32,6 @@ export const companyInvitationRoutes =
           body: CreateInvitationBody,
           response: {
             201: InvitationResponse,
-
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
@@ -47,17 +46,14 @@ export const companyInvitationRoutes =
         },
       },
       async (req, reply) => {
-        const { companyId } = req.params;
-        const { email, role } = req.body;
-
         return reply
           .status(201)
           .send(
             await invitation.create(
               req.authUser.sub,
-              toId(companyId),
-              email,
-              role,
+              toId(req.params.companyId),
+              req.body.email,
+              req.body.role,
               req.server.config.WEB_URL,
             ),
           );
@@ -110,8 +106,7 @@ export const companyInvitationRoutes =
           summary: "Revoke company invitation",
           params: CompanyInvitationIdParams,
           response: {
-            204: { type: "null" },
-
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
@@ -129,7 +124,7 @@ export const companyInvitationRoutes =
           toId(req.params.invitationId),
         );
 
-        return reply.status(204);
+        return reply.status(204).send();
       },
     );
   };

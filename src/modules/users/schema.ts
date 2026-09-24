@@ -14,20 +14,10 @@ export const RegisterBody = Type.Object(
   { additionalProperties: false },
 );
 
-export type RegisterBodyType = Static<typeof RegisterBody>;
-
 export const UpdateBody = Type.Object(
   { name: Name, email: Email },
   { additionalProperties: false },
 );
-
-export type UpdateBodyType = Static<typeof UpdateBody>;
-
-// export const UploadProfileImageBody = Type.Object({
-//   file: Type.String({ format: "binary" }),
-// });
-
-// export type UploadProfileImageBodyType = Static<typeof UploadProfileImageBody>;
 
 // responses
 
@@ -36,7 +26,14 @@ export const UserResponse = Type.Object({
   name: Name,
   email: Email,
 });
-export type UserResponseType = Static<typeof UserResponse>;
+
+export const RegistedUserResponse = Type.Intersect([
+  UserResponse,
+  Type.Object({
+    expiresAt: Type.String({ format: "date-time" }),
+    cooldown: Type.String({ format: "date-time" }),
+  }),
+]);
 
 export const UserListResponse = Type.Array(UserResponse);
 
@@ -44,24 +41,3 @@ export const ProfileImageResponse = Type.Object({
   userId: IdSchema,
   fileId: IdSchema,
 });
-export type ProfileImageResponseType = Static<typeof ProfileImageResponse>;
-
-// route generics
-
-export type RegisterRoute = {
-  Body: RegisterBodyType;
-};
-
-export type GetMeRoute = {};
-
-export type UpdateRoute = {
-  Body: UpdateBodyType;
-};
-
-export type DeleteRoute = {};
-
-export type UploadProfileImageRoute = {};
-
-export type OpenProfileImageRoute = {};
-
-export type DeleteProfileImageRoute = {};

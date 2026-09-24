@@ -9,14 +9,10 @@ export const CompanyIdParam = Type.Object({
   companyId: IdSchema,
 });
 
-export type CompanyIdParamType = Static<typeof CompanyIdParam>;
-
 export const MemberParam = Type.Object({
   companyId: IdSchema,
   userId: IdSchema,
 });
-
-export type MemberParamType = Static<typeof MemberParam>;
 
 // query
 
@@ -24,8 +20,6 @@ export const ListMembersQuery = Type.Object({
   limit: Type.Optional(Type.Number({ minimum: 1, default: 20 })),
   offset: Type.Optional(Type.Number({ minimum: 0, default: 0 })),
 });
-
-export type ListMembersQueryType = Static<typeof ListMembersQuery>;
 
 // bodies
 
@@ -37,8 +31,6 @@ export const AddMemberBody = Type.Object(
   { additionalProperties: false },
 );
 
-export type AddMemberBodyType = Static<typeof AddMemberBody>;
-
 export const ChangeRoleBody = Type.Object(
   {
     role: Type.Union(permissionsEnum.map((p) => Type.Literal(p))),
@@ -46,13 +38,13 @@ export const ChangeRoleBody = Type.Object(
   { additionalProperties: false },
 );
 
-export type ChangeRoleBodyType = Static<typeof ChangeRoleBody>;
-
 // responses
 
-const RoleSchema = Type.Union(
-  permissionsEnum.map((permission) => Type.Literal(permission)),
-);
+const RoleSchema = Type.Union([
+  Type.Literal("owner"),
+  Type.Literal("admin"),
+  Type.Literal("viewer"),
+]);
 
 export const MemberResponse = Type.Object({
   userId: IdSchema,
@@ -87,26 +79,3 @@ export const UserCompanyResponse = Type.Object({
 });
 
 export const UserCompaniesResponse = Type.Array(UserCompanyResponse);
-
-// route generics
-
-export type ListMembersRoute = {
-  Params: CompanyIdParamType;
-  Querystring: ListMembersQueryType;
-};
-
-export type AddMemberRoute = {
-  Params: CompanyIdParamType;
-  Body: AddMemberBodyType;
-};
-
-export type ChangeMemberRoleRoute = {
-  Params: MemberParamType;
-  Body: ChangeRoleBodyType;
-};
-
-export type RemoveMemberRoute = {
-  Params: MemberParamType;
-};
-
-export type ListUserCompaniesRoute = {};

@@ -24,7 +24,6 @@ export const verificationEmailRouter =
           body: EmailVerificationResendBody,
           response: {
             200: EmailVerificationResponse,
-
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
@@ -35,14 +34,18 @@ export const verificationEmailRouter =
         },
       },
       async (req, reply) => {
+        const result = await verificationEmail.resend(
+          req.body.email,
+          req.server.config.WEB_URL,
+        );
+
         return reply
           .status(200)
-          .send(
-            await verificationEmail.resend(
-              req.body.email,
-              req.server.config.WEB_URL,
-            ),
-          );
+          .send({
+            ...result,
+            expiresAt: result.expiresAt.toISOString(),
+            cooldown: result.cooldown.toISOString(),
+          });
       },
     );
   };

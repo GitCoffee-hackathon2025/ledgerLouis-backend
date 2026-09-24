@@ -45,9 +45,9 @@ export const createUserService = (
       throw error;
     }
 
-    await emailService.create(id, webUrl);
+    const { expiresAt, cooldown } = await emailService.create(id, webUrl);
 
-    return { id, name, email };
+    return { id, name, email, expiresAt, cooldown };
   },
 
   async findById(id: ULID) {
@@ -92,11 +92,11 @@ export const createUserService = (
       if (existingUser && existingUser.id !== id)
         throw new AppError("EMAIL_ALREADY_EXISTS");
     }
-    if (user.name) user.name = user.name.trim();
+    else if (user.name) user.name = user.name.trim();
 
-    await repo.update(id, user);
+    const [updatedUser] = await repo.update(id, user);
 
-    return { id, ...user };
+    return updatedUser!;
   },
 
   async delete(id: ULID) {

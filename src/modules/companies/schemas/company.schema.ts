@@ -25,7 +25,6 @@ const CompanyData = Type.Object({
 export const CompanyIdParam = Type.Object({
   companyId: IdSchema,
 });
-export type CompanyIdParamType = Static<typeof CompanyIdParam>;
 
 // bodies
 export const CreateBody = Type.Object(
@@ -38,7 +37,6 @@ export const CreateBody = Type.Object(
   },
   { additionalProperties: false },
 );
-export type CreateBodyType = Static<typeof CreateBody>;
 
 const UpdateBodyProperties = {
   name: NameCompany,
@@ -68,20 +66,6 @@ export const UpdateBody = Type.Object(
   },
   { additionalProperties: false },
 );
-export type UpdateBodyType = Static<typeof UpdateBody>;
-
-// route generics
-export type GetCompanyRoute = { Params: CompanyIdParamType };
-
-export type CreateCompanyRoute = { Body: CreateBodyType };
-
-// export type UpdateCompanyRoute = { Params: IdParamType; Body: UpdateBodyType };
-export type UpdateCompanyRoute<K extends keyof UpdateBodyType> = {
-  Params: CompanyIdParamType;
-  Body: Pick<UpdateBodyType, K>;
-};
-
-export type DeleteCompanyRoute = { Params: CompanyIdParamType };
 
 // responses
 export const CompanyResponse = CompanyData;

@@ -1,7 +1,6 @@
-import type { FastifyPluginAsync } from "fastify";
-
-import { createMemberController } from "../controllers/member.controller.js";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
+import { toId } from "../../../domain/shared/id.js";
 
 import {
   CompanyIdParam,
@@ -12,10 +11,6 @@ import {
   MembersListResponse,
   MemberMutationResponse,
   UserCompaniesResponse,
-  type ListMembersRoute,
-  type AddMemberRoute,
-  type ChangeMemberRoleRoute,
-  type RemoveMemberRoute,
 } from "../schemas/member.schema.js";
 
 import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
@@ -24,11 +19,9 @@ import { routeGroups } from "../../../shared/errors/domain/groups.js";
 export const memberRoutes =
   (
     module: ReturnType<typeof buildCompanyModule>["memberService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    const controller = createMemberController(module);
-
-    app.get<ListMembersRoute>(
+    app.get(
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
@@ -50,10 +43,25 @@ export const memberRoutes =
           },
         },
       },
-      controller.list,
+      async (req, reply) => {
+        const result = await module.findAllMember(
+          req.authUser.sub,
+          toId(req.params.companyId),
+          req.query.limit,
+          req.query.offset,
+        );
+
+        return reply.status(200).send({
+          ...result,
+          items: result.items.map((item) => ({
+            ...item,
+            createdAt: item.createdAt.toISOString(),
+          })),
+        });
+      },
     );
 
-    app.post<AddMemberRoute>(
+    app.post(
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
@@ -77,10 +85,20 @@ export const memberRoutes =
           },
         },
       },
-      controller.add,
+      async (req, reply) =>
+        reply
+          .status(201)
+          .send(
+            await module.addMember(
+              req.authUser.sub,
+              toId(req.params.companyId),
+              req.body.email,
+              req.body.role,
+            ),
+          ),
     );
 
-    app.patch<ChangeMemberRoleRoute>(
+    app.patch(
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
@@ -103,10 +121,20 @@ export const memberRoutes =
           },
         },
       },
-      controller.changeRole,
+      async (req, reply) =>
+        reply
+          .status(200)
+          .send(
+            await module.changeMemberRole(
+              req.authUser.sub,
+              toId(req.params.companyId),
+              toId(req.params.userId),
+              req.body.role,
+            ),
+          ),
     );
 
-    app.delete<RemoveMemberRoute>(
+    app.delete(
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
@@ -116,7 +144,7 @@ export const memberRoutes =
           summary: "Remove company member",
           params: MemberParam,
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
@@ -127,7 +155,14 @@ export const memberRoutes =
           },
         },
       },
-      controller.remove,
+      async (req, reply) => {
+        await module.removeMember(
+          req.authUser.sub,
+          toId(req.params.companyId),
+          toId(req.params.userId),
+        );
+        return reply.status(204).send();
+      },
     );
 
     app.get(
@@ -147,6 +182,15 @@ export const memberRoutes =
           },
         },
       },
-      controller.listUserCompanies,
+      async (req, reply) => {
+        const result = await module.findUserList(req.authUser.sub);
+
+        return reply.status(200).send(
+          result.map((item) => ({
+            ...item,
+            createdAt: item.createdAt.toISOString(),
+          })),
+        );
+      },
     );
   };

@@ -15,15 +15,12 @@ export const AuthHeader = Type.Object(
   },
   { additionalProperties: true },
 );
-export type AuthHeaderType = Static<typeof AuthHeader>;
 
 // query
 export const LoginQuery = Type.Object(
   { token: Type.Optional(Type.String({ minLength: 1 })) },
   { additionalProperties: false },
 );
-
-export type LoginQueryType = Static<typeof LoginQuery>;
 
 // bodies
 export const LoginBody = Type.Object(
@@ -33,7 +30,6 @@ export const LoginBody = Type.Object(
   },
   { additionalProperties: false },
 );
-export type LoginBodyType = Static<typeof LoginBody>;
 
 export const RefreshBody = Type.Object(
   {
@@ -41,7 +37,6 @@ export const RefreshBody = Type.Object(
   },
   { additionalProperties: false },
 );
-export type RefreshBodyType = Static<typeof RefreshBody>;
 
 // email verification
 export const EmailVerificationResendBody = Type.Object(
@@ -50,20 +45,8 @@ export const EmailVerificationResendBody = Type.Object(
   },
   { additionalProperties: false },
 );
-export type EmailVerificationResendBodyType = Static<
-  typeof EmailVerificationResendBody
->;
 
 // route generics
-export type LoginRoute = { Body: LoginBodyType; Querystring: LoginQueryType };
-export type RefreshRoute = { Body: RefreshBodyType };
-export type LogoutRoute = { Headers: AuthHeaderType };
-export type LogoutAllRoute = { Headers: AuthHeaderType };
-
-export type EmailVerificationResendRoute = {
-  Body: EmailVerificationResendBodyType;
-};
-// responses
 export const AuthResponse = Type.Object({
   accessToken: JwtSchema,
   refreshToken: JwtSchema,

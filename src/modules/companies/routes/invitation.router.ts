@@ -3,8 +3,6 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
 
 import {
-  // InvitationTokenParams,
-  // InvitationDetailsResponse,
   InvitationAcceptanceResponse,
   UserInvitationIdParams,
   UserInvitationsListResponse,

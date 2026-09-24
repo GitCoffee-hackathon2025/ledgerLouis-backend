@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import type { buildAuthModule } from "../module.js";
 import { AppError } from "../../../shared/errors/domain/errors.js";
 
@@ -7,10 +7,7 @@ import {
   RefreshBody,
   AuthResponse,
   AuthHeader,
-  type LoginRoute,
-  type RefreshRoute,
-  type LogoutRoute,
-  type LogoutAllRoute,
+  LoginQuery,
 } from "../schema.js";
 
 import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
@@ -19,15 +16,16 @@ import { routeGroups } from "../../../shared/errors/domain/groups.js";
 export const authRouter =
   (
     auth: ReturnType<typeof buildAuthModule>["authService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    app.post<LoginRoute>(
+    app.post(
       "/login",
       {
         config: { rateLimit: { max: 10, window: 60 } },
         schema: {
           tags: ["auth"],
           summary: "Login user",
+          querystring: LoginQuery,
           body: LoginBody,
           response: {
             200: AuthResponse,
@@ -54,7 +52,7 @@ export const authRouter =
       },
     );
 
-    app.post<RefreshRoute>(
+    app.post(
       "/refresh",
       {
         config: { rateLimit: { max: 30, window: 60 } },
@@ -83,7 +81,7 @@ export const authRouter =
       },
     );
 
-    app.delete<LogoutRoute>(
+    app.delete(
       "/logout",
       {
         preHandler: app.verifyAccess,
@@ -93,7 +91,7 @@ export const authRouter =
           summary: "Logout current session",
           headers: AuthHeader,
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
@@ -111,7 +109,7 @@ export const authRouter =
       },
     );
 
-    app.delete<LogoutAllRoute>(
+    app.delete(
       "/logout-all",
       {
         preHandler: app.verifyAccess,
@@ -121,7 +119,7 @@ export const authRouter =
           summary: "Logout all sessions",
           headers: AuthHeader,
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
