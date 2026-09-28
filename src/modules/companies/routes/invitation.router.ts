@@ -67,10 +67,10 @@ export const invitationRoutes =
         return res
           .status(200)
           .send(
-            await invitation.acceptById(
-              req.authUser.sub,
-              toId(req.params.invitationId),
-            ),
+            await invitation.accept(req.authUser.sub, {
+              by: "id",
+              value: toId(req.params.invitationId),
+            }),
           );
       },
     );

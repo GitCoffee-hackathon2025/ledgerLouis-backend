@@ -11,6 +11,10 @@ import { permissionsEnum } from "../../../domain/organization/enums.js";
 
 import { generateToken, hashToken } from "../../../shared/security/token.js";
 
+type InvitationLookup =
+  | { by: "token"; value: string }
+  | { by: "id"; value: ULID };
+
 export const createInvitationService = (
   inviteRepo: ReturnType<typeof createInviteRepository>,
   memberRepo: ReturnType<typeof createMemberRepository>,
@@ -94,24 +98,6 @@ export const createInvitationService = (
       };
     },
 
-    // async read(userId: ULID, token: string) {
-    //   const invite = validateInvitation(
-    //     await inviteRepo.findByTokenHash(hashToken(token)),
-    //   );
-
-    //   const user = await userRepo.findById(userId);
-    //   if (!user) throw new AppError("USER_NOT_FOUND");
-
-    //   if (user.email !== invite.email) throw new AppError("FORBIDDEN");
-
-    //   return {
-    //     companyId: invite.companyId,
-    //     email: invite.email,
-    //     role: invite.role,
-    //     expiresAt: invite.expiresAt,
-    //   };
-    // },
-
     async listByUser(userId: ULID) {
       const user = await userRepo.findById(userId);
       if (!user) throw new AppError("USER_NOT_FOUND");
@@ -138,46 +124,11 @@ export const createInvitationService = (
       };
     },
 
-    async acceptByToken(userId: ULID, token: string) {
+    async accept(userId: ULID, lookup: InvitationLookup) {
       const invite = validateInvitation(
-        await inviteRepo.findByTokenHash(hashToken(token)),
-      );
-
-      const user = await userRepo.findById(userId);
-
-      if (!user) throw new AppError("USER_NOT_FOUND");
-
-      // o convite é destinado ao e-mail específico
-      if (user.email.toLowerCase() !== invite.email)
-        throw new AppError("INVITATION_EMAIL_MISMATCH");
-
-      // proteção contra associação duplicada
-      const existingMembership = await memberRepo.findMembership(
-        invite.companyId,
-        userId,
-      );
-
-      if (existingMembership) throw new AppError("MEMBER_ALREADY_EXISTS");
-
-      await memberRepo.create({
-        companyId: invite.companyId,
-        userId,
-        role: invite.role,
-      });
-
-      if (!(await inviteRepo.markAsAccepted(invite.id)))
-        throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-      return {
-        companyId: invite.companyId,
-        userId,
-        role: invite.role,
-      };
-    },
-
-    async acceptById(userId: ULID, invitationId: ULID) {
-      const invite = validateInvitation(
-        await inviteRepo.findById(invitationId),
+        lookup.by === "id"
+          ? await inviteRepo.findById(lookup.value)
+          : await inviteRepo.findByTokenHash(hashToken(lookup.value)),
       );
 
       const user = await userRepo.findById(userId);
