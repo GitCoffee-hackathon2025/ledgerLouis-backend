@@ -1,4 +1,4 @@
-import { authWorkers } from "../modules/auth/queue/workers.js";
+import { authWorkers } from "../modules/auth/queues/workers.js";
 import { fileWorkers } from "../modules/files/queue/workers.js";
 import { companyWorkers } from "../modules/companies/queues/workers.js";
 

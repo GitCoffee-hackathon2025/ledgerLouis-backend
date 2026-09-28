@@ -1,6 +1,6 @@
 import type { createVerificationEmailRepository } from "../repositories/verificationEmail.repository.js";
 import type { createUserRepository } from "../../users/repositories/user.repository.js";
-import type { buildEmailVerificationQueue } from "../queue/email-verification/index.js";
+import type { buildEmailVerificationQueue } from "../queues/email-verification/index.js";
 
 import type { ULID } from "../../../domain/shared/id.js";
 import { generateToken, hashToken } from "../../../shared/security/token.js";

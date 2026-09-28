@@ -12,7 +12,7 @@ import { createRefreshService } from "./services/refresh.service.js";
 import { createTokenService } from "./services/token.service.js";
 import { createAuthService } from "./service.js";
 
-import { buildEmailVerificationQueue } from "./queue/email-verification/index.js";
+import { buildEmailVerificationQueue } from "./queues/email-verification/index.js";
 import { createVerificationEmailRepository } from "./repositories/verificationEmail.repository.js";
 import { createVerificationService } from "./services/verificationEmail.service.js";
 
