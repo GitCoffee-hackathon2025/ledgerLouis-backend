@@ -4,13 +4,10 @@ import { type FastifyInstance } from "fastify";
 import { AppError } from "../../../shared/errors/domain/errors.js";
 
 import { buildAuthModule } from "../../../modules/auth/module.js";
-import { startKeyRotation } from "../../../modules/auth/services/scheduler.service.js";
 
 export default fp(
   async function (app: FastifyInstance) {
     const auth = buildAuthModule(app.db, app.redis.adapter);
-    const scheduler = startKeyRotation(auth.keyService);
-    await scheduler.start();
 
     app.decorate("verifyAccess", async function (req, res) {
       const header = req.headers.authorization;
