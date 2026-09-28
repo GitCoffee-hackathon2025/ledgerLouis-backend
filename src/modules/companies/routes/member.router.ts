@@ -51,13 +51,7 @@ export const memberRoutes =
           req.query.offset,
         );
 
-        return reply.status(200).send({
-          ...result,
-          items: result.items.map((item) => ({
-            ...item,
-            createdAt: item.createdAt.toISOString(),
-          })),
-        });
+        return reply.status(200).send(result);
       },
     );
 
@@ -185,12 +179,7 @@ export const memberRoutes =
       async (req, reply) => {
         const result = await module.findUserList(req.authUser.sub);
 
-        return reply.status(200).send(
-          result.map((item) => ({
-            ...item,
-            createdAt: item.createdAt.toISOString(),
-          })),
-        );
+        return reply.status(200).send(result);
       },
     );
   };

@@ -43,11 +43,7 @@ export const userRouter =
           req.server.config.WEB_URL,
         );
 
-        return reply.status(201).send({
-          ...result,
-          expiresAt: result.expiresAt.toISOString(),
-          cooldown: result.cooldown.toISOString(),
-        });
+        return reply.status(201).send(result);
       },
     );
 

@@ -1,5 +1,5 @@
-import { Type, type Static } from "@sinclair/typebox";
-
+import { Type } from "@sinclair/typebox";
+import { DateTime } from "../../../api/schemas/primitives/date.schema.js";
 import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
 
@@ -51,7 +51,7 @@ export const MemberResponse = Type.Object({
   name: Type.String(),
   email: Type.String({ format: "email" }),
   role: RoleSchema,
-  createdAt: Type.String({ format: "date-time" }),
+  createdAt: DateTime,
 });
 
 export const MembersListResponse = Type.Object({
@@ -75,7 +75,7 @@ export const UserCompanyResponse = Type.Object({
   cep: Type.Union([Type.String(), Type.Null()]),
   phone: Type.Union([Type.String(), Type.Null()]),
   role: RoleSchema,
-  createdAt: Type.String({ format: "date-time" }),
+  createdAt: DateTime,
 });
 
 export const UserCompaniesResponse = Type.Array(UserCompanyResponse);

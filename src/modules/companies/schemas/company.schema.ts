@@ -1,4 +1,4 @@
-import { Type, type Static } from "@sinclair/typebox";
+import { Type } from "@sinclair/typebox";
 import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 import { Email } from "../../../api/schemas/primitives/user.schema.js";
 
@@ -16,9 +16,6 @@ const CompanyData = Type.Object({
   email: Type.Optional(Type.Union([Email, Type.Null()])),
   cep: Type.Optional(Type.Union([Cep, Type.Null()])),
   phone: Type.Optional(Type.Union([Phone, Type.Null()])),
-  // createdAt: Type.String({ format: "date-time" }),
-  // updatedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
-  // deletedAt: Type.Union([Type.String({ format: "date-time" }), Type.Null()]),
 });
 
 // params

@@ -1,5 +1,5 @@
-import { Type, type Static } from "@sinclair/typebox";
-
+import { Type } from "@sinclair/typebox";
+import { DateTime } from "../../api/schemas/primitives/date.schema.js";
 import { Email, Password } from "../../api/schemas/primitives/user.schema.js";
 import {
   JwtSchema,
@@ -54,6 +54,6 @@ export const AuthResponse = Type.Object({
 
 export const EmailVerificationResponse = Type.Object({
   email: Email,
-  expiresAt: Type.String({ format: "date-time" }),
-  cooldown: Type.String({ format: "date-time" }),
+  expiresAt: DateTime,
+  cooldown: DateTime,
 });

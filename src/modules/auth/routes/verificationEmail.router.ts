@@ -41,11 +41,7 @@ export const verificationEmailRouter =
 
         return reply
           .status(200)
-          .send({
-            ...result,
-            expiresAt: result.expiresAt.toISOString(),
-            cooldown: result.cooldown.toISOString(),
-          });
+          .send(result);
       },
     );
   };

@@ -1,5 +1,5 @@
-import { Type, type Static } from "@sinclair/typebox";
-
+import { Type } from "@sinclair/typebox";
+import { DateTime } from "../../api/schemas/primitives/date.schema.js";
 import { IdSchema } from "../../api/schemas/primitives/id.schema.js";
 import {
   Email,
@@ -30,8 +30,8 @@ export const UserResponse = Type.Object({
 export const RegistedUserResponse = Type.Intersect([
   UserResponse,
   Type.Object({
-    expiresAt: Type.String({ format: "date-time" }),
-    cooldown: Type.String({ format: "date-time" }),
+    expiresAt: DateTime,
+    cooldown: DateTime,
   }),
 ]);
 

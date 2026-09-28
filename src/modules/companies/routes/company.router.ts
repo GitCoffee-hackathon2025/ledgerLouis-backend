@@ -57,7 +57,7 @@ export const companyRoutes =
           },
         },
       },
-      async (_req, reply) => reply.status(200).send(await module.list()),
+      async (req, reply) => reply.status(200).send(await module.list()),
     );
 
     app.post(
