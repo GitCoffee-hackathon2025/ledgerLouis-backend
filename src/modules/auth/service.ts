@@ -29,10 +29,12 @@ export const createAuthService = (
 
     if (!user) throw new AppError("INVALID_CREDENTIALS");
 
+    // valida senha
     if (!(await verifyPassword(user.password, password)))
-      // valida senha
       throw new AppError("INVALID_CREDENTIALS");
 
+    // verifica se o usuário é verificado
+    // e caso não seja, valida o token
     if (!user.verifiedAt) {
       if (!token) throw new AppError("EMAIL_NOT_VERIFIED");
       await emailService.verify(user.id, token);
