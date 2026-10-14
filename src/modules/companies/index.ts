@@ -12,7 +12,7 @@ export default async function (app: FastifyInstance) {
   const {
     company,
     memberService: member,
-    invitationService: invitation,
+    invitation,
   } = buildCompanyModule(app.db, app.redis.adapter);
 
   await app.register(companyRoutes(company.companyService), {
@@ -28,11 +28,11 @@ export default async function (app: FastifyInstance) {
     // caso seja necessário aplicar esse prefix, será necessário mover o /me para user ou outro modulo ou rota especifica pra ele
   });
 
-  await app.register(companyInvitationRoutes(invitation), {
+  await app.register(companyInvitationRoutes(invitation.invitationCompanyService), {
     prefix: "/companies/:companyId/invitations",
   });
 
-  await app.register(invitationRoutes(invitation), {
+  await app.register(invitationRoutes(invitation.invitationUserService), {
     prefix: "/invitations",
   });
 }

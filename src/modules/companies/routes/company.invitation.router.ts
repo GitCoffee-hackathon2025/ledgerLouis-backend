@@ -17,7 +17,9 @@ import { toId } from "../../../domain/shared/id.js";
 
 export const companyInvitationRoutes =
   (
-    invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
+    invitation: ReturnType<
+      typeof buildCompanyModule
+    >["invitation"]["invitationCompanyService"],
   ): FastifyPluginAsyncTypebox =>
   async (app) => {
     app.post(

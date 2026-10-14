@@ -14,7 +14,9 @@ import { toId } from "../../../domain/shared/id.js";
 
 export const invitationRoutes =
   (
-    invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
+    invitation: ReturnType<
+      typeof buildCompanyModule
+    >["invitation"]["invitationUserService"],
   ): FastifyPluginAsyncTypebox =>
   async (app) => {
     app.get(
@@ -64,14 +66,12 @@ export const invitationRoutes =
         },
       },
       async (req, res) => {
-        return res
-          .status(200)
-          .send(
-            await invitation.accept(req.authUser.sub, {
-              by: "id",
-              value: toId(req.params.invitationId),
-            }),
-          );
+        return res.status(200).send(
+          await invitation.accept(req.authUser.sub, {
+            by: "id",
+            value: toId(req.params.invitationId),
+          }),
+        );
       },
     );
   };

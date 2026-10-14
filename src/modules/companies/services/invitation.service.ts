@@ -11,11 +11,7 @@ import { permissionsEnum } from "../../../domain/organization/enums.js";
 
 import { generateToken, hashToken } from "../../../shared/security/token.js";
 
-type InvitationLookup =
-  | { by: "token"; value: string }
-  | { by: "id"; value: ULID };
-
-export const createInvitationService = (
+export const createCompanyInvitationService = (
   inviteRepo: ReturnType<typeof createInviteRepository>,
   memberRepo: ReturnType<typeof createMemberRepository>,
   userRepo: ReturnType<typeof createUserRepository>,
@@ -23,21 +19,6 @@ export const createInvitationService = (
   assertRole: ReturnType<typeof createMemberService>["assertRole"],
 ) => {
   const INVITATION_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000;
-
-  function validateInvitation(
-    invite: Awaited<ReturnType<(typeof inviteRepo)["findById"]>>,
-  ) {
-    if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-
-    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
-
-    if (invite.expiresAt <= new Date())
-      throw new AppError("INVITATION_EXPIRED");
-
-    return invite;
-  }
 
   return {
     async create(
@@ -98,15 +79,6 @@ export const createInvitationService = (
       };
     },
 
-    async listByUser(userId: ULID) {
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-
-      return {
-        items: await inviteRepo.findAllPendingByEmail(user.email.toLowerCase()),
-      };
-    },
-
     async listByCompany(
       actorId: ULID,
       companyId: ULID,
@@ -121,6 +93,60 @@ export const createInvitationService = (
         total: await inviteRepo.countByCompanyId(companyId),
         limit,
         offset,
+      };
+    },
+
+    async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {
+      await assertRole(companyId, actorId, ["owner"]);
+
+      const invite = await inviteRepo.findById(invitationId);
+
+      if (!invite || invite.companyId !== companyId)
+        throw new AppError("INVITATION_NOT_FOUND");
+
+      if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+      if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+
+      const revokedInvite = await inviteRepo.revoke(invitationId);
+
+      if (!revokedInvite) throw new AppError("INVITATION_NOT_FOUND");
+
+      return revokedInvite;
+    },
+  };
+};
+
+type InvitationLookup =
+  | { by: "token"; value: string }
+  | { by: "id"; value: ULID };
+
+export const createUserInvitationService = (
+  inviteRepo: ReturnType<typeof createInviteRepository>,
+  memberRepo: ReturnType<typeof createMemberRepository>,
+  userRepo: ReturnType<typeof createUserRepository>,
+) => {
+  function validateInvitation(
+    invite: Awaited<ReturnType<(typeof inviteRepo)["findById"]>>,
+  ) {
+    if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+
+    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+
+    if (invite.expiresAt <= new Date())
+      throw new AppError("INVITATION_EXPIRED");
+
+    return invite;
+  }
+  return {
+    async listByUser(userId: ULID) {
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+
+      return {
+        items: await inviteRepo.findAllPendingByEmail(user.email.toLowerCase()),
       };
     },
 
@@ -161,25 +187,6 @@ export const createInvitationService = (
         userId,
         role: invite.role,
       };
-    },
-
-    async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {
-      await assertRole(companyId, actorId, ["owner"]);
-
-      const invite = await inviteRepo.findById(invitationId);
-
-      if (!invite || invite.companyId !== companyId)
-        throw new AppError("INVITATION_NOT_FOUND");
-
-      if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-      if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
-
-      const revokedInvite = await inviteRepo.revoke(invitationId);
-
-      if (!revokedInvite) throw new AppError("INVITATION_NOT_FOUND");
-
-      return revokedInvite;
     },
   };
 };

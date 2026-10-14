@@ -9,7 +9,10 @@ import { createMemberRepository } from "./repositories/member.repository.js";
 import { createMemberService } from "./services/member.service.js";
 
 import { createInviteRepository } from "./repositories/invite.repository.js";
-import { createInvitationService } from "./services/invitation.service.js";
+import {
+  createCompanyInvitationService,
+  createUserInvitationService,
+} from "./services/invitation.service.js";
 
 import { createAccountRepository } from "../finances/repositories/account.repository.js";
 import { createAccountService } from "../finances/services/account.service.js";
@@ -38,7 +41,7 @@ export function buildCompanyModule(db: DB, redis: Redis["adapter"]) {
     memberService,
   );
 
-  const invitationService = createInvitationService(
+  const invitationCompanyService = createCompanyInvitationService(
     createInviteRepository(db),
     memberRepo,
     userRepo,
@@ -46,9 +49,18 @@ export function buildCompanyModule(db: DB, redis: Redis["adapter"]) {
     memberService.assertRole,
   );
 
+  const invitationUserService = createUserInvitationService(
+    createInviteRepository(db),
+    memberRepo,
+    userRepo,
+  );
+
   return {
     company: { companyService, companyUpdateService },
     memberService,
-    invitationService,
+    invitation: {
+      invitationCompanyService,
+      invitationUserService,
+    },
   };
 }
