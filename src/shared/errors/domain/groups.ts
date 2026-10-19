@@ -3,9 +3,10 @@ export const routeGroups = {
     "BAD_REQUEST",
     "INTERNAL_ERROR",
     "RATE_LIMIT_EXCEEDED",
+    "PAYLOAD_TOO_LARGE",
     "UNSUPPORTED_MEDIA_TYPE",
   ],
-  form: ["INVALID_JSON", "VALIDATION_ERROR"],
+  form: ["VALIDATION_ERROR"],
   auth: [
     "INVALID_TOKEN",
     "TOKEN_EXPIRED",

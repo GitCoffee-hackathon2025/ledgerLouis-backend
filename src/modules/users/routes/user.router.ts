@@ -3,6 +3,7 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import {
   RegistedUserResponse,
   RegisterBody,
+  RegisterQuery,
   UpdateBody,
   UserResponse,
 } from "../schema.js";
@@ -25,12 +26,22 @@ export const userRouter =
           tags: ["users"],
           summary: "Register user",
           body: RegisterBody,
+          querystring: RegisterQuery,
           response: {
             201: RegistedUserResponse,
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.user,
+              "INVALID_JSON",
+              "EMAIL_ALREADY_EXISTS",
+              "USER_NOT_FOUND",
+              "EMAIL_ALREADY_VERIFIED",
+              "MEMBER_ALREADY_EXISTS",
+              "INVITATION_EXPIRED",
+              "INVITATION_NOT_FOUND",
+              "INVITATION_ALREADY_ACCEPTED",
+              "INVITATION_REVOKED",
+              "INVITATION_EMAIL_MISMATCH",
             ]),
           },
         },
@@ -41,6 +52,7 @@ export const userRouter =
         const result = await userService.register(
           { name, email, password },
           req.server.config.WEB_URL,
+          req.query.invite
         );
 
         return reply.status(201).send(result);
@@ -59,8 +71,10 @@ export const userRouter =
             200: UserResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.user,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
             ]),
           },
         },
@@ -88,8 +102,12 @@ export const userRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.user,
-              ...routeGroups.auth,
+              "INVALID_JSON",
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
+              "EMAIL_ALREADY_EXISTS",
             ]),
           },
         },
@@ -116,7 +134,9 @@ export const userRouter =
             204: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
             ]),
           },
         },

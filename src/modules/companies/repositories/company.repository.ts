@@ -20,11 +20,10 @@ export const createCompanyRepository = (db: DB) => ({
       .returning({
         id: companies.id,
         name: companies.name,
+        cnpj: companies.cnpj,
         email: companies.email,
         cep: companies.cep,
         phone: companies.phone,
-        createAt: companies.createdAt,
-        updatedAt: companies.updatedAt,
       })
       .then(([row]) => row);
   },

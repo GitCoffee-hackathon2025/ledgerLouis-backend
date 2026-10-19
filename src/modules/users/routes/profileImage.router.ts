@@ -1,4 +1,5 @@
 import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { Type } from "@sinclair/typebox";
 
 import { buildUserModule } from "../module.js";
 
@@ -34,8 +35,14 @@ export const profileImageRouter =
             201: ProfileImageResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.file,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "FILE_REQUIRED",
+              "INVALID_FILE_TYPE",
+              "FILE_TOO_LARGE",
+              "FILE_NOT_FOUND",
+              "UPLOAD_FAILED",
             ]),
           },
         },
@@ -57,7 +64,7 @@ export const profileImageRouter =
       },
     );
 
-    app.get(
+    app.get<{ Reply: NodeJS.ReadableStream }>(
       "/me/profile-image",
       {
         preHandler: app.verifyAccess,
@@ -65,13 +72,17 @@ export const profileImageRouter =
         schema: {
           tags: ["users"],
           summary: "Open profile image",
+          produces: ["application/octet-stream"],
           response: {
-            200: {},
+            200: Type.String({ format: "binary" }),
             302: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.file,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "PROFILE_IMAGE_NOT_FOUND",
+              "FILE_NOT_FOUND",
             ]),
           },
         },
@@ -96,8 +107,11 @@ export const profileImageRouter =
             204: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.file,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "PROFILE_IMAGE_NOT_FOUND",
+              "FILE_NOT_FOUND",
             ]),
           },
         },

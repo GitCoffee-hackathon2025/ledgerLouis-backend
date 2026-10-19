@@ -5,6 +5,10 @@ import type { StorageProvider } from "../../types/storage.js";
 import { createUserRepository } from "./repositories/user.repository.js";
 import { createUserService } from "./services/user.service.js";
 
+import { createUserInvitationService } from "../companies/services/invitation.service.js";
+import { createMemberRepository } from "../companies/repositories/member.repository.js";
+import { createInviteRepository } from "../companies/repositories/invite.repository.js";
+
 import { createProfileImageRepository } from "./repositories/profileImage.repository.js";
 import { createProfileImageService } from "./services/profileImage.service.js";
 
@@ -20,10 +24,18 @@ export function buildUserModule(
   const files = buildFileModule(db, storage);
 
   const userRepo = createUserRepository(db);
+
+  const invitationUserService = createUserInvitationService(
+    createInviteRepository(db),
+    createMemberRepository(db),
+    userRepo,
+  );
+
   const userService = createUserService(
     userRepo,
     auth.authService,
     auth.emailService,
+    invitationUserService,
   );
 
   const profileImageRepo = createProfileImageRepository(db);

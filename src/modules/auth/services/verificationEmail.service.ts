@@ -12,7 +12,7 @@ export const createVerificationService = (
   userRepo: ReturnType<typeof createUserRepository>,
   verificationEmailProducer: ReturnType<typeof buildEmailVerificationQueue>,
 ) => {
-  const path = "/users/register?token=";
+  const path = "/auth/login/?token=";
 
   const EMAIL_VERIFICATION_EXPIRATION_MS = 60 * 60 * 1000;
   const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 3 * 60 * 1000;

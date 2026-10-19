@@ -3,6 +3,12 @@ import { DateTime } from "../../../api/schemas/primitives/date.schema.js";
 import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
 
+export const RoleSchema = Type.Union([
+  Type.Literal("owner"),
+  Type.Literal("admin"),
+  Type.Literal("viewer"),
+]);
+
 // params
 
 export const CompanyIdParam = Type.Object({
@@ -39,12 +45,6 @@ export const ChangeRoleBody = Type.Object(
 );
 
 // responses
-
-const RoleSchema = Type.Union([
-  Type.Literal("owner"),
-  Type.Literal("admin"),
-  Type.Literal("viewer"),
-]);
 
 export const MemberResponse = Type.Object({
   userId: IdSchema,

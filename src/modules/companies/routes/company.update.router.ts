@@ -33,10 +33,13 @@ export const companyUpdateRoutes =
               ...createErrorResponses([
                 ...routeGroups.common,
                 ...routeGroups.form,
-                ...routeGroups.auth,
-                ...routeGroups.permission,
-                ...routeGroups.member,
-                ...routeGroups.company,
+                "INVALID_JSON",
+                "INVALID_TOKEN",
+                "TOKEN_EXPIRED",
+                "UNAUTHORIZED",
+                "MEMBER_NOT_FOUND",
+                "FORBIDDEN",
+                "COMPANY_NOT_FOUND",
               ]),
             },
           },
@@ -53,7 +56,7 @@ export const companyUpdateRoutes =
                 : key === "cep"
                   ? await module.updateCep(companyId, userId, value)
                   : await module.updatePhone(companyId, userId, value);
-          return reply.status(200).send(updated as never);
+          return reply.status(200).send(updated);
         },
       );
     }

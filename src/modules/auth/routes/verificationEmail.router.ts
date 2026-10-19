@@ -27,8 +27,11 @@ export const verificationEmailRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.user,
-              ...routeGroups.verification,
+              "INVALID_JSON",
+              "USER_NOT_FOUND",
+              "EMAIL_ALREADY_VERIFIED",
+              "VERIFICATION_EMAIL_NOT_FOUND",
+              "EMAIL_VERIFICATION_COOLDOWN",
             ]),
           },
         },

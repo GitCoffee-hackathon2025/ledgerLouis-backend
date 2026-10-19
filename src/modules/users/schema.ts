@@ -6,6 +6,7 @@ import {
   Name,
   Password,
 } from "../../api/schemas/primitives/user.schema.js";
+import { RoleSchema } from "../companies/schemas/member.schema.js";
 
 // bodies
 
@@ -16,6 +17,12 @@ export const RegisterBody = Type.Object(
 
 export const UpdateBody = Type.Object(
   { name: Name, email: Email },
+  { additionalProperties: false },
+);
+
+// query
+export const RegisterQuery = Type.Object(
+  { invite: Type.Optional(Type.String({ minLength: 1 })) },
   { additionalProperties: false },
 );
 
@@ -30,8 +37,18 @@ export const UserResponse = Type.Object({
 export const RegistedUserResponse = Type.Intersect([
   UserResponse,
   Type.Object({
-    expiresAt: DateTime,
-    cooldown: DateTime,
+    nextStep: Type.Union([
+      Type.Object({
+        type: Type.Literal("company_linked"),
+        companyId: IdSchema,
+        role: RoleSchema,
+      }),
+      Type.Object({
+        type: Type.Literal("email_verification"),
+        expiresAt: DateTime,
+        cooldown: DateTime,
+      }),
+    ]),
   }),
 ]);
 
