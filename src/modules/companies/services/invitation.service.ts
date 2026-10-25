@@ -28,19 +28,47 @@ export const createInvitationService = (
     return createHash("sha256").update(token).digest("hex");
   }
 
+  function validateActive(invite: NonNullable<Awaited<ReturnType<typeof inviteRepo.findById>>>) {
+    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+    if (invite.expiresAt <= new Date()) throw new AppError("INVITATION_EXPIRED");
+    return invite;
+  }
+
   async function findByToken(token: string) {
     const invite = await inviteRepo.findByTokenHash(hashToken(token));
-
     if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+    return validateActive(invite);
+  }
 
-    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+  async function processAcceptance(
+    userId: ULID,
+    invite: NonNullable<Awaited<ReturnType<typeof inviteRepo.findById>>>,
+  ) {
+    validateActive(invite);
 
-    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+    const user = await userRepo.findById(userId);
+    if (!user) throw new AppError("USER_NOT_FOUND");
+    if (user.email.toLowerCase() !== invite.email)
+      throw new AppError("INVITATION_EMAIL_MISMATCH");
 
-    if (invite.expiresAt <= new Date())
-      throw new AppError("INVITATION_EXPIRED");
+    if (await memberRepo.findMembership(invite.companyId, userId))
+      throw new AppError("MEMBER_ALREADY_EXISTS");
 
-    return invite;
+    await memberRepo.create({
+      companyId: invite.companyId,
+      userId,
+      role: invite.role,
+    });
+
+    if (!(await inviteRepo.markAsAccepted(invite.id)))
+      throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+    return {
+      companyId: invite.companyId,
+      userId,
+      role: invite.role,
+    };
   }
 
   return {
@@ -51,24 +79,17 @@ export const createInvitationService = (
       role: (typeof permissionsEnum)[number],
       invitationUrl: string,
     ) {
-      // somente owner pode convidar
       await assertRole(companyId, actorId, ["owner"]);
 
       const normalizedEmail = email.trim().toLowerCase();
 
-      // verifica se o usuário já existe
-      await userRepo.findByEmail(normalizedEmail).then(async (user) => {
-        // se existir, verifica se já pertence à companhia
-        if (user && (await memberRepo.findMembership(companyId, user.id)))
-          throw new AppError("MEMBER_ALREADY_EXISTS");
-      });
+      const existingUser = await userRepo.findByEmail(normalizedEmail);
+      if (existingUser && (await memberRepo.findMembership(companyId, existingUser.id))) {
+        throw new AppError("MEMBER_ALREADY_EXISTS");
+      }
 
-      // evita múltiplos convites pendentes para o mesmo e-mail
-      await inviteRepo
-        .findPendingByCompanyAndEmail(companyId, normalizedEmail)
-        .then(async (outstanding) => {
-          if (outstanding) await inviteRepo.revoke(outstanding.id);
-        });
+      const outstanding = await inviteRepo.findPendingByCompanyAndEmail(companyId, normalizedEmail);
+      if (outstanding) await inviteRepo.revoke(outstanding.id);
 
       const token = generateToken();
 
@@ -85,7 +106,6 @@ export const createInvitationService = (
 
       /* 
       O token bruto não deve ser persistido.
-      
       O worker precisa dele para construir a URL,
       então o producer deve receber o token apenas neste momento.
       */
@@ -108,7 +128,6 @@ export const createInvitationService = (
 
       const user = await userRepo.findById(userId);
       if (!user) throw new AppError("USER_NOT_FOUND");
-
       if (user.email !== invite.email) throw new AppError("FORBIDDEN");
 
       return {
@@ -139,59 +158,15 @@ export const createInvitationService = (
     },
 
     async accept(userId: ULID, token: string) {
-      const invite = await findByToken(token);
-
-      const user = await userRepo.findById(userId);
-
-      if (!user) throw new AppError("USER_NOT_FOUND");
-
-      // o convite é destinado ao e-mail específico
-      if (user.email.toLowerCase() !== invite.email)
-        throw new AppError("INVITATION_EMAIL_MISMATCH");
-
-      // proteção contra associação duplicada
-      const existingMembership = await memberRepo.findMembership(
-        invite.companyId,
-        userId,
-      );
-
-      if (existingMembership) throw new AppError("MEMBER_ALREADY_EXISTS");
-
-      await memberRepo.create({
-        companyId: invite.companyId,
-        userId,
-        role: invite.role,
-      });
-
-      if (!(await inviteRepo.markAsAccepted(invite.id)))
-        throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-      return {
-        companyId: invite.companyId,
-        userId,
-        role: invite.role,
-      };
+      const invite = await inviteRepo.findByTokenHash(hashToken(token));
+      if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+      return processAcceptance(userId, invite);
     },
 
     async acceptById(userId: ULID, invitationId: ULID) {
       const invite = await inviteRepo.findById(invitationId);
       if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-      if (user.email.toLowerCase() !== invite.email)
-        throw new AppError("INVITATION_EMAIL_MISMATCH");
-      if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
-      if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
-      if (invite.expiresAt <= new Date()) throw new AppError("INVITATION_EXPIRED");
-      if (await memberRepo.findMembership(invite.companyId, userId))
-        throw new AppError("MEMBER_ALREADY_EXISTS");
-
-      await memberRepo.create({ companyId: invite.companyId, userId, role: invite.role });
-      if (!(await inviteRepo.markAsAccepted(invite.id)))
-        throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-      return { companyId: invite.companyId, userId, role: invite.role };
+      return processAcceptance(userId, invite);
     },
 
     async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {
@@ -203,11 +178,9 @@ export const createInvitationService = (
         throw new AppError("INVITATION_NOT_FOUND");
 
       if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
       if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
 
       const revokedInvite = await inviteRepo.revoke(invitationId);
-
       if (!revokedInvite) throw new AppError("INVITATION_NOT_FOUND");
 
       return revokedInvite;
