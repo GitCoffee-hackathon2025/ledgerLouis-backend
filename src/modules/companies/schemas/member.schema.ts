@@ -27,12 +27,18 @@ export const ListMembersQuery = Type.Object({
 
 export type ListMembersQueryType = Static<typeof ListMembersQuery>;
 
+// schemas
+
+export const RoleSchema = Type.Union(
+  permissionsEnum.map((p) => Type.Literal(p)),
+);
+
 // bodies
 
 export const AddMemberBody = Type.Object(
   {
     email: Type.String({ format: "email" }),
-    role: Type.Union(permissionsEnum.map((p) => Type.Literal(p))),
+    role: RoleSchema,
   },
   { additionalProperties: false },
 );
@@ -41,7 +47,7 @@ export type AddMemberBodyType = Static<typeof AddMemberBody>;
 
 export const ChangeRoleBody = Type.Object(
   {
-    role: Type.Union(permissionsEnum.map((p) => Type.Literal(p))),
+    role: RoleSchema,
   },
   { additionalProperties: false },
 );
@@ -49,10 +55,6 @@ export const ChangeRoleBody = Type.Object(
 export type ChangeRoleBodyType = Static<typeof ChangeRoleBody>;
 
 // responses
-
-const RoleSchema = Type.Union(
-  permissionsEnum.map((permission) => Type.Literal(permission)),
-);
 
 export const MemberResponse = Type.Object({
   userId: IdSchema,
