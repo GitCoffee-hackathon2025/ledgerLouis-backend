@@ -41,17 +41,10 @@ export const createInvitationService = (
     return validateActive(invite);
   }
 
-  async function processAcceptance(
+  async function associateMember(
     userId: ULID,
     invite: NonNullable<Awaited<ReturnType<typeof inviteRepo.findById>>>,
   ) {
-    validateActive(invite);
-
-    const user = await userRepo.findById(userId);
-    if (!user) throw new AppError("USER_NOT_FOUND");
-    if (user.email.toLowerCase() !== invite.email)
-      throw new AppError("INVITATION_EMAIL_MISMATCH");
-
     if (await memberRepo.findMembership(invite.companyId, userId))
       throw new AppError("MEMBER_ALREADY_EXISTS");
 
@@ -158,15 +151,28 @@ export const createInvitationService = (
     },
 
     async accept(userId: ULID, token: string) {
-      const invite = await inviteRepo.findByTokenHash(hashToken(token));
-      if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-      return processAcceptance(userId, invite);
+      const invite = await findByToken(token);
+
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+      if (user.email.toLowerCase() !== invite.email)
+        throw new AppError("INVITATION_EMAIL_MISMATCH");
+
+      return associateMember(userId, invite);
     },
 
     async acceptById(userId: ULID, invitationId: ULID) {
       const invite = await inviteRepo.findById(invitationId);
       if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-      return processAcceptance(userId, invite);
+
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+      if (user.email.toLowerCase() !== invite.email)
+        throw new AppError("INVITATION_EMAIL_MISMATCH");
+
+      validateActive(invite);
+
+      return associateMember(userId, invite);
     },
 
     async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {
