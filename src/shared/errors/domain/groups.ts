@@ -15,6 +15,7 @@ export const routeGroups = {
   account: ["ACCOUNT_NOT_FOUND"],
   recurringTransaction: ["RECURRING_TRANSACTION_NOT_FOUND"],
   tag: ["TAG_NOT_FOUND"],
+  investment: ["INVESTMENT_INVALID"],
   invitation: [
     "INVITATION_EXPIRED",
     "INVITATION_NOT_FOUND",

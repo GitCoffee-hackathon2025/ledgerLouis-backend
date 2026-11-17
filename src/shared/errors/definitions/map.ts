@@ -43,6 +43,7 @@ import {
   recurringTransactionErrors,
 } from "../../../modules/finances/errors.js";
 import { tagErrors } from "../../../modules/tags/errors.js";
+import { investmentErrors } from "../../../modules/investments/errors.js";
 
 // Centralizador de erros
 type ErrorDefinition = readonly [status: number, message: string];
@@ -76,5 +77,6 @@ export const errorMap = generateErrorMap(
   accountErrors,
   recurringTransactionErrors,
   tagErrors,
+  investmentErrors,
 );
 export type ErrorCode = keyof typeof errorMap;

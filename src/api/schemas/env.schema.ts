@@ -38,6 +38,13 @@ export const EnvSchema = Type.Object({
 
   // Autenticação
   ENABLE_KEY_ROTATION: Type.Boolean({ default: true }),
+
+  // Investimentos
+  /// Token da brapi (cotações da B3). Sem ele a brapi só responde alguns tickers de teste
+  BRAPI_TOKEN: Type.String({ default: "" }),
+  /// Caminho do Claude Code para o chat. Vazio = chat desligado
+  CLAUDE_BIN: Type.Optional(Type.String()),
+  CLAUDE_CHAT_MODEL: Type.Optional(Type.String()),
 });
 
 export type Env = Static<typeof EnvSchema>;

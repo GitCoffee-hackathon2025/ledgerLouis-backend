@@ -8,6 +8,10 @@ export * from "./finance/transactions.js";
 export * from "./finance/tags.js";
 export * from "./finance/transactionTags.js";
 
+// investments
+export * from "./investments/market.js";
+export * from "./investments/portfolio.js";
+
 // identity
 export * from "./identity/jwtKeys.js";
 export * from "./identity/refreshTokens.js";

@@ -9,6 +9,10 @@ export const errorPayloadSchemas = {
     retryAfter: Type.Number(),
   }),
 
+  INVESTMENT_INVALID: Type.Object({
+    detail: Type.String(),
+  }),
+
   // TOKEN_EXPIRED: Type.Object({
   //   expiredAt: Type.String({
   //     format: "date-time",
