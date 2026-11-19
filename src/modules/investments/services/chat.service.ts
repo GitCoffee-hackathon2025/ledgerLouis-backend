@@ -48,16 +48,11 @@ function mcpConfig(userId: ULID) {
   });
 }
 
-export function buildCommand(
-  cfg: ChatConfig,
-  userId: ULID,
-  message: string,
-  sessionId: string,
-  resume: boolean,
-) {
+// A mensagem NÃO entra nos argumentos: vai pelo stdin, senão "--alguma-flag" no chat viraria opção do CLI.
+export function buildCommand(cfg: ChatConfig, userId: ULID, sessionId: string, resume: boolean) {
   return [
     cfg.claudeBin ?? "claude",
-    "-p", message,
+    "-p",
     "--output-format", "stream-json", "--verbose", "--include-partial-messages",
     "--tools", "", // nenhuma ferramenta interna (Bash, Edit, Read...): só as de investimentos
     "--strict-mcp-config", "--mcp-config", mcpConfig(userId),
@@ -115,15 +110,28 @@ export function parseLine(line: string): ChatEvent[] {
 const sse = (event: ChatEvent) => `data: ${JSON.stringify(event)}\n\n`;
 const failed = (error: string) => sse({ type: "done", is_error: true, error });
 
-export const createChatService = (cfg: ChatConfig) => ({
-  /** Continua a conversa se o id for um UUID válido; senão começa outra. */
-  session(sessionId: unknown) {
-    return typeof sessionId === "string" && UUID_RE.test(sessionId)
-      ? { sessionId: sessionId.toLowerCase(), resume: true }
-      : { sessionId: randomUUID(), resume: false };
-  },
+export const createChatService = (cfg: ChatConfig) => {
+  // shortcut: dono de cada conversa fica na memória; reiniciar a API (ou ter várias instâncias) só faz
+  // a próxima mensagem abrir conversa nova. Mover para Redis/banco se o histórico precisar sobreviver.
+  const owners = new Map<string, ULID>();
 
-  async *run(userId: ULID, message: string, sessionId: string, resume: boolean) {
+  return {
+    /** Continua a conversa só se o id foi criado aqui para este mesmo usuário; senão começa outra. */
+    session(userId: ULID, sessionId: unknown) {
+      const id = typeof sessionId === "string" && UUID_RE.test(sessionId) ? sessionId.toLowerCase() : null;
+      if (id && owners.get(id) === userId) return { sessionId: id, resume: true };
+
+      const fresh = randomUUID();
+      owners.set(fresh, userId);
+      return { sessionId: fresh, resume: false };
+    },
+
+    run: (userId: ULID, message: string, sessionId: string, resume: boolean) =>
+      runChat(cfg, userId, message, sessionId, resume),
+  };
+};
+
+async function* runChat(cfg: ChatConfig, userId: ULID, message: string, sessionId: string, resume: boolean) {
     yield sse({ type: "session", session_id: sessionId });
 
     if (!cfg.claudeBin) {
@@ -131,8 +139,10 @@ export const createChatService = (cfg: ChatConfig) => ({
       return;
     }
 
-    const [bin, ...args] = buildCommand(cfg, userId, message, sessionId, resume);
-    const proc = spawn(bin!, args, { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"] });
+    const [bin, ...args] = buildCommand(cfg, userId, sessionId, resume);
+    const proc = spawn(bin!, args, { cwd: ROOT, stdio: ["pipe", "pipe", "pipe"] });
+    proc.stdin.on("error", () => {}); // processo que morre cedo (ENOENT) não pode derrubar a API
+    proc.stdin.end(message);
 
     let notFound = false;
     let stderr = "";
@@ -167,5 +177,4 @@ export const createChatService = (cfg: ChatConfig) => ({
       // o navegador fechou a conexão no meio: não deixar o processo órfão
       if (proc.exitCode === null) proc.kill();
     }
-  },
-});
+}
