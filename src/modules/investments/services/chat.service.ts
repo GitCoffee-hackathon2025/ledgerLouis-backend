@@ -31,7 +31,18 @@ export interface ChatConfig {
   /** Caminho do Claude Code. Vazio = chat desligado neste servidor. */
   claudeBin?: string | undefined;
   model?: string | undefined;
+  /** Onde fica o dono de cada conversa (o Redis da API). Sem ele, toda mensagem abre conversa nova. */
+  sessions?: SessionStore | undefined;
 }
+
+/** O pedaço do cliente Redis que o chat usa. */
+export interface SessionStore {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, options: { EX: number }): Promise<unknown>;
+}
+
+const SESSION_TTL_S = 30 * 24 * 3600; // conversa parada há 30 dias não é mais retomada
+const ownerKey = (sessionId: string) => `investments:chat:${sessionId}`;
 
 /** O servidor MCP roda com o mesmo runtime deste processo (tsx em dev, node em produção), preso ao usuário logado. */
 function mcpConfig(userId: ULID) {
@@ -110,26 +121,21 @@ export function parseLine(line: string): ChatEvent[] {
 const sse = (event: ChatEvent) => `data: ${JSON.stringify(event)}\n\n`;
 const failed = (error: string) => sse({ type: "done", is_error: true, error });
 
-export const createChatService = (cfg: ChatConfig) => {
-  // shortcut: dono de cada conversa fica na memória; reiniciar a API (ou ter várias instâncias) só faz
-  // a próxima mensagem abrir conversa nova. Mover para Redis/banco se o histórico precisar sobreviver.
-  const owners = new Map<string, ULID>();
+export const createChatService = (cfg: ChatConfig) => ({
+  /** Continua a conversa só se o id foi criado pelo servidor para este mesmo usuário; senão começa outra. */
+  async session(userId: ULID, sessionId: unknown) {
+    const id = typeof sessionId === "string" && UUID_RE.test(sessionId) ? sessionId.toLowerCase() : null;
+    if (id && cfg.sessions && (await cfg.sessions.get(ownerKey(id))) === userId)
+      return { sessionId: id, resume: true };
 
-  return {
-    /** Continua a conversa só se o id foi criado aqui para este mesmo usuário; senão começa outra. */
-    session(userId: ULID, sessionId: unknown) {
-      const id = typeof sessionId === "string" && UUID_RE.test(sessionId) ? sessionId.toLowerCase() : null;
-      if (id && owners.get(id) === userId) return { sessionId: id, resume: true };
+    const fresh = randomUUID();
+    await cfg.sessions?.set(ownerKey(fresh), userId, { EX: SESSION_TTL_S });
+    return { sessionId: fresh, resume: false };
+  },
 
-      const fresh = randomUUID();
-      owners.set(fresh, userId);
-      return { sessionId: fresh, resume: false };
-    },
-
-    run: (userId: ULID, message: string, sessionId: string, resume: boolean) =>
-      runChat(cfg, userId, message, sessionId, resume),
-  };
-};
+  run: (userId: ULID, message: string, sessionId: string, resume: boolean) =>
+    runChat(cfg, userId, message, sessionId, resume),
+});
 
 async function* runChat(cfg: ChatConfig, userId: ULID, message: string, sessionId: string, resume: boolean) {
     yield sse({ type: "session", session_id: sessionId });

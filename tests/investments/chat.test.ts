@@ -15,16 +15,25 @@ test("chat: a mensagem nunca vira argumento do CLI", () => {
   assert.ok(args[2]!.startsWith("--")); // logo depois de -p vem uma opção nossa, não texto do usuário
 });
 
-test("chat: só o dono retoma a conversa", () => {
-  const chat = createChatService({});
-  const mine = chat.session(alice, null);
+test("chat: só o dono retoma a conversa", async () => {
+  const redis = new Map<string, string>(); // faz o papel do Redis
+  const chat = createChatService({
+    sessions: { get: async (k) => redis.get(k) ?? null, set: async (k, v) => redis.set(k, v) },
+  });
+  const mine = await chat.session(alice, null);
   assert.equal(mine.resume, false);
 
-  assert.deepEqual(chat.session(alice, mine.sessionId), { sessionId: mine.sessionId, resume: true });
+  assert.deepEqual(await chat.session(alice, mine.sessionId), { sessionId: mine.sessionId, resume: true });
 
-  const stolen = chat.session(bob, mine.sessionId);
+  const stolen = await chat.session(bob, mine.sessionId);
   assert.equal(stolen.resume, false);
   assert.notEqual(stolen.sessionId, mine.sessionId);
 
-  assert.equal(chat.session(alice, "00000000-0000-4000-8000-000000000000").resume, false); // id inventado
+  assert.equal((await chat.session(alice, "00000000-0000-4000-8000-000000000000")).resume, false); // id inventado
+});
+
+test("chat: sem onde guardar o dono, nunca retoma", async () => {
+  const chat = createChatService({});
+  const first = await chat.session(alice, null);
+  assert.equal((await chat.session(alice, first.sessionId)).resume, false);
 });

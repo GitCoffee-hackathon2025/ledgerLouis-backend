@@ -11,6 +11,7 @@ export default async function (app: FastifyInstance) {
     brapiToken: app.config.BRAPI_TOKEN,
     claudeBin: app.config.CLAUDE_BIN,
     model: app.config.CLAUDE_CHAT_MODEL,
+    sessions: app.redis.raw,
   });
 
   await app.register(marketRoutes(module), { prefix: "/investments" });

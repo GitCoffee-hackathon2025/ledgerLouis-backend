@@ -8,7 +8,7 @@ export const createChatController = (
 ) => ({
   /** Resposta em streaming (SSE). Se o navegador fechar a conexão, o processo do Claude é encerrado. */
   async chat(req: FastifyRequest<ChatRoute>, res: FastifyReply) {
-    const { sessionId, resume } = chat.session(req.authUser.sub, req.body.session_id);
+    const { sessionId, resume } = await chat.session(req.authUser.sub, req.body.session_id);
     const events = chat.run(req.authUser.sub, req.body.message.trim(), sessionId, resume);
 
     return res

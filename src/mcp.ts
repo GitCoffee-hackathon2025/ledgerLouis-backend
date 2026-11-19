@@ -25,9 +25,11 @@ async function start() {
   if (!user) throw new Error(`usuário não encontrado: ${who}`);
 
   const server = buildMcpServer(buildInvestmentsModule(db, investmentsConfigFromEnv()), user.id);
-  server.server.onclose = () => void close();
+  server.server.onclose = () => void close().finally(() => process.exit(0));
 
   await server.connect(new StdioServerTransport());
+  // o transporte do SDK não percebe o cliente indo embora: sem isto o processo fica preso no pool do banco
+  process.stdin.once("end", () => void server.close());
 }
 
 start().catch((error) => {
