@@ -116,6 +116,7 @@ export const transactionRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.auth,
+              ...routeGroups.permission,
               ...routeGroups.company,
               ...routeGroups.member,
             ]),
@@ -136,6 +137,12 @@ export const transactionRoutes =
           params: CompanyParam,
           response: {
             200: accountValueResponseSchema,
+            ...createErrorResponses([
+              ...routeGroups.common,
+              ...routeGroups.auth,
+              ...routeGroups.company,
+              ...routeGroups.member,
+            ]),
           },
         },
       },

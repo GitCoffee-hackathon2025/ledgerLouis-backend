@@ -3,8 +3,6 @@ import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
 
 import {
-  InvitationTokenParams,
-  InvitationDetailsResponse,
   InvitationAcceptanceResponse,
   UserInvitationIdParams,
   UserInvitationsListResponse,
@@ -16,7 +14,9 @@ import { toId } from "../../../domain/shared/id.js";
 
 export const invitationRoutes =
   (
-    invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
+    invitation: ReturnType<
+      typeof buildCompanyModule
+    >["invitation"]["invitationUserService"],
   ): FastifyPluginAsyncTypebox =>
   async (app) => {
     app.get(
@@ -26,81 +26,28 @@ export const invitationRoutes =
         config: { auth: true },
         schema: {
           tags: ["invitations"],
-          summary: "Get invitation details",
-          params: InvitationTokenParams,
-          response: {
-            200: InvitationDetailsResponse,
-            ...createErrorResponses([
-              ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.user,
-              ...routeGroups.invitation,
-              ...routeGroups.permission,
-            ]),
-          },
-        },
-      },
-      async (req, reply) => {
-        return reply
-          .status(200)
-          .send(await invitation.read(req.authUser.sub, req.params.token));
-      },
-    );
-
-    app.post(
-      "/accept",
-      {
-        preHandler: app.verifyAccess,
-        config: { auth: true },
-        schema: {
-          tags: ["invitations"],
-          summary: "Accept invitation",
-          params: InvitationTokenParams,
-          response: {
-            200: InvitationAcceptanceResponse,
-            ...createErrorResponses([
-              ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.user,
-              ...routeGroups.member,
-              ...routeGroups.invitation,
-              "MEMBER_ALREADY_EXISTS",
-            ]),
-          },
-        },
-      },
-      async (req, reply) => {
-        return reply
-          .status(200)
-          .send(await invitation.accept(req.authUser.sub, req.params.token));
-      },
-    );
-  };
-
-export const userInvitationRoutes =
-  (
-    invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
-  ): FastifyPluginAsyncTypebox =>
-  async (app) => {
-    app.get(
-      "/me",
-      {
-        preHandler: app.verifyAccess,
-        config: { auth: true },
-        schema: {
-          tags: ["invitations"],
-          summary: "List invitations for authenticated user",
+          summary: "List invitations",
           response: {
             200: UserInvitationsListResponse,
-            ...createErrorResponses([...routeGroups.common, ...routeGroups.auth, ...routeGroups.user]),
+            ...createErrorResponses([
+              ...routeGroups.common,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
+            ]),
           },
         },
       },
-      async (req, reply) => reply.status(200).send(await invitation.listForUser(req.authUser.sub)),
+      async (req, res) => {
+        return res
+          .status(200)
+          .send(await invitation.listByUser(req.authUser.sub));
+      },
     );
 
     app.post(
-      "/id/:invitationId/accept",
+      "/:invitationId/accept",
       {
         preHandler: app.verifyAccess,
         config: { auth: true },
@@ -112,18 +59,28 @@ export const userInvitationRoutes =
             200: InvitationAcceptanceResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.user,
-              ...routeGroups.member,
-              ...routeGroups.invitation,
+              ...routeGroups.form,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
               "MEMBER_ALREADY_EXISTS",
+              "INVITATION_EXPIRED",
+              "INVITATION_NOT_FOUND",
+              "INVITATION_ALREADY_ACCEPTED",
+              "INVITATION_REVOKED",
+              "INVITATION_EMAIL_MISMATCH",
             ]),
           },
         },
       },
-      async (req, reply) =>
-        reply
-          .status(200)
-          .send(await invitation.acceptById(req.authUser.sub, toId(req.params.invitationId))),
+      async (req, res) => {
+        return res.status(200).send(
+          await invitation.accept(req.authUser.sub, {
+            by: "id",
+            value: toId(req.params.invitationId),
+          }),
+        );
+      },
     );
   };

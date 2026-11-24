@@ -13,6 +13,10 @@ export const errorPayloadSchemas = {
     detail: Type.String(),
   }),
 
+  EMAIL_VERIFICATION_COOLDOWN: Type.Object({
+    retryAfter: Type.String({ format: "date-time" }),
+  }),
+
   // TOKEN_EXPIRED: Type.Object({
   //   expiredAt: Type.String({
   //     format: "date-time",

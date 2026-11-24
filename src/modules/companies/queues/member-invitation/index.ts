@@ -9,9 +9,7 @@ export const MEMBER_INVITATION_JOB_NAME = "send-member-invitation";
 export function buildMemberInvitationQueue(connection: IRedisClient) {
   return createMemberInvitationProducer(
     MEMBER_INVITATION_JOB_NAME,
-    new Queue(MEMBER_INVITATION_QUEUE_NAME, {
-      connection,
-    }),
+    new Queue(MEMBER_INVITATION_QUEUE_NAME, { connection }),
   );
 }
 
@@ -22,8 +20,6 @@ export function buildMemberInvitationWorker(
   return new Worker(
     MEMBER_INVITATION_QUEUE_NAME,
     createMemberInvitationProcessor(config),
-    {
-      connection,
-    },
+    { connection },
   );
 }

@@ -1,49 +1,65 @@
-import type { FastifyPluginAsync } from "fastify";
-
-import { createUserController } from "../controllers/user.controller.js";
-import { buildUserModule } from "../module.js";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 
 import {
+  RegistedUserResponse,
   RegisterBody,
+  RegisterQuery,
   UpdateBody,
   UserResponse,
-  type DeleteRoute,
-  type GetMeRoute,
-  type UpdateRoute,
-  type RegisterRoute,
 } from "../schema.js";
+
+import { buildUserModule } from "../module.js";
 
 import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
 import { routeGroups } from "../../../shared/errors/domain/groups.js";
+import { AppError } from "../../../shared/errors/domain/errors.js";
 
 export const userRouter =
   (
     userService: ReturnType<typeof buildUserModule>["userService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    const controller = createUserController(userService);
-
-    app.post<RegisterRoute>(
+    app.post(
       "/",
       {
         schema: {
           tags: ["users"],
           summary: "Register user",
           body: RegisterBody,
+          querystring: RegisterQuery,
           response: {
-            201: UserResponse,
+            201: RegistedUserResponse,
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.user,
+              "INVALID_JSON",
+              "EMAIL_ALREADY_EXISTS",
+              "USER_NOT_FOUND",
+              "EMAIL_ALREADY_VERIFIED",
+              "MEMBER_ALREADY_EXISTS",
+              "INVITATION_EXPIRED",
+              "INVITATION_NOT_FOUND",
+              "INVITATION_ALREADY_ACCEPTED",
+              "INVITATION_REVOKED",
+              "INVITATION_EMAIL_MISMATCH",
             ]),
           },
         },
       },
-      controller.register,
+      async (req, reply) => {
+        const { name, email, password } = req.body;
+
+        const result = await userService.register(
+          { name, email, password },
+          req.server.config.WEB_URL,
+          req.query.invite
+        );
+
+        return reply.status(201).send(result);
+      },
     );
 
-    app.get<GetMeRoute>(
+    app.get(
       "/me",
       {
         preHandler: app.verifyAccess,
@@ -55,16 +71,24 @@ export const userRouter =
             200: UserResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.user,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
             ]),
           },
         },
       },
-      controller.getMe,
+      async (req, reply) => {
+        const user = await userService.findById(req.authUser.sub);
+
+        if (!user) throw new AppError("USER_NOT_FOUND");
+
+        return reply.status(200).send(user);
+      },
     );
 
-    app.patch<UpdateRoute>(
+    app.patch(
       "/me",
       {
         preHandler: app.verifyAccess,
@@ -78,16 +102,27 @@ export const userRouter =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.user,
-              ...routeGroups.auth,
+              "INVALID_JSON",
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "USER_NOT_FOUND",
+              "EMAIL_ALREADY_EXISTS",
             ]),
           },
         },
       },
-      controller.update,
+      async (req, reply) => {
+        const result = await userService.update(req.authUser.sub, {
+          name: req.body.name,
+          email: req.body.email,
+        });
+
+        return reply.status(200).send(result);
+      },
     );
 
-    app.delete<DeleteRoute>(
+    app.delete(
       "/me",
       {
         preHandler: app.verifyAccess,
@@ -96,14 +131,20 @@ export const userRouter =
           tags: ["users"],
           summary: "Delete authenticated user",
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
             ]),
           },
         },
       },
-      controller.delete,
+      async (req, reply) => {
+        await userService.delete(req.authUser.sub);
+
+        return reply.status(204).send();
+      },
     );
   };

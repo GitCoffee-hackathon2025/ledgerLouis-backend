@@ -5,7 +5,7 @@ import { userRouter } from "./routes/user.router.js";
 import { profileImageRouter } from "./routes/profileImage.router.js";
 
 export default async function (app: FastifyInstance) {
-  const module = buildUserModule(app.db, app.storage);
+  const module = buildUserModule(app.db, app.redis.adapter, app.storage);
 
   await app.register(userRouter(module.userService), {
     prefix: "/users",

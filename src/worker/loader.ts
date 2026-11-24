@@ -1,12 +1,15 @@
+import { authWorkers } from "../modules/auth/queues/workers.js";
 import { fileWorkers } from "../modules/files/queue/workers.js";
-
-import { fileSchedulers } from "../modules/files/queue/schedulers.js";
 import { companyWorkers } from "../modules/companies/queues/workers.js";
 import { financeWorkers } from "../modules/finances/queue/workers.js";
 import { financeSchedulers } from "../modules/finances/queue/schedulers.js";
 
+import { authSchedulers } from "../modules/auth/queues/schedulers.js";
+import { fileSchedulers } from "../modules/files/queue/schedulers.js";
+
 // Workers
 export const builds = {
+  auth: authWorkers,
   files: fileWorkers,
   companies: companyWorkers,
   finances: financeWorkers,
@@ -14,6 +17,7 @@ export const builds = {
 
 // Queues periodicas, funcionam de forma automatica quando o servidor está ativo
 export const schedulers = {
+  auth: authSchedulers,
   files: fileSchedulers,
   finances: financeSchedulers,
 };

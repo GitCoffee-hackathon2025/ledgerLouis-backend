@@ -8,7 +8,7 @@ export const users = pgTable(
     name: varchar("name", { length: 150 }).notNull(),
     email: varchar("email", { length: 150 }).notNull(),
     password: varchar("password", { length: 255 }).notNull(),
-    isVerified: timestamp("is_verified"),
+    verifiedAt: timestamp("verified_at", { mode: "date" }),
     ...timestamps,
   },
   (table) => [uniqueIndex("uq_users_email").on(table.email)],

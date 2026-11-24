@@ -17,6 +17,7 @@ export * from "./identity/jwtKeys.js";
 export * from "./identity/refreshTokens.js";
 export * from "./identity/sessions.js";
 export * from "./identity/users.js";
+export * from "./identity/verificationEmail.js"
 
 // organization
 export * from "./organization/companies.js";

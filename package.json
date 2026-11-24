@@ -39,8 +39,6 @@
     "test": "tsx --test tests/**/*.test.ts"
   },
   "dependencies": {
-    "@bull-board/api": "^8.1.2",
-    "@bull-board/fastify": "^8.1.2",
     "@fastify/autoload": "^6.3.1",
     "@fastify/cors": "^11.2.0",
     "@fastify/env": "^5.0.3",
@@ -74,7 +72,7 @@
   "devDependencies": {
     "@types/node": "^25.3.5",
     "@types/nodemailer": "^8.0.1",
-    "drizzle-kit": "^0.31.10",
+    "drizzle-kit": "^0.31.11",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

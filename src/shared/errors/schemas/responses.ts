@@ -21,7 +21,7 @@ function createErrorSchema<E extends ErrorCode>(code: E) {
 export function createErrorResponses<T extends ErrorCode[]>(errors: [...T]) {
   const grouped = new Map<number, TSchema[]>();
 
-  for (const code of errors) {
+  for (const code of new Set(errors)) {
     const [status] = errorMap[code];
     const schema = createErrorSchema(code);
 

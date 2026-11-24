@@ -41,9 +41,11 @@ export default fp(
         routePrefix: "/docs",
       });
 
-      app.get("/", async (req, res) => {
-        return res.redirect("/docs/");
-      });
+      app.get(
+        "/",
+        { schema: { response: { 302: {} } } },
+        async (req, res) => res.redirect("/docs/"),
+      );
     }
   },
   {

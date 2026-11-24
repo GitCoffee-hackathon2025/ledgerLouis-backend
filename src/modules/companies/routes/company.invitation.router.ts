@@ -17,8 +17,9 @@ import { toId } from "../../../domain/shared/id.js";
 
 export const companyInvitationRoutes =
   (
-    invitation: ReturnType<typeof buildCompanyModule>["invitationService"],
-    invitationUrl: string,
+    invitation: ReturnType<
+      typeof buildCompanyModule
+    >["invitation"]["invitationCompanyService"],
   ): FastifyPluginAsyncTypebox =>
   async (app) => {
     app.post(
@@ -33,7 +34,6 @@ export const companyInvitationRoutes =
           body: CreateInvitationBody,
           response: {
             201: InvitationResponse,
-
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
@@ -49,18 +49,15 @@ export const companyInvitationRoutes =
         },
       },
       async (req, reply) => {
-        const { companyId } = req.params;
-        const { email, role } = req.body;
-
         return reply
           .status(201)
           .send(
             await invitation.create(
               req.authUser.sub,
-              toId(companyId),
-              email,
-              role,
-              invitationUrl,
+              toId(req.params.companyId),
+              req.body.email,
+              req.body.role,
+              req.server.config.WEB_URL,
             ),
           );
       },
@@ -78,13 +75,14 @@ export const companyInvitationRoutes =
           querystring: ListInvitationsQuery,
           response: {
             200: InvitationsListResponse,
-
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.invitation,
+              ...routeGroups.form,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
+              "FORBIDDEN",
             ]),
           },
         },
@@ -93,7 +91,7 @@ export const companyInvitationRoutes =
         return reply
           .status(200)
           .send(
-            await invitation.list(
+            await invitation.listByCompany(
               req.authUser.sub,
               toId(req.params.companyId),
               req.query.limit,
@@ -113,14 +111,18 @@ export const companyInvitationRoutes =
           summary: "Revoke company invitation",
           params: CompanyInvitationIdParams,
           response: {
-            204: { type: "null" },
-
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.invitation,
+              ...routeGroups.form,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
+              "FORBIDDEN",
+              "INVITATION_NOT_FOUND",
+              "INVITATION_ALREADY_ACCEPTED",
+              "INVITATION_REVOKED",
             ]),
           },
         },
@@ -132,7 +134,7 @@ export const companyInvitationRoutes =
           toId(req.params.invitationId),
         );
 
-        return reply.status(204);
+        return reply.status(204).send();
       },
     );
   };

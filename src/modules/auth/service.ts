@@ -6,11 +6,13 @@ import type { createUserRepository } from "../users/repositories/user.repository
 import { AppError } from "../../shared/errors/domain/errors.js";
 import { type ULID, generateId } from "../../domain/shared/id.js";
 import { verifyPassword } from "../../shared/security/hash/password.js";
+import type { createVerificationService } from "./services/verificationEmail.service.js";
 
 export const createAuthService = (
   tokenService: ReturnType<typeof createTokenService>,
   refreshService: ReturnType<typeof createRefreshService>,
   sessionService: ReturnType<typeof createSessionService>,
+  emailService: ReturnType<typeof createVerificationService>,
   userRepo: ReturnType<typeof createUserRepository>,
 ) => ({
   /**
@@ -20,6 +22,7 @@ export const createAuthService = (
     email: string,
     password: string,
     ctx: { ipAddress?: string; userAgent?: string },
+    token?: string,
   ) {
     // procura pelo user
     const user = await userRepo.findByEmail(email.trim().toLowerCase());
@@ -29,6 +32,13 @@ export const createAuthService = (
     // valida senha
     if (!(await verifyPassword(user.password, password)))
       throw new AppError("INVALID_CREDENTIALS");
+
+    // verifica se o usuário é verificado
+    // e caso não seja, valida o token
+    if (!user.verifiedAt) {
+      if (!token) throw new AppError("EMAIL_NOT_VERIFIED");
+      await emailService.verify(user.id, token);
+    }
 
     const userId = user.id;
 

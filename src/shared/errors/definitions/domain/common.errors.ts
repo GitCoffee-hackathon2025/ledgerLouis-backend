@@ -3,5 +3,6 @@ export const commonErrors = {
   VALIDATION_ERROR: [400, "Invalid input"],
   INVALID_JSON: [400, "Malformed JSON body"],
   INTERNAL_ERROR: [500, "Internal server error"],
+  PAYLOAD_TOO_LARGE: [413, "Request payload is too large"],
   UNSUPPORTED_MEDIA_TYPE: [415, "Content-Type must be application/json"],
 } as const;

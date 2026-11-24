@@ -32,6 +32,8 @@ export const createProfileImageService = (
       fileId: stored.id,
     });
 
+    if (!profileImage) throw new AppError("INTERNAL_ERROR");
+
     return profileImage;
   },
 

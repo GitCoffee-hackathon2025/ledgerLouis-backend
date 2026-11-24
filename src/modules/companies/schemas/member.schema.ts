@@ -1,7 +1,13 @@
-import { Type, type Static } from "@sinclair/typebox";
-
+import { Type } from "@sinclair/typebox";
+import { DateTime } from "../../../api/schemas/primitives/date.schema.js";
 import { IdSchema } from "../../../api/schemas/primitives/id.schema.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
+
+export const RoleSchema = Type.Union([
+  Type.Literal("owner"),
+  Type.Literal("admin"),
+  Type.Literal("viewer"),
+]);
 
 // params
 
@@ -9,14 +15,10 @@ export const CompanyIdParam = Type.Object({
   companyId: IdSchema,
 });
 
-export type CompanyIdParamType = Static<typeof CompanyIdParam>;
-
 export const MemberParam = Type.Object({
   companyId: IdSchema,
   userId: IdSchema,
 });
-
-export type MemberParamType = Static<typeof MemberParam>;
 
 // query
 
@@ -24,14 +26,6 @@ export const ListMembersQuery = Type.Object({
   limit: Type.Optional(Type.Number({ minimum: 1, default: 20 })),
   offset: Type.Optional(Type.Number({ minimum: 0, default: 0 })),
 });
-
-export type ListMembersQueryType = Static<typeof ListMembersQuery>;
-
-// schemas
-
-export const RoleSchema = Type.Union(
-  permissionsEnum.map((p) => Type.Literal(p)),
-);
 
 // bodies
 
@@ -43,16 +37,12 @@ export const AddMemberBody = Type.Object(
   { additionalProperties: false },
 );
 
-export type AddMemberBodyType = Static<typeof AddMemberBody>;
-
 export const ChangeRoleBody = Type.Object(
   {
     role: RoleSchema,
   },
   { additionalProperties: false },
 );
-
-export type ChangeRoleBodyType = Static<typeof ChangeRoleBody>;
 
 // responses
 
@@ -61,7 +51,7 @@ export const MemberResponse = Type.Object({
   name: Type.String(),
   email: Type.String({ format: "email" }),
   role: RoleSchema,
-  createdAt: Type.String({ format: "date-time" }),
+  createdAt: DateTime,
 });
 
 export const MembersListResponse = Type.Object({
@@ -85,30 +75,7 @@ export const UserCompanyResponse = Type.Object({
   cep: Type.Union([Type.String(), Type.Null()]),
   phone: Type.Union([Type.String(), Type.Null()]),
   role: RoleSchema,
-  createdAt: Type.String({ format: "date-time" }),
+  createdAt: DateTime,
 });
 
 export const UserCompaniesResponse = Type.Array(UserCompanyResponse);
-
-// route generics
-
-export type ListMembersRoute = {
-  Params: CompanyIdParamType;
-  Querystring: ListMembersQueryType;
-};
-
-export type AddMemberRoute = {
-  Params: CompanyIdParamType;
-  Body: AddMemberBodyType;
-};
-
-export type ChangeMemberRoleRoute = {
-  Params: MemberParamType;
-  Body: ChangeRoleBodyType;
-};
-
-export type RemoveMemberRoute = {
-  Params: MemberParamType;
-};
-
-export type ListUserCompaniesRoute = {};

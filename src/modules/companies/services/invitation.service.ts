@@ -9,9 +9,9 @@ import { AppError } from "../../../shared/errors/domain/errors.js";
 import { type ULID } from "../../../domain/shared/id.js";
 import { permissionsEnum } from "../../../domain/organization/enums.js";
 
-import { createHash, randomBytes } from "node:crypto";
+import { generateToken, hashToken } from "../../../shared/security/token.js";
 
-export const createInvitationService = (
+export const createCompanyInvitationService = (
   inviteRepo: ReturnType<typeof createInviteRepository>,
   memberRepo: ReturnType<typeof createMemberRepository>,
   userRepo: ReturnType<typeof createUserRepository>,
@@ -20,70 +20,34 @@ export const createInvitationService = (
 ) => {
   const INVITATION_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000;
 
-  function generateToken() {
-    return randomBytes(32).toString("base64url");
-  }
-
-  function hashToken(token: string) {
-    return createHash("sha256").update(token).digest("hex");
-  }
-
-  function validateActive(invite: NonNullable<Awaited<ReturnType<typeof inviteRepo.findById>>>) {
-    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
-    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
-    if (invite.expiresAt <= new Date()) throw new AppError("INVITATION_EXPIRED");
-    return invite;
-  }
-
-  async function findByToken(token: string) {
-    const invite = await inviteRepo.findByTokenHash(hashToken(token));
-    if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-    return validateActive(invite);
-  }
-
-  async function associateMember(
-    userId: ULID,
-    invite: NonNullable<Awaited<ReturnType<typeof inviteRepo.findById>>>,
-  ) {
-    if (await memberRepo.findMembership(invite.companyId, userId))
-      throw new AppError("MEMBER_ALREADY_EXISTS");
-
-    await memberRepo.create({
-      companyId: invite.companyId,
-      userId,
-      role: invite.role,
-    });
-
-    if (!(await inviteRepo.markAsAccepted(invite.id)))
-      throw new AppError("INVITATION_ALREADY_ACCEPTED");
-
-    return {
-      companyId: invite.companyId,
-      userId,
-      role: invite.role,
-    };
-  }
-
   return {
     async create(
       actorId: ULID,
       companyId: ULID,
       email: string,
       role: (typeof permissionsEnum)[number],
-      invitationUrl: string,
+      webUrl: string,
     ) {
+      // somente owner pode convidar
       await assertRole(companyId, actorId, ["owner"]);
 
       const normalizedEmail = email.trim().toLowerCase();
 
-      const existingUser = await userRepo.findByEmail(normalizedEmail);
-      if (existingUser && (await memberRepo.findMembership(companyId, existingUser.id))) {
+      // verifica se o usuário já existe
+      const user = await userRepo.findByEmail(normalizedEmail);
+
+      // se existir, verifica se já pertence à companhia
+      if (user && (await memberRepo.findMembership(companyId, user.id)))
         throw new AppError("MEMBER_ALREADY_EXISTS");
-      }
 
-      const outstanding = await inviteRepo.findPendingByCompanyAndEmail(companyId, normalizedEmail);
-      if (outstanding) await inviteRepo.revoke(outstanding.id);
+      // evita múltiplos convites pendentes para o mesmo e-mail
+      await inviteRepo
+        .findPendingByCompanyAndEmail(companyId, normalizedEmail)
+        .then(async (outstanding) => {
+          if (outstanding) await inviteRepo.revoke(outstanding.id);
+        });
 
+      // Gera token, mas não é usado caso o usuário seja registrado
       const token = generateToken();
 
       const invite = await inviteRepo.create({
@@ -97,14 +61,13 @@ export const createInvitationService = (
 
       if (!invite) throw new AppError("INTERNAL_ERROR");
 
-      /* 
-      O token bruto não deve ser persistido.
-      O worker precisa dele para construir a URL,
-      então o producer deve receber o token apenas neste momento.
-      */
+      const path = user
+        ? `/invitations/${invite.id}/accept`
+        : `/users/register/?invite=${token}`;
+
       await invitationProducer.enqueue({
         invitationId: invite.id,
-        invitationUrl: invitationUrl + "/" + token,
+        invitationUrl: webUrl + path,
       });
 
       return {
@@ -116,29 +79,12 @@ export const createInvitationService = (
       };
     },
 
-    async read(userId: ULID, token: string) {
-      const invite = await findByToken(token);
-
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-      if (user.email !== invite.email) throw new AppError("FORBIDDEN");
-
-      return {
-        companyId: invite.companyId,
-        email: invite.email,
-        role: invite.role,
-        expiresAt: invite.expiresAt,
-      };
-    },
-
-    async listForUser(userId: ULID) {
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-
-      return { items: await inviteRepo.findAllPendingByEmail(user.email.toLowerCase()) };
-    },
-
-    async list(actorId: ULID, companyId: ULID, limit = 20, offset = 0) {
+    async listByCompany(
+      actorId: ULID,
+      companyId: ULID,
+      limit = 20,
+      offset = 0,
+    ) {
       await assertRole(companyId, actorId, ["owner"]);
 
       return {
@@ -150,31 +96,6 @@ export const createInvitationService = (
       };
     },
 
-    async accept(userId: ULID, token: string) {
-      const invite = await findByToken(token);
-
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-      if (user.email.toLowerCase() !== invite.email)
-        throw new AppError("INVITATION_EMAIL_MISMATCH");
-
-      return associateMember(userId, invite);
-    },
-
-    async acceptById(userId: ULID, invitationId: ULID) {
-      const invite = await inviteRepo.findById(invitationId);
-      if (!invite) throw new AppError("INVITATION_NOT_FOUND");
-
-      const user = await userRepo.findById(userId);
-      if (!user) throw new AppError("USER_NOT_FOUND");
-      if (user.email.toLowerCase() !== invite.email)
-        throw new AppError("INVITATION_EMAIL_MISMATCH");
-
-      validateActive(invite);
-
-      return associateMember(userId, invite);
-    },
-
     async revoke(actorId: ULID, companyId: ULID, invitationId: ULID) {
       await assertRole(companyId, actorId, ["owner"]);
 
@@ -184,12 +105,88 @@ export const createInvitationService = (
         throw new AppError("INVITATION_NOT_FOUND");
 
       if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
       if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
 
       const revokedInvite = await inviteRepo.revoke(invitationId);
+
       if (!revokedInvite) throw new AppError("INVITATION_NOT_FOUND");
 
       return revokedInvite;
+    },
+  };
+};
+
+type InvitationLookup =
+  | { by: "token"; value: string }
+  | { by: "id"; value: ULID };
+
+export const createUserInvitationService = (
+  inviteRepo: ReturnType<typeof createInviteRepository>,
+  memberRepo: ReturnType<typeof createMemberRepository>,
+  userRepo: ReturnType<typeof createUserRepository>,
+) => {
+  function validateInvitation(
+    invite: Awaited<ReturnType<(typeof inviteRepo)["findById"]>>,
+  ) {
+    if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+
+    if (invite.acceptedAt) throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+    if (invite.revokedAt) throw new AppError("INVITATION_REVOKED");
+
+    if (invite.expiresAt <= new Date())
+      throw new AppError("INVITATION_EXPIRED");
+
+    return invite;
+  }
+  return {
+    async listByUser(userId: ULID) {
+      const user = await userRepo.findById(userId);
+      if (!user) throw new AppError("USER_NOT_FOUND");
+
+      return {
+        items: await inviteRepo.findAllPendingByEmail(user.email.toLowerCase()),
+      };
+    },
+
+    async accept(userId: ULID, lookup: InvitationLookup) {
+      const invite = validateInvitation(
+        lookup.by === "id"
+          ? await inviteRepo.findById(lookup.value)
+          : await inviteRepo.findByTokenHash(hashToken(lookup.value)),
+      );
+
+      const user = await userRepo.findById(userId);
+
+      if (!user) throw new AppError("USER_NOT_FOUND");
+
+      // o convite é destinado ao e-mail específico
+      if (user.email.toLowerCase() !== invite.email)
+        throw new AppError("INVITATION_EMAIL_MISMATCH");
+
+      // proteção contra associação duplicada
+      const existingMembership = await memberRepo.findMembership(
+        invite.companyId,
+        userId,
+      );
+
+      if (existingMembership) throw new AppError("MEMBER_ALREADY_EXISTS");
+
+      await memberRepo.create({
+        companyId: invite.companyId,
+        userId,
+        role: invite.role,
+      });
+
+      if (!(await inviteRepo.markAsAccepted(invite.id)))
+        throw new AppError("INVITATION_ALREADY_ACCEPTED");
+
+      return {
+        companyId: invite.companyId,
+        userId,
+        role: invite.role,
+      };
     },
   };
 };

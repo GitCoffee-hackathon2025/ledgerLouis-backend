@@ -1,7 +1,6 @@
-import type { FastifyPluginAsync } from "fastify";
-
-import { createMemberController } from "../controllers/member.controller.js";
+import type { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { buildCompanyModule } from "../module.js";
+import { toId } from "../../../domain/shared/id.js";
 
 import {
   CompanyIdParam,
@@ -12,10 +11,6 @@ import {
   MembersListResponse,
   MemberMutationResponse,
   UserCompaniesResponse,
-  type ListMembersRoute,
-  type AddMemberRoute,
-  type ChangeMemberRoleRoute,
-  type RemoveMemberRoute,
 } from "../schemas/member.schema.js";
 
 import { createErrorResponses } from "../../../shared/errors/schemas/responses.js";
@@ -24,11 +19,9 @@ import { routeGroups } from "../../../shared/errors/domain/groups.js";
 export const memberRoutes =
   (
     module: ReturnType<typeof buildCompanyModule>["memberService"],
-  ): FastifyPluginAsync =>
+  ): FastifyPluginAsyncTypebox =>
   async (app) => {
-    const controller = createMemberController(module);
-
-    app.get<ListMembersRoute>(
+    app.get(
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
@@ -42,18 +35,28 @@ export const memberRoutes =
             200: MembersListResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.member,
+              ...routeGroups.form,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
             ]),
           },
         },
       },
-      controller.list,
+      async (req, reply) => {
+        const result = await module.findAllMember(
+          req.authUser.sub,
+          toId(req.params.companyId),
+          req.query.limit,
+          req.query.offset,
+        );
+
+        return reply.status(200).send(result);
+      },
     );
 
-    app.post<AddMemberRoute>(
+    app.post(
       "/companies/:companyId/members",
       {
         preHandler: app.verifyAccess,
@@ -68,19 +71,32 @@ export const memberRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.member,
-              ...routeGroups.user,
+              "INVALID_JSON",
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
+              "FORBIDDEN",
+              "USER_NOT_FOUND",
+              "MEMBER_ALREADY_EXISTS",
             ]),
           },
         },
       },
-      controller.add,
+      async (req, reply) =>
+        reply
+          .status(201)
+          .send(
+            await module.addMember(
+              req.authUser.sub,
+              toId(req.params.companyId),
+              req.body.email,
+              req.body.role,
+            ),
+          ),
     );
 
-    app.patch<ChangeMemberRoleRoute>(
+    app.patch(
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
@@ -95,18 +111,31 @@ export const memberRoutes =
             ...createErrorResponses([
               ...routeGroups.common,
               ...routeGroups.form,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.member,
+              "INVALID_JSON",
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
+              "FORBIDDEN",
+              "CANNOT_CHANGE_OWN_ROLE",
             ]),
           },
         },
       },
-      controller.changeRole,
+      async (req, reply) =>
+        reply
+          .status(200)
+          .send(
+            await module.changeMemberRole(
+              req.authUser.sub,
+              toId(req.params.companyId),
+              toId(req.params.userId),
+              req.body.role,
+            ),
+          ),
     );
 
-    app.delete<RemoveMemberRoute>(
+    app.delete(
       "/companies/:companyId/members/:userId",
       {
         preHandler: app.verifyAccess,
@@ -116,18 +145,28 @@ export const memberRoutes =
           summary: "Remove company member",
           params: MemberParam,
           response: {
-            204: { type: "null" },
+            204: {},
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
-              ...routeGroups.permission,
-              ...routeGroups.company,
-              ...routeGroups.member,
+              ...routeGroups.form,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
+              "MEMBER_NOT_FOUND",
+              "FORBIDDEN",
+              "CANNOT_REMOVE_LAST_OWNER",
             ]),
           },
         },
       },
-      controller.remove,
+      async (req, reply) => {
+        await module.removeMember(
+          req.authUser.sub,
+          toId(req.params.companyId),
+          toId(req.params.userId),
+        );
+        return reply.status(204).send();
+      },
     );
 
     app.get(
@@ -142,11 +181,17 @@ export const memberRoutes =
             200: UserCompaniesResponse,
             ...createErrorResponses([
               ...routeGroups.common,
-              ...routeGroups.auth,
+              "INVALID_TOKEN",
+              "TOKEN_EXPIRED",
+              "UNAUTHORIZED",
             ]),
           },
         },
       },
-      controller.listUserCompanies,
+      async (req, reply) => {
+        const result = await module.findUserList(req.authUser.sub);
+
+        return reply.status(200).send(result);
+      },
     );
   };

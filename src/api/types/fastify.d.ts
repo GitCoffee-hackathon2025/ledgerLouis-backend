@@ -5,7 +5,6 @@ import type { DB } from "../../types/db.ts";
 import type { Redis } from "../../types/redis.ts";
 import type { StorageProvider } from "../../types/storage.ts";
 
-import type { buildAuthModule } from "../../modules/auth/module.ts";
 import { type ULID } from "../../domain/shared/id.ts";
 
 import type { RateLimitOptions } from "../../infrastructure/rate-limit/service.ts";
@@ -15,8 +14,6 @@ declare module "fastify" {
     config: Env;
     db: DB;
     redis: Redis;
-
-    // Gerenciador de arquivos
     storage: StorageProvider;
 
     // Função para declarar uma rota antenticada e configura automatimente

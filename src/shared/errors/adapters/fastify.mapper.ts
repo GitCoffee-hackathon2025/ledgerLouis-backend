@@ -11,7 +11,16 @@ export function handleFastifyError(error: any) {
     case "FST_ERR_CTP_INVALID_JSON_BODY":
       return new AppError("INVALID_JSON");
 
-    default:
+    case "FST_ERR_CTP_INVALID_CONTENT_LENGTH":
       return new AppError("BAD_REQUEST");
+
+    case "FST_ERR_CTP_BODY_TOO_LARGE":
+      return new AppError("PAYLOAD_TOO_LARGE");
+
+    case "FST_REQ_FILE_TOO_LARGE":
+      return new AppError("FILE_TOO_LARGE");
+
+    default:
+      return new AppError("INTERNAL_ERROR");
   }
 }
