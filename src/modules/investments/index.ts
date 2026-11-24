@@ -9,8 +9,8 @@ import { portfolioRoutes } from "./routes/portfolio.router.js";
 export default async function (app: FastifyInstance) {
   const module = buildInvestmentsModule(app.db, {
     brapiToken: app.config.BRAPI_TOKEN,
-    claudeBin: app.config.CLAUDE_BIN,
-    model: app.config.CLAUDE_CHAT_MODEL,
+    geminiApiKey: app.config.GEMINI_API_KEY,
+    model: app.config.GEMINI_CHAT_MODEL,
     sessions: app.redis.raw,
   });
 

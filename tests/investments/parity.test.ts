@@ -17,7 +17,6 @@ import {
 import { annualizedVolatility, periodReturn, rsi, sma } from "../../src/domain/investments/technical.js";
 import { readCsvFromZip, onlyDigits } from "../../src/infrastructure/market-data/cvm.js";
 import { parseFeed } from "../../src/infrastructure/market-data/rss.js";
-import { parseLine } from "../../src/modules/investments/services/chat.service.js";
 
 const ref = JSON.parse(
   readFileSync(new URL("./fixtures/python-reference.json", import.meta.url), "utf8"),
@@ -133,9 +132,6 @@ test("soma de pesos que dá 1 com ruído de ponto flutuante não é rejeitada", 
   );
 });
 
-test("chat: linhas do Claude Code viram os mesmos eventos", () => {
-  for (const [line, events] of ref.chat) assert.deepEqual(parseLine(line), events);
-});
 
 test("CVM: ZIP com CSV em latin-1, aspas e ';' dentro do campo", () => {
   const ipe = readCsvFromZip(Buffer.from(ref.cvm.ipe_zip, "base64"), "ipe_cia_aberta", ["Assunto"]);

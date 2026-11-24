@@ -1,17 +1,13 @@
-// Chat do dashboard: roda o Claude Code (`claude -p`) no servidor e repassa a resposta em streaming (SSE).
-// O Claude deste chat só tem as ferramentas MCP de investimentos: sem terminal, sem arquivos.
+// Chat do dashboard: conversa com o Gemini (API do Google) e repassa a resposta em streaming (SSE).
+// O Gemini só enxerga as ferramentas MCP de investimentos (chamadas dentro deste processo): sem terminal, sem arquivos.
 
-import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { extname } from "node:path";
-import { createInterface } from "node:readline";
-import { fileURLToPath } from "node:url";
+import { GoogleGenAI, type Content, type FunctionDeclaration, type Part } from "@google/genai";
 
-import { ROOT, fromSource } from "../../../config/paths.js";
 import type { ULID } from "../../../domain/shared/id.js";
 
-const TIMEOUT_MS = 300_000;
-const TOOL_PREFIX = "mcp__ledgerlouis__";
+const MAX_ROUNDS = 8; // idas e voltas modelo <-> ferramentas por mensagem
+const MAX_HISTORY = 200; // conversas guardadas em memória
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const CHAT_RULES = `Você está no painel de chat do LedgerLouis, ao lado do dashboard do usuário. Responda em português,
@@ -27,12 +23,22 @@ export type ChatEvent =
   | { type: "warning"; text: string }
   | { type: "done"; is_error: boolean; error: string | null };
 
+/** As ferramentas MCP de um usuário, já conectadas. */
+export interface ChatTools {
+  instructions?: string | undefined;
+  declarations: FunctionDeclaration[];
+  call(name: string, args: Record<string, unknown>): Promise<{ error: string } | { result: unknown }>;
+  close(): Promise<void>;
+}
+
 export interface ChatConfig {
-  /** Caminho do Claude Code. Vazio = chat desligado neste servidor. */
-  claudeBin?: string | undefined;
+  /** Chave da API do Gemini. Vazio = chat desligado neste servidor. */
+  geminiApiKey?: string | undefined;
   model?: string | undefined;
   /** Onde fica o dono de cada conversa (o Redis da API). Sem ele, toda mensagem abre conversa nova. */
   sessions?: SessionStore | undefined;
+  /** Abre as ferramentas MCP presas ao usuário logado. */
+  connectTools?: ((userId: ULID) => Promise<ChatTools>) | undefined;
 }
 
 /** O pedaço do cliente Redis que o chat usa. */
@@ -44,79 +50,8 @@ export interface SessionStore {
 const SESSION_TTL_S = 30 * 24 * 3600; // conversa parada há 30 dias não é mais retomada
 const ownerKey = (sessionId: string) => `investments:chat:${sessionId}`;
 
-/** O servidor MCP roda com o mesmo runtime deste processo (tsx em dev, node em produção), preso ao usuário logado. */
-function mcpConfig(userId: ULID) {
-  const entry = fromSource(`mcp${extname(fileURLToPath(import.meta.url))}`);
-
-  return JSON.stringify({
-    mcpServers: {
-      ledgerlouis: {
-        command: process.execPath,
-        args: [...process.execArgv, entry],
-        env: { INVESTMENTS_MCP_USER_ID: userId },
-      },
-    },
-  });
-}
-
-// A mensagem NÃO entra nos argumentos: vai pelo stdin, senão "--alguma-flag" no chat viraria opção do CLI.
-export function buildCommand(cfg: ChatConfig, userId: ULID, sessionId: string, resume: boolean) {
-  return [
-    cfg.claudeBin ?? "claude",
-    "-p",
-    "--output-format", "stream-json", "--verbose", "--include-partial-messages",
-    "--tools", "", // nenhuma ferramenta interna (Bash, Edit, Read...): só as de investimentos
-    "--strict-mcp-config", "--mcp-config", mcpConfig(userId),
-    "--allowedTools", "mcp__ledgerlouis",
-    "--permission-mode", "dontAsk", // o que não estiver liberado acima é negado, sem perguntar
-    "--append-system-prompt", CHAT_RULES,
-    resume ? "--resume" : "--session-id", sessionId,
-    ...(cfg.model ? ["--model", cfg.model] : []),
-  ];
-}
-
-/** Uma linha do stream-json -> eventos simples para o frontend. */
-export function parseLine(line: string): ChatEvent[] {
-  let ev: Record<string, any>;
-  try {
-    ev = JSON.parse(line);
-  } catch {
-    return [];
-  }
-  if (!ev || typeof ev !== "object") return [];
-
-  if (ev.type === "stream_event") {
-    const delta = ev.event?.delta;
-    return delta?.type === "text_delta" ? [{ type: "text", text: delta.text }] : [];
-  }
-
-  // o texto já veio pelos deltas; daqui só as chamadas de ferramenta
-  if (ev.type === "assistant")
-    return ((ev.message?.content ?? []) as Record<string, any>[])
-      .filter((b) => b.type === "tool_use")
-      .map((b) => ({ type: "tool", name: String(b.name ?? "").replace(TOOL_PREFIX, "") }));
-
-  if (ev.type === "system" && ev.subtype === "init") {
-    const server = ((ev.mcp_servers ?? []) as Record<string, any>[]).find(
-      (s) => s.name === "ledgerlouis",
-    );
-    return ["connected", "pending"].includes(server?.status)
-      ? []
-      : [
-          {
-            type: "warning",
-            text: "As ferramentas do LedgerLouis não conectaram; o Claude responde sem os seus dados.",
-          },
-        ];
-  }
-
-  if (ev.type === "result")
-    return [
-      { type: "done", is_error: Boolean(ev.is_error), error: ev.is_error ? (ev.result ?? null) : null },
-    ];
-
-  return [];
-}
+// shortcut: histórico só em memória (some ao reiniciar a API); guardar no Redis se isso incomodar.
+const histories = new Map<string, Content[]>();
 
 const sse = (event: ChatEvent) => `data: ${JSON.stringify(event)}\n\n`;
 const failed = (error: string) => sse({ type: "done", is_error: true, error });
@@ -138,49 +73,70 @@ export const createChatService = (cfg: ChatConfig) => ({
 });
 
 async function* runChat(cfg: ChatConfig, userId: ULID, message: string, sessionId: string, resume: boolean) {
-    yield sse({ type: "session", session_id: sessionId });
+  yield sse({ type: "session", session_id: sessionId });
 
-    if (!cfg.claudeBin) {
-      yield failed("O chat com o Claude está desligado neste servidor (defina CLAUDE_BIN para ligar).");
-      return;
-    }
+  if (!cfg.geminiApiKey || !cfg.connectTools) {
+    yield failed("O chat com o Gemini está desligado neste servidor (defina GEMINI_API_KEY para ligar).");
+    return;
+  }
 
-    const [bin, ...args] = buildCommand(cfg, userId, sessionId, resume);
-    const proc = spawn(bin!, args, { cwd: ROOT, stdio: ["pipe", "pipe", "pipe"] });
-    proc.stdin.on("error", () => {}); // processo que morre cedo (ENOENT) não pode derrubar a API
-    proc.stdin.end(message);
+  if (!resume) histories.delete(sessionId);
+  const history = histories.get(sessionId) ?? [];
+  histories.delete(sessionId); // reinsere no fim: o mais antigo sai primeiro
+  histories.set(sessionId, history);
+  if (histories.size > MAX_HISTORY) histories.delete(histories.keys().next().value!);
 
-    let notFound = false;
-    let stderr = "";
-    proc.stderr.on("data", (chunk) => (stderr = (stderr + chunk).slice(-500)));
-    const closed = new Promise<void>((resolve) => {
-      proc.once("close", () => resolve());
-      proc.once("error", (e: NodeJS.ErrnoException) => {
-        notFound = e.code === "ENOENT";
-        resolve();
+  const before = history.length;
+  history.push({ role: "user", parts: [{ text: message }] });
+  let tools: ChatTools | undefined;
+
+  try {
+    tools = await cfg.connectTools(userId);
+    const ai = new GoogleGenAI({ apiKey: cfg.geminiApiKey });
+    const config = {
+      systemInstruction: `${tools.instructions ?? ""}\n\n${CHAT_RULES}`,
+      tools: [{ functionDeclarations: tools.declarations }],
+      automaticFunctionCalling: { disable: true },
+    };
+
+    let settled = false;
+    for (let round = 0; round < MAX_ROUNDS && !settled; round++) {
+      const parts: Part[] = [];
+      const stream = await ai.models.generateContentStream({
+        model: cfg.model || "gemini-3.5-flash",
+        contents: history,
+        config,
       });
-    });
-
-    const watchdog = setTimeout(() => proc.kill("SIGKILL"), TIMEOUT_MS);
-    let finished = false;
-
-    try {
-      for await (const line of createInterface({ input: proc.stdout }))
-        for (const ev of parseLine(line)) {
-          finished ||= ev.type === "done";
-          yield sse(ev);
+      for await (const chunk of stream)
+        for (const part of chunk.candidates?.[0]?.content?.parts ?? []) {
+          parts.push(part);
+          if (part.text && !part.thought) yield sse({ type: "text", text: part.text });
         }
-      await closed;
+      if (!parts.length) break;
 
-      if (!finished)
-        yield failed(
-          notFound
-            ? "Claude Code não encontrado. Instale e faça login com `claude` no terminal do servidor."
-            : stderr.trim() || `o Claude Code saiu com código ${proc.exitCode}`,
-        );
-    } finally {
-      clearTimeout(watchdog);
-      // o navegador fechou a conexão no meio: não deixar o processo órfão
-      if (proc.exitCode === null) proc.kill();
+      history.push({ role: "model", parts });
+      const calls = parts.flatMap((p) => (p.functionCall ? [p.functionCall] : []));
+      if (!calls.length) {
+        settled = true;
+        break;
+      }
+
+      const answers: Part[] = [];
+      for (const call of calls) {
+        yield sse({ type: "tool", name: call.name ?? "" });
+        const response = await tools.call(call.name ?? "", call.args ?? {});
+        answers.push({ functionResponse: { name: call.name ?? "", response } });
+      }
+      history.push({ role: "user", parts: answers });
     }
+
+    if (!settled && history.at(-1)?.role === "user")
+      yield sse({ type: "warning", text: "Parei depois de muitas chamadas de ferramenta; peça de novo se faltou algo." });
+    yield sse({ type: "done", is_error: false, error: null });
+  } catch (error) {
+    history.length = before; // a próxima mensagem não herda uma volta quebrada
+    yield failed(`Gemini: ${(error instanceof Error ? error.message : String(error)).slice(0, 300)}`);
+  } finally {
+    await tools?.close().catch(() => {});
+  }
 }

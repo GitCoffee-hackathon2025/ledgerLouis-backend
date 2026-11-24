@@ -6,7 +6,14 @@ import { z } from "zod";
 
 import { AppError } from "../../../shared/errors/domain/errors.js";
 import type { ULID } from "../../../domain/shared/id.js";
-import type { buildInvestmentsModule } from "../module.js";
+import type { createMarketService } from "../services/market.service.js";
+import type { createPortfolioService } from "../services/portfolio.service.js";
+
+/** O que as ferramentas MCP usam do módulo. */
+export interface McpServices {
+  marketService: ReturnType<typeof createMarketService>;
+  portfolioService: ReturnType<typeof createPortfolioService>;
+}
 
 const INSTRUCTIONS = `Você é o analista do LedgerLouis, a plataforma de investimentos do usuário.
 Regras:
@@ -36,7 +43,7 @@ const proposalItem = z.object({
 });
 
 export function buildMcpServer(
-  { marketService: market, portfolioService: portfolio }: ReturnType<typeof buildInvestmentsModule>,
+  { marketService: market, portfolioService: portfolio }: McpServices,
   userId: ULID,
 ) {
   const server = new McpServer(

@@ -8,6 +8,7 @@ import { createYahooClient } from "../../infrastructure/market-data/yahoo.js";
 
 import { createMarketRepository } from "./repositories/market.repository.js";
 import { createPortfolioRepository } from "./repositories/portfolio.repository.js";
+import { connectInProcessTools } from "./mcp/in-process.js";
 import { createChatService, type ChatConfig } from "./services/chat.service.js";
 import { createMarketService } from "./services/market.service.js";
 import { createPortfolioService } from "./services/portfolio.service.js";
@@ -20,8 +21,8 @@ export interface InvestmentsConfig extends ChatConfig {
 /** Lê do ambiente as opções do módulo (usado pelos processos fora da API: MCP e scripts). */
 export const investmentsConfigFromEnv = (env = process.env): InvestmentsConfig => ({
   brapiToken: env.BRAPI_TOKEN,
-  claudeBin: env.CLAUDE_BIN,
-  model: env.CLAUDE_CHAT_MODEL,
+  geminiApiKey: env.GEMINI_API_KEY,
+  model: env.GEMINI_CHAT_MODEL,
 });
 
 export function buildInvestmentsModule(db: DB, config: InvestmentsConfig = {}) {
@@ -30,7 +31,10 @@ export function buildInvestmentsModule(db: DB, config: InvestmentsConfig = {}) {
 
   const marketService = createMarketService(marketRepo);
   const portfolioService = createPortfolioService(portfolioRepo, marketRepo);
-  const chatService = createChatService(config);
+  const chatService = createChatService({
+    connectTools: (userId) => connectInProcessTools({ marketService, portfolioService }, userId),
+    ...config,
+  });
   const syncService = createSyncService(marketRepo, {
     brapi: createBrapiClient(config.brapiToken ?? ""),
     yahoo: createYahooClient(),

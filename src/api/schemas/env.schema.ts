@@ -42,9 +42,9 @@ export const EnvSchema = Type.Object({
   // Investimentos
   /// Token da brapi (cotações da B3). Sem ele a brapi só responde alguns tickers de teste
   BRAPI_TOKEN: Type.String({ default: "" }),
-  /// Caminho do Claude Code para o chat. Vazio = chat desligado
-  CLAUDE_BIN: Type.Optional(Type.String()),
-  CLAUDE_CHAT_MODEL: Type.Optional(Type.String()),
+  /// Chave da API do Gemini (https://aistudio.google.com/apikey) para o chat. Vazio = chat desligado
+  GEMINI_API_KEY: Type.Optional(Type.String()),
+  GEMINI_CHAT_MODEL: Type.Optional(Type.String()),
 });
 
 export type Env = Static<typeof EnvSchema>;
