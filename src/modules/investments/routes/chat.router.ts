@@ -15,7 +15,7 @@ export const chatRoutes =
       {
         ...secured(app, "Chat with Claude (SSE stream)", { body: ChatBody }),
         // cada mensagem abre um processo do Claude no servidor: bem menos que o limite geral
-        config: { auth: true, rateLimit: { by: "user", max: 10, window: 60 } },
+        config: { auth: true, rateLimit: { by: "user", max: 30, window: 60 } },
       },
       controller.chat,
     );

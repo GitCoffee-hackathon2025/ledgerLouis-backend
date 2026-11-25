@@ -56,9 +56,9 @@ export default fp(
       await assert(res, {
         by: "ip",
         id: req.ip,
-        max: 100,
+        max: 1000,
         window: 60,
-        penalty: { initial: 60, max: 3600, remember: 86400 },
+        penalty: { initial: 10, max: 300, remember: 3600 },
       });
     });
 

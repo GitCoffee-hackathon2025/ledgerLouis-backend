@@ -21,7 +21,7 @@ export const authRouter =
     app.post(
       "/login",
       {
-        config: { rateLimit: { max: 10, window: 60 } },
+        config: { rateLimit: { max: 60, window: 60 } },
         schema: {
           tags: ["auth"],
           summary: "Login user",
@@ -60,7 +60,7 @@ export const authRouter =
     app.post(
       "/refresh",
       {
-        config: { rateLimit: { max: 30, window: 60 } },
+        config: { rateLimit: { max: 120, window: 60 } },
         schema: {
           tags: ["auth"],
           summary: "Refresh token",

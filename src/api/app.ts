@@ -25,6 +25,8 @@ async function buildApp() {
 
   // Criando instância fastify
   const app = fastify({
+    // 1 salto (o nginx): sem isso req.ip é o do proxy e todos dividem o limite; "true" deixaria o cliente forjar o IP via X-Forwarded-For
+    trustProxy: 1,
     logger: {
       transport: { target: "pino-pretty", options: { colorize: true } },
     },
